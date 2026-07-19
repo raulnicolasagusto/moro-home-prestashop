@@ -370,11 +370,6 @@
   color: var(--moro-primary);
 }
 
-/* ---- Ocultar searchbar de displayTop en escritorio (está en el top bar) ---- */
-
-.moro-header__nav-wrapper #_desktop_ps_searchbar {
-  display: none !important;
-}
 
 /* ================================================================
    5. Ajustes responsive para placeholders #_mobile_*
@@ -437,4 +432,149 @@
 .header-nav-full-width {
   background-color: var(--moro-surface-container-low);
   border-bottom: 1px solid var(--moro-surface-dim);
+}
+
+/* ================================================================
+   8. Search bar — grid animation (desgine/header.html:200-212)
+   ================================================================ */
+
+/* Contenedor exterior: CSS Grid para expandir/colapsar altura */
+
+.moro-search-dialog {
+  display: grid;
+  grid-template-rows: 0fr;
+  width: 100%;
+  background: var(--moro-surface);
+  border-color: var(--moro-surface-dim);
+  border-style: solid;
+  border-width: 0;
+  padding: 0 20px;
+  overflow: hidden;
+  transition: grid-template-rows 500ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (min-width: 768px) {
+  .moro-search-dialog {
+    padding: 0 64px;
+  }
+}
+
+/* Wrapper interior: necesario para que grid colapse correctamente */
+
+.moro-search-dialog__grid-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Contenido de la barra: centrado, flex justify-between */
+
+.moro-search-dialog__bar-content {
+  max-width: 1920px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  transition: all 400ms ease-out 75ms;
+}
+
+@media (min-width: 768px) {
+  .moro-search-dialog__bar-content {
+    padding: 12px 0;
+  }
+}
+
+/* Estado oculto inicial (fade out + slide up) */
+
+.moro-search-dialog--hidden-content {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* ---- Abrir: expandir grid + mostrar contenido ---- */
+
+.moro-search-dialog.is-open {
+  grid-template-rows: 1fr;
+  border-top-width: 1px;
+}
+
+.moro-search-dialog.is-open .moro-search-dialog--hidden-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Grupo input + icono (izquierda, flex-1) ---- */
+
+.moro-search-dialog__input-group {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* ---- Icono lupa ---- */
+
+.moro-search-dialog__search-icon {
+  font-size: 24px;
+  color: var(--moro-on-surface);
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+/* ---- Input ---- */
+
+.moro-search-dialog__input {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  font-family: "Newsreader", var(--moro-font-serif);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--moro-on-surface);
+  outline: none;
+  box-shadow: none;
+}
+
+.moro-search-dialog__input::placeholder {
+  color: var(--moro-on-surface-variant);
+  opacity: 0.3;
+}
+
+.moro-search-dialog__input::-webkit-search-cancel-button {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .moro-search-dialog__input {
+    font-size: 32px;
+  }
+}
+
+/* ---- Botón cerrar ---- */
+
+.moro-search-dialog__close {
+  margin-left: 16px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--moro-on-surface);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color 300ms ease;
+}
+
+.moro-search-dialog__close:hover {
+  color: var(--moro-primary);
+}
+
+.moro-search-dialog__close .material-icons {
+  font-size: 32px;
+}
+
+/* ---- Bloquear scroll ---- */
+
+body.moro-search-dialog-open {
+  overflow: hidden;
 }

@@ -41,10 +41,10 @@
           *}
           <button
             type="button"
+            id="moro-search-toggle"
             class="moro-header__icon-btn"
             aria-label="{l s='Search' d='Shop.Theme.Actions'}"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#searchCanvas"
+            aria-expanded="false"
           >
             <i class="material-icons moro-header__icon" aria-hidden="true">&#xE8B6;</i>
             <span class="moro-header__icon-label d-none d-md-inline">{l s='Search' d='Shop.Theme.Actions'}</span>
@@ -110,6 +110,47 @@
       <div class="moro-header__nav-wrapper">
         {hook h='displayTop'}
       </div>
+    </div>
+
+    {* ===== Search bar con grid animation — desgine/header.html:200-212 ===== *}
+    <div id="moro-search-dialog"
+         class="moro-search-dialog"
+         role="dialog"
+         aria-modal="true"
+         aria-label="{l s='Search' d='Shop.Theme.Actions'}"
+         data-ps-component="search-dialog">
+
+      <div class="moro-search-dialog__grid-inner">
+
+        <div class="moro-search-dialog__bar-content moro-search-dialog--hidden-content"
+             id="moro-search-dialog-inner">
+
+          <form action="{$urls.pages.search}"
+                method="get"
+                class="moro-search-dialog__input-group"
+                role="search">
+            <i class="material-icons moro-search-dialog__search-icon" aria-hidden="true">&#xE8B6;</i>
+            <input type="search"
+                   name="s"
+                   id="moro-search-dialog-input"
+                   class="moro-search-dialog__input"
+                   aria-label="{l s='Search' d='Shop.Theme.Actions'}"
+                   placeholder="{l s='Search for...' d='Shop.Theme.Actions'}"
+                   autocomplete="off" />
+          </form>
+
+          <button type="button"
+                  id="moro-search-dialog-close"
+                  class="moro-search-dialog__close"
+                  aria-label="{l s='Close' d='Shop.Theme.Actions'}"
+                  data-ps-action="close-search-dialog">
+            <i class="material-icons" aria-hidden="true">&#xE14C;</i>
+          </button>
+
+        </div>
+
+      </div>
+
     </div>
   </header>
 

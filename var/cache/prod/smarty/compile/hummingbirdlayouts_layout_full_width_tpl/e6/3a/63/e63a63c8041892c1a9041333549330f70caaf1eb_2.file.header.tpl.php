@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 23:40:04
+/* Smarty version 4.5.5, created on 2026-07-19 13:14:32
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\_partials\header.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c3904d66b31_48011283',
+  'unifunc' => 'content_6a5cf7e83b0988_87726143',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'e63a63c8041892c1a9041333549330f70caaf1eb' => 
     array (
       0 => 'C:\\xampp-8-2\\htdocs\\more-home\\themes\\hummingbird\\templates\\_partials\\header.tpl',
-      1 => 1784428685,
+      1 => 1784477610,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5c3904d66b31_48011283 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5cf7e83b0988_87726143 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, false);
 ?>
@@ -39,22 +39,22 @@ echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUG
 $_smarty_tpl->smarty->ext->_capture->close($_smarty_tpl);?>
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_5950986a5c3904d3a239_96670120', 'header_banner');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_2675500866a5cf7e838d906_75305125', 'header_banner');
 ?>
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_2435174086a5c3904d3f565_43756899', 'header_bottom');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_19825788966a5cf7e83909e1_42300175', 'header_bottom');
 ?>
 
 <?php }
 /* {block 'header_banner'} */
-class Block_5950986a5c3904d3a239_96670120 extends Smarty_Internal_Block
+class Block_2675500866a5cf7e838d906_75305125 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'header_banner' => 
   array (
-    0 => 'Block_5950986a5c3904d3a239_96670120',
+    0 => 'Block_2675500866a5cf7e838d906_75305125',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -71,12 +71,12 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
 }
 /* {/block 'header_banner'} */
 /* {block 'header_bottom'} */
-class Block_2435174086a5c3904d3f565_43756899 extends Smarty_Internal_Block
+class Block_19825788966a5cf7e83909e1_42300175 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'header_bottom' => 
   array (
-    0 => 'Block_2435174086a5c3904d3f565_43756899',
+    0 => 'Block_19825788966a5cf7e83909e1_42300175',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -90,11 +90,11 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
                 <div class="moro-header__left">
                     <button
             type="button"
+            id="moro-search-toggle"
             class="moro-header__icon-btn"
             aria-label="<?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Search','d'=>'Shop.Theme.Actions'),$_smarty_tpl ) );?>
 "
-            data-bs-toggle="offcanvas"
-            data-bs-target="#searchCanvas"
+            aria-expanded="false"
           >
             <i class="material-icons moro-header__icon" aria-hidden="true">&#xE8B6;</i>
             <span class="moro-header__icon-label d-none d-md-inline"><?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Search','d'=>'Shop.Theme.Actions'),$_smarty_tpl ) );?>
@@ -151,6 +151,51 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
         <?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['hook'][0], array( array('h'=>'displayTop'),$_smarty_tpl ) );?>
 
       </div>
+    </div>
+
+        <div id="moro-search-dialog"
+         class="moro-search-dialog"
+         role="dialog"
+         aria-modal="true"
+         aria-label="<?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Search','d'=>'Shop.Theme.Actions'),$_smarty_tpl ) );?>
+"
+         data-ps-component="search-dialog">
+
+      <div class="moro-search-dialog__grid-inner">
+
+        <div class="moro-search-dialog__bar-content moro-search-dialog--hidden-content"
+             id="moro-search-dialog-inner">
+
+          <form action="<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['urls']->value['pages']['search']), ENT_QUOTES, 'UTF-8');?>
+"
+                method="get"
+                class="moro-search-dialog__input-group"
+                role="search">
+            <i class="material-icons moro-search-dialog__search-icon" aria-hidden="true">&#xE8B6;</i>
+            <input type="search"
+                   name="s"
+                   id="moro-search-dialog-input"
+                   class="moro-search-dialog__input"
+                   aria-label="<?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Search','d'=>'Shop.Theme.Actions'),$_smarty_tpl ) );?>
+"
+                   placeholder="<?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Search for...','d'=>'Shop.Theme.Actions'),$_smarty_tpl ) );?>
+"
+                   autocomplete="off" />
+          </form>
+
+          <button type="button"
+                  id="moro-search-dialog-close"
+                  class="moro-search-dialog__close"
+                  aria-label="<?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Close','d'=>'Shop.Theme.Actions'),$_smarty_tpl ) );?>
+"
+                  data-ps-action="close-search-dialog">
+            <i class="material-icons" aria-hidden="true">&#xE14C;</i>
+          </button>
+
+        </div>
+
+      </div>
+
     </div>
   </header>
 

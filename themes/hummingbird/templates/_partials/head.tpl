@@ -81,6 +81,7 @@
 
 {block name='javascript_head'}
   {include file='_partials/javascript.tpl' javascript=$javascript.head vars=$js_custom_vars}
+  <script src="{$urls.theme_assets}js/moro-search-dialog.js?v=1.0.0" defer></script>
 {/block}
 
 {block name='hook_header'}
