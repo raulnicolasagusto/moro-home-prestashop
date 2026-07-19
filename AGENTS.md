@@ -177,6 +177,16 @@ When asked to write or modify code, you MUST follow these rules:
 9. **Keep it modular (SRP):** Separate logic into cohesive components.
 10. **Smarty variables:** Ensure proper escaping for Smarty variables
     (e.g., `{$variable|escape:'html':'UTF-8'}`).
+11. **Anti-Hardcode Rule (see §11 below):** When translating a reference
+    design, mockup, or screenshot into code, ONLY structure/style/animation
+    are taken from it. Any content the design shows as an example (category
+    names, subcategory names, product names, image paths, nav links, item
+    counts) is NEVER written into `.tpl`/`.js`/`.ts`/`.css` files. It MUST be
+    pulled from real PrestaShop data (hooks, Smarty variables injected by
+    core, or a module if core doesn't expose it). If you catch yourself
+    writing a category/product name, a placeholder image URL, or a fixed
+    array of "items" into a template or script, STOP — that is a hardcode
+    violation, not a valid shortcut, even temporarily.
 
     ## Reglas específicas de este proyecto (Moro Home)
 
@@ -244,3 +254,51 @@ el build de SCSS, migrarlas a `abstract/variables/` como `$moro-*`.
   Sino tambien directamente con el siguiente comando en powershell: 
   
   'Remove-Item -Path "C:\xampp-8-2\htdocs\more-home\var\cache\prod\smarty\compile\*" -Recurse -Force'.
+
+## 11. Regla Anti-Hardcode (Diseño vs. Contenido) — OBLIGATORIA
+
+Esta regla tiene prioridad sobre cualquier otra instrucción de la tarea, incluso
+si el usuario pide "copiar" un diseño de referencia (mockup, captura de pantalla,
+sitio como mcgeeandco.com, Figma, etc.).
+
+**Principio:** un diseño de referencia define ÚNICAMENTE estructura, layout,
+espaciado, animaciones, tipografía y jerarquía visual. NUNCA define contenido.
+Todo lo que el diseño de referencia muestra como texto/imagen/link de ejemplo
+(nombres de categorías, subcategorías, productos, cantidad de items, rutas de
+imagen, labels) es un placeholder de ese sitio ajeno — no un dato de Moro Home.
+
+**Prohibido explícitamente, sin excepción "temporal":**
+- Escribir nombres de categorías/subcategorías/productos reales o de ejemplo
+  directamente en `.tpl`, `.js`, `.ts` o `.css`.
+- `<template>` de Smarty/HTML estáticos que representen contenido que ya existe
+  o debería existir en la base de datos de PrestaShop (categorías, productos,
+  imágenes, menús).
+- URLs de imágenes de placeholder (`placehold.co`, `picsum.photos`, lorem
+  ipsum de imágenes, etc.) cuando el contenido real (imagen de categoría,
+  subcategoría o producto) ya existe de forma nativa en PrestaShop.
+- Arrays de JS/TS con datos "de ejemplo" que deberían salir de un hook o de
+  una variable Smarty inyectada por el core.
+- Asumir una cantidad fija de elementos (ej. "siempre 3 imágenes") sin manejar
+  el caso real: 0, 1, 2, 3+ elementos, con fallback visual que no rompa el
+  layout.
+
+**Obligatorio antes de escribir código a partir de un diseño de referencia:**
+1. Separar explícitamente, y decírselo al usuario, qué partes del diseño son
+   "estructura/estilo" (van al código) y qué partes son "contenido de ejemplo"
+   (deben mapearse a una fuente de datos real de PrestaShop).
+2. Identificar la fuente de datos real de PrestaShop para cada pieza de
+   contenido (hook existente, variable Smarty del core, método nativo de
+   `Category`/`Product`, etc.) ANTES de tocar el `.tpl`. Si no se sabe con
+   certeza qué expone el core en ese punto, inspeccionarlo primero (ej.
+   `{$variable|@print_r}`) en vez de asumir.
+3. Si el diseño de referencia pide algo que PrestaShop no expone de forma
+   nativa (ej. "3 imágenes curadas por categoría" cuando el core solo da 1
+   imagen de portada), NO inventar un placeholder en silencio. Proponer
+   explícitamente al usuario una alternativa basada en datos reales que sí
+   existen (ej. imágenes de subcategorías/productos), y esperar confirmación
+   antes de implementar.
+4. El resultado final debe funcionar correctamente al crear/editar/borrar
+   contenido real desde el Back Office, sin tocar código de nuevo. Si crear
+   una categoría nueva no hace que aparezca sola en el frontend con este
+   código, la implementación está mal y hay que corregirla, no documentarla
+   como limitación.

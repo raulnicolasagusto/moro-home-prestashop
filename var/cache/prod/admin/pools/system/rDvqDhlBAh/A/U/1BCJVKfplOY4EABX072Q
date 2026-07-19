@@ -1,0 +1,185 @@
+<?php //request.attributes.has%2528%2522_anonymous_controller%2522%2529%2520and%2520request.attributes.get%2528%2522_anonymous_controller%2522%2529%2520%253D%253D%2520true%252F%252Fauth_checker%257Cobject%257Crequest%257Crole_names%257Csubject%257Ctoken%257Ctrust_resolver%257Cuser
+
+return [PHP_INT_MAX, new class() implements \Symfony\Component\Cache\Traits\CachedValueInterface { public function getValue(): mixed { return \Symfony\Component\VarExporter\Internal\Hydrator::hydrate(
+    $o = [
+        clone (($p = &\Symfony\Component\VarExporter\Internal\Registry::$prototypes)['Symfony\\Component\\ExpressionLanguage\\ParsedExpression'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\ExpressionLanguage\\ParsedExpression')),
+        clone ($p['Symfony\\Component\\ExpressionLanguage\\Node\\BinaryNode'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\ExpressionLanguage\\Node\\BinaryNode')),
+        clone ($p['Symfony\\Component\\ExpressionLanguage\\Node\\GetAttrNode'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\ExpressionLanguage\\Node\\GetAttrNode')),
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\GetAttrNode'],
+        clone ($p['Symfony\\Component\\ExpressionLanguage\\Node\\NameNode'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\ExpressionLanguage\\Node\\NameNode')),
+        clone ($p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode')),
+        clone ($p['Symfony\\Component\\ExpressionLanguage\\Node\\ArgumentsNode'] ?? \Symfony\Component\VarExporter\Internal\Registry::p('Symfony\\Component\\ExpressionLanguage\\Node\\ArgumentsNode')),
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ArgumentsNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\BinaryNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\GetAttrNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\GetAttrNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\NameNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ArgumentsNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ArgumentsNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'],
+        clone $p['Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode'],
+    ],
+    null,
+    [
+        'Symfony\\Component\\ExpressionLanguage\\Expression' => [
+            'expression' => [
+                'request.attributes.has("_anonymous_controller") and request.attributes.get("_anonymous_controller") == true',
+            ],
+        ],
+        'Symfony\\Component\\ExpressionLanguage\\ParsedExpression' => [
+            'nodes' => [
+                $o[1],
+            ],
+        ],
+        'stdClass' => [
+            'nodes' => [
+                1 => [
+                    'left' => $o[2],
+                    'right' => $o[11],
+                ],
+                8 => [
+                    $o[9],
+                    $o[10],
+                ],
+                11 => [
+                    'left' => $o[12],
+                    'right' => $o[21],
+                ],
+                18 => [
+                    $o[19],
+                    $o[20],
+                ],
+            ],
+            'attributes' => [
+                1 => [
+                    'operator' => 'and',
+                ],
+                4 => [
+                    'name' => 'request',
+                ],
+                [
+                    'value' => 'attributes',
+                ],
+                7 => [
+                    'value' => 'has',
+                ],
+                9 => [
+                    'value' => 0,
+                ],
+                [
+                    'value' => '_anonymous_controller',
+                ],
+                [
+                    'operator' => '==',
+                ],
+                14 => [
+                    'name' => 'request',
+                ],
+                [
+                    'value' => 'attributes',
+                ],
+                17 => [
+                    'value' => 'get',
+                ],
+                19 => [
+                    'value' => 0,
+                ],
+                [
+                    'value' => '_anonymous_controller',
+                ],
+                [
+                    'value' => true,
+                ],
+            ],
+        ],
+        'Symfony\\Component\\ExpressionLanguage\\Node\\ConstantNode' => [
+            'isNullSafe' => [
+                5 => false,
+                7 => false,
+                9 => false,
+                false,
+                15 => false,
+                17 => false,
+                19 => false,
+                false,
+                false,
+            ],
+            'isIdentifier' => [
+                5 => true,
+                7 => true,
+                9 => false,
+                false,
+                15 => true,
+                17 => true,
+                19 => false,
+                false,
+                false,
+            ],
+        ],
+        'Symfony\\Component\\ExpressionLanguage\\Node\\ArrayNode' => [
+            'index' => [
+                6 => -1,
+                8 => 0,
+                16 => -1,
+                18 => 0,
+            ],
+        ],
+    ],
+    $o[0],
+    [
+        -3 => [
+            'nodes' => [
+                'node' => $o[4],
+                'attribute' => $o[5],
+                'arguments' => $o[6],
+            ],
+            'attributes' => [
+                'type' => 1,
+                'is_null_coalesce' => false,
+                'is_short_circuited' => false,
+            ],
+        ],
+        -2 => [
+            'nodes' => [
+                'node' => $o[3],
+                'attribute' => $o[7],
+                'arguments' => $o[8],
+            ],
+            'attributes' => [
+                'type' => 2,
+                'is_null_coalesce' => false,
+                'is_short_circuited' => false,
+            ],
+        ],
+        -13 => [
+            'nodes' => [
+                'node' => $o[14],
+                'attribute' => $o[15],
+                'arguments' => $o[16],
+            ],
+            'attributes' => [
+                'type' => 1,
+                'is_null_coalesce' => false,
+                'is_short_circuited' => false,
+            ],
+        ],
+        -12 => [
+            'nodes' => [
+                'node' => $o[13],
+                'attribute' => $o[17],
+                'arguments' => $o[18],
+            ],
+            'attributes' => [
+                'type' => 2,
+                'is_null_coalesce' => false,
+                'is_short_circuited' => false,
+            ],
+        ],
+    ]
+); } }];

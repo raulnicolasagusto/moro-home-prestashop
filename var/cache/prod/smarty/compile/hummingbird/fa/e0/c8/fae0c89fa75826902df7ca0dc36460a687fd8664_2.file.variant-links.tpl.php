@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-19 13:14:28
+/* Smarty version 4.5.5, created on 2026-07-19 19:34:17
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\catalog\_partials\variant-links.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5cf7e46224c8_45718884',
+  'unifunc' => 'content_6a5d50e9e1ee84_33094813',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5cf7e46224c8_45718884 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d50e9e1ee84_33094813 (Smarty_Internal_Template $_smarty_tpl) {
 $_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['variants']->value, 'variant');
 $_smarty_tpl->tpl_vars['variant']->do_else = true;
 if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['variant']->value) {

@@ -26,7 +26,7 @@
 {/block}
 
 {block name='header_bottom'}
-  <header class="moro-header" data-ps-ref="moro-header">
+  <header class="moro-header{if !empty($mega_menu_categories)} moro-header--has-mega-menu{/if}" data-ps-ref="moro-header">
     <div class="moro-header__inner">
 
       {* ===== Fila 1: top bar ===== *}
@@ -102,15 +102,100 @@
         <div id="_mobile_ps_shoppingcart" class="d-md-none d-flex col-auto"></div>
       {/if}
 
-      {* ===== Fila 2: navegación de categorías (desktop ≥ xl) =====
-         displayTop inyecta ps_mainmenu (menú de categorías con dropdown
-         on-hover, <nav> con .ps-mainmenu--desktop, offcanvas mobile) y
-         ps_searchbar. El wrapper .moro-header__nav-wrapper solo provee
-         layout visual, no toca la lógica JS ni los data-ps-*. *}
+      {* ===== Fila 2: navegación de categorías =====
+         El hook displayTop sigue inyectando ps_mainmenu (su offcanvas
+         mobile se conserva intacto) y ps_searchbar (invisible, solo para
+         assets y template de resultados). El nav desktop viejo de
+         ps_mainmenu se oculta por CSS y se reemplaza por el nav propio
+         del mega menu, mucho más visual. *}
       <div class="moro-header__nav-wrapper">
         {hook h='displayTop'}
       </div>
+
+      {* ===== Nav del mega menu (desktop ≥ xl) =====
+         Solo se renderiza si el módulo moromegamedia inyectó categorías.
+         Los botones usan data-ps-action + data-ps-data (AGENTS.md §5). *}
+      {if !empty($mega_menu_categories)}
+        <nav class="moro-mega-menu-nav" data-ps-component="moro-mega-menu" aria-label="{l s='Main navigation' d='Shop.Theme.Menu'}">
+          {foreach from=$mega_menu_categories item=cat name=megaNavLoop}
+            <button
+              type="button"
+              class="moro-mega-menu-nav__btn"
+              data-ps-action="toggle-mega-menu"
+              data-ps-data='{ldelim}"category":"{$cat.id_category}"{rdelim}'
+              aria-expanded="false"
+              aria-controls="moro-mega-panel-{$cat.id_category}">
+              {$cat.name|escape:'html':'UTF-8'}
+            </button>
+          {/foreach}
+        </nav>
+      {/if}
     </div>
+
+    {* ===== Mega menu panel (grid animation) — estructura de desgine/header.html:206-211 ===== *}
+    {if !empty($mega_menu_categories)}
+      <div id="moro-mega-menu"
+           class="moro-mega-menu"
+           data-ps-target="mega-menu"
+           aria-label="{l s='Categories' d='Shop.Theme.Menu'}"
+           hidden>
+
+        <div class="moro-mega-menu__grid-inner">
+
+          {foreach from=$mega_menu_categories item=cat}
+            <div
+              id="moro-mega-panel-{$cat.id_category}"
+              class="moro-mega-menu__panel-content moro-mega-menu--hidden-content"
+              data-ps-target="mega-panel"
+              data-ps-data='{ldelim}"category":"{$cat.id_category}"{rdelim}'
+              hidden>
+
+              <div class="moro-mega-menu__content">
+                {* Columna izquierda: links de subcategorías *}
+                {if !empty($cat.subs)}
+                  <div class="moro-mega-menu__links">
+                    <div class="moro-mega-menu__group">
+                      <h3 class="moro-mega-menu__group-title">{l s='Destacado' d='Shop.Theme.Menu'}</h3>
+                      <a class="moro-mega-menu__sublink moro-mega-menu__sublink--all" href="{$cat.url}">
+                        {l s='Ver todo' d='Shop.Theme.Menu'} {$cat.name|escape:'html':'UTF-8'}
+                      </a>
+                    </div>
+                    <div class="moro-mega-menu__group">
+                      <h3 class="moro-mega-menu__group-title">{$cat.name|escape:'html':'UTF-8'}</h3>
+                      {foreach from=$cat.subs item=sub}
+                        <a class="moro-mega-menu__sublink" href="{$sub.url}">
+                          {$sub.name|escape:'html':'UTF-8'}
+                        </a>
+                      {/foreach}
+                    </div>
+                  </div>
+                {/if}
+
+                {* Columna derecha: imágenes dinámicas (subcats/portadas de productos) *}
+                {if !empty($mega_menu_media[$cat.id_category])}
+                  <div class="moro-mega-menu__media">
+                    {foreach from=$mega_menu_media[$cat.id_category] item=media}
+                      <a class="moro-mega-menu__card" href="{$media.url}">
+                        <div class="moro-mega-menu__image-wrap">
+                          <img class="moro-mega-menu__image"
+                               src="{$media.image}"
+                               alt="{$media.label|escape:'html':'UTF-8'}"
+                               loading="lazy" />
+                        </div>
+                        <p class="moro-mega-menu__card-label">{$media.label|escape:'html':'UTF-8'}</p>
+                      </a>
+                    {/foreach}
+                  </div>
+                {/if}
+              </div>
+
+            </div>
+          {/foreach}
+
+        </div>
+
+      </div>
+    {/if}
 
     {* ===== Search bar con grid animation — desgine/header.html:200-212 ===== *}
     <div id="moro-search-dialog"

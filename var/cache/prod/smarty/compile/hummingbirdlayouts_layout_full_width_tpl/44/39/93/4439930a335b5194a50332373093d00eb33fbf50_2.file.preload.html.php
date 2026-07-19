@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-19 13:14:31
+/* Smarty version 4.5.5, created on 2026-07-19 19:34:21
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\assets\preload.html' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5cf7e7515160_43639463',
+  'unifunc' => 'content_6a5d50ed253f84_24382794',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5cf7e7515160_43639463 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d50ed253f84_24382794 (Smarty_Internal_Template $_smarty_tpl) {
 ?><link
       rel="preload"
       href="../fonts/MaterialIcons-Regular-2d8017489da689caedc1.woff2"

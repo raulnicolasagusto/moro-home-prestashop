@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-19 13:14:32
+/* Smarty version 4.5.5, created on 2026-07-19 19:34:22
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\_partials\header.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5cf7e83b0988_87726143',
+  'unifunc' => 'content_6a5d50ee126108_06181749',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'e63a63c8041892c1a9041333549330f70caaf1eb' => 
     array (
       0 => 'C:\\xampp-8-2\\htdocs\\more-home\\themes\\hummingbird\\templates\\_partials\\header.tpl',
-      1 => 1784477610,
+      1 => 1784497403,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5cf7e83b0988_87726143 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d50ee126108_06181749 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, false);
 ?>
@@ -39,22 +39,22 @@ echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUG
 $_smarty_tpl->smarty->ext->_capture->close($_smarty_tpl);?>
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_2675500866a5cf7e838d906_75305125', 'header_banner');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_4549185906a5d50ee0f2567_29124323', 'header_banner');
 ?>
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_19825788966a5cf7e83909e1_42300175', 'header_bottom');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_10922467276a5d50ee0f6103_00904756', 'header_bottom');
 ?>
 
 <?php }
 /* {block 'header_banner'} */
-class Block_2675500866a5cf7e838d906_75305125 extends Smarty_Internal_Block
+class Block_4549185906a5d50ee0f2567_29124323 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'header_banner' => 
   array (
-    0 => 'Block_2675500866a5cf7e838d906_75305125',
+    0 => 'Block_4549185906a5d50ee0f2567_29124323',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -71,18 +71,18 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
 }
 /* {/block 'header_banner'} */
 /* {block 'header_bottom'} */
-class Block_19825788966a5cf7e83909e1_42300175 extends Smarty_Internal_Block
+class Block_10922467276a5d50ee0f6103_00904756 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'header_bottom' => 
   array (
-    0 => 'Block_19825788966a5cf7e83909e1_42300175',
+    0 => 'Block_10922467276a5d50ee0f6103_00904756',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
 ?>
 
-  <header class="moro-header" data-ps-ref="moro-header">
+  <header class="moro-header<?php if (!empty($_smarty_tpl->tpl_vars['mega_menu_categories']->value)) {?> moro-header--has-mega-menu<?php }?>" data-ps-ref="moro-header">
     <div class="moro-header__inner">
 
             <div class="moro-header__top">
@@ -151,7 +151,132 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
         <?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['hook'][0], array( array('h'=>'displayTop'),$_smarty_tpl ) );?>
 
       </div>
+
+            <?php if (!empty($_smarty_tpl->tpl_vars['mega_menu_categories']->value)) {?>
+        <nav class="moro-mega-menu-nav" data-ps-component="moro-mega-menu" aria-label="<?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Main navigation','d'=>'Shop.Theme.Menu'),$_smarty_tpl ) );?>
+">
+          <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['mega_menu_categories']->value, 'cat', false, NULL, 'megaNavLoop', array (
+));
+$_smarty_tpl->tpl_vars['cat']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['cat']->value) {
+$_smarty_tpl->tpl_vars['cat']->do_else = false;
+?>
+            <button
+              type="button"
+              class="moro-mega-menu-nav__btn"
+              data-ps-action="toggle-mega-menu"
+              data-ps-data='{"category":"<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['cat']->value['id_category']), ENT_QUOTES, 'UTF-8');?>
+"}'
+              aria-expanded="false"
+              aria-controls="moro-mega-panel-<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['cat']->value['id_category']), ENT_QUOTES, 'UTF-8');?>
+">
+              <?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'escape' ][ 0 ], array( $_smarty_tpl->tpl_vars['cat']->value['name'],'html','UTF-8' ))), ENT_QUOTES, 'UTF-8');?>
+
+            </button>
+          <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+        </nav>
+      <?php }?>
     </div>
+
+        <?php if (!empty($_smarty_tpl->tpl_vars['mega_menu_categories']->value)) {?>
+      <div id="moro-mega-menu"
+           class="moro-mega-menu"
+           data-ps-target="mega-menu"
+           aria-label="<?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Categories','d'=>'Shop.Theme.Menu'),$_smarty_tpl ) );?>
+"
+           hidden>
+
+        <div class="moro-mega-menu__grid-inner">
+
+          <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['mega_menu_categories']->value, 'cat');
+$_smarty_tpl->tpl_vars['cat']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['cat']->value) {
+$_smarty_tpl->tpl_vars['cat']->do_else = false;
+?>
+            <div
+              id="moro-mega-panel-<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['cat']->value['id_category']), ENT_QUOTES, 'UTF-8');?>
+"
+              class="moro-mega-menu__panel-content moro-mega-menu--hidden-content"
+              data-ps-target="mega-panel"
+              data-ps-data='{"category":"<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['cat']->value['id_category']), ENT_QUOTES, 'UTF-8');?>
+"}'
+              hidden>
+
+              <div class="moro-mega-menu__content">
+                                <?php if (!empty($_smarty_tpl->tpl_vars['cat']->value['subs'])) {?>
+                  <div class="moro-mega-menu__links">
+                    <div class="moro-mega-menu__group">
+                      <h3 class="moro-mega-menu__group-title"><?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Destacado','d'=>'Shop.Theme.Menu'),$_smarty_tpl ) );?>
+</h3>
+                      <a class="moro-mega-menu__sublink moro-mega-menu__sublink--all" href="<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['cat']->value['url']), ENT_QUOTES, 'UTF-8');?>
+">
+                        <?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Ver todo','d'=>'Shop.Theme.Menu'),$_smarty_tpl ) );?>
+ <?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'escape' ][ 0 ], array( $_smarty_tpl->tpl_vars['cat']->value['name'],'html','UTF-8' ))), ENT_QUOTES, 'UTF-8');?>
+
+                      </a>
+                    </div>
+                    <div class="moro-mega-menu__group">
+                      <h3 class="moro-mega-menu__group-title"><?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'escape' ][ 0 ], array( $_smarty_tpl->tpl_vars['cat']->value['name'],'html','UTF-8' ))), ENT_QUOTES, 'UTF-8');?>
+</h3>
+                      <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['cat']->value['subs'], 'sub');
+$_smarty_tpl->tpl_vars['sub']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['sub']->value) {
+$_smarty_tpl->tpl_vars['sub']->do_else = false;
+?>
+                        <a class="moro-mega-menu__sublink" href="<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['sub']->value['url']), ENT_QUOTES, 'UTF-8');?>
+">
+                          <?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'escape' ][ 0 ], array( $_smarty_tpl->tpl_vars['sub']->value['name'],'html','UTF-8' ))), ENT_QUOTES, 'UTF-8');?>
+
+                        </a>
+                      <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                    </div>
+                  </div>
+                <?php }?>
+
+                                <?php if (!empty($_smarty_tpl->tpl_vars['mega_menu_media']->value[$_smarty_tpl->tpl_vars['cat']->value['id_category']])) {?>
+                  <div class="moro-mega-menu__media">
+                    <?php
+$_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['mega_menu_media']->value[$_smarty_tpl->tpl_vars['cat']->value['id_category']], 'media');
+$_smarty_tpl->tpl_vars['media']->do_else = true;
+if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['media']->value) {
+$_smarty_tpl->tpl_vars['media']->do_else = false;
+?>
+                      <a class="moro-mega-menu__card" href="<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['media']->value['url']), ENT_QUOTES, 'UTF-8');?>
+">
+                        <div class="moro-mega-menu__image-wrap">
+                          <img class="moro-mega-menu__image"
+                               src="<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['media']->value['image']), ENT_QUOTES, 'UTF-8');?>
+"
+                               alt="<?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'escape' ][ 0 ], array( $_smarty_tpl->tpl_vars['media']->value['label'],'html','UTF-8' ))), ENT_QUOTES, 'UTF-8');?>
+"
+                               loading="lazy" />
+                        </div>
+                        <p class="moro-mega-menu__card-label"><?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'escape' ][ 0 ], array( $_smarty_tpl->tpl_vars['media']->value['label'],'html','UTF-8' ))), ENT_QUOTES, 'UTF-8');?>
+</p>
+                      </a>
+                    <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+                  </div>
+                <?php }?>
+              </div>
+
+            </div>
+          <?php
+}
+$_smarty_tpl->smarty->ext->_foreach->restore($_smarty_tpl, 1);?>
+
+        </div>
+
+      </div>
+    <?php }?>
 
         <div id="moro-search-dialog"
          class="moro-search-dialog"

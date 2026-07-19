@@ -259,6 +259,13 @@
   padding: 8px 0 0;
 }
 
+/* Ocultar el nav desktop viejo de ps_mainmenu (dropdown on-hover)
+   SOLO cuando el mega menu está activo (módulo instalado).
+   Si el módulo no está instalado, el nav viejo sigue visible. */
+.moro-header--has-mega-menu .moro-header__nav-wrapper .ps-mainmenu--desktop {
+  display: none !important;
+}
+
 /* ---- Contenedor del menú desktop ---- */
 
 .moro-header__nav-wrapper .ps-mainmenu {
@@ -576,5 +583,227 @@
 /* ---- Bloquear scroll ---- */
 
 body.moro-search-dialog-open {
+  overflow: hidden;
+}
+
+/* ================================================================
+   9. Mega menu nav — botones de categorías (desktop ≥ xl)
+   Copia de desgine/header.html:198-204
+   ================================================================ */
+
+.moro-mega-menu-nav {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 8px 0 0;
+}
+
+@media (min-width: 1280px) {
+  .moro-mega-menu-nav {
+    display: flex;
+  }
+}
+
+.moro-mega-menu-nav__btn {
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 4px 0 4px;
+  color: var(--moro-on-surface-variant);
+  font-family: var(--moro-font-sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: color 300ms ease, border-color 300ms ease;
+}
+
+.moro-mega-menu-nav__btn:hover,
+.moro-mega-menu-nav__btn[aria-expanded="true"] {
+  color: var(--moro-primary);
+  border-bottom-color: var(--moro-primary);
+}
+
+/* ================================================================
+   10. Mega menu panel — grid animation (copia de desgine/header.html:206-211)
+   ================================================================ */
+
+.moro-mega-menu {
+  display: grid;
+  grid-template-rows: 0fr;
+  width: 100%;
+  background: var(--moro-surface);
+  border-color: var(--moro-surface-dim);
+  border-style: solid;
+  border-width: 0;
+  padding: 0 20px;
+  overflow: hidden;
+  transition: grid-template-rows 500ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@media (min-width: 768px) {
+  .moro-mega-menu {
+    padding: 0 64px;
+  }
+}
+
+.moro-mega-menu__grid-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Panel activo: grid expande a 1fr + border-top aparece */
+.moro-mega-menu.is-open {
+  grid-template-rows: 1fr;
+  border-top-width: 1px;
+}
+
+/* ---- Contenido de cada panel (1 por categoría) ---- */
+
+.moro-mega-menu__panel-content {
+  max-width: 1920px;
+  margin: 0 auto;
+  width: 100%;
+  transition: opacity 400ms ease-out 75ms, transform 400ms ease-out 75ms;
+}
+
+.moro-mega-menu--hidden-content {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* ---- Layout interno del panel: flex-col en mobile, flex-row en md+ ---- */
+
+.moro-mega-menu__content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 40px 0;
+}
+
+@media (min-width: 768px) {
+  .moro-mega-menu__content {
+    flex-direction: row;
+    padding: 40px 0;
+  }
+}
+
+/* ---- Columna izquierda: links ---- */
+
+.moro-mega-menu__links {
+  display: flex;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .moro-mega-menu__links {
+    width: 280px;
+    flex-shrink: 0;
+    flex-direction: column;
+  }
+}
+
+.moro-mega-menu__group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.moro-mega-menu__group-title {
+  font-family: var(--moro-font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--moro-on-surface-variant);
+  opacity: 0.6;
+  margin: 0 0 4px 0;
+}
+
+.moro-mega-menu__sublink {
+  font-family: var(--moro-font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--moro-on-surface-variant);
+  text-decoration: none;
+  transition: color 300ms ease;
+}
+
+.moro-mega-menu__sublink:hover,
+.moro-mega-menu__sublink:focus {
+  color: var(--moro-primary);
+}
+
+.moro-mega-menu__sublink--all {
+  color: var(--moro-on-surface);
+  font-weight: 500;
+}
+
+/* ---- Columna derecha: media (cards con imagen) ---- */
+
+.moro-mega-menu__media {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 576px) {
+  .moro-mega-menu__media {
+    flex-direction: row;
+  }
+}
+
+.moro-mega-menu__card {
+  flex: 1;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.moro-mega-menu__image-wrap {
+  overflow: hidden;
+  width: 100%;
+  height: 220px;
+}
+
+@media (min-width: 768px) {
+  .moro-mega-menu__image-wrap {
+    height: 280px;
+  }
+}
+
+.moro-mega-menu__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 700ms ease;
+}
+
+.moro-mega-menu__card:hover .moro-mega-menu__image {
+  transform: scale(1.05);
+}
+
+.moro-mega-menu__card-label {
+  font-family: var(--moro-font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--moro-on-surface);
+  margin: 12px 0 0 0;
+  transition: color 300ms ease;
+}
+
+.moro-mega-menu__card:hover .moro-mega-menu__card-label {
+  color: var(--moro-primary);
+}
+
+/* ---- Bloquear scroll del body cuando mega menu abierto ---- */
+
+body.moro-mega-menu-open {
   overflow: hidden;
 }

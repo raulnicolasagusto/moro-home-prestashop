@@ -24,7 +24,7 @@
                   data-bs-target="#category-tree-{$node.id|escape:'htmlall':'UTF-8'}"
                   aria-expanded="false"
                   aria-controls="category-tree-{$node.id|escape:'htmlall':'UTF-8'}"
-                  aria-label="{l s='Subcategories for %s' sprintf=[$node.name] d='Shop.Theme.Catalog'}"
+                  aria-label="{l s='Toggle subcategories' d='Shop.Theme.Catalog'}"
                 >
                 </button>
               {/if}

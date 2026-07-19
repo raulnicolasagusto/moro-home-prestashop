@@ -1,0 +1,1 @@
+{* Marker. No output. La data se asigna vía $this->context->smarty->assign en hookDisplayHeader. *}

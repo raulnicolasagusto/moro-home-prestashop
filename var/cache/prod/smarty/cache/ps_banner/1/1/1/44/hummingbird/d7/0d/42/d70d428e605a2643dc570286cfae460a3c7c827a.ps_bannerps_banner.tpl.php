@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:27
+/* Smarty version 4.5.5, created on 2026-07-19 19:19:07
   from 'module:ps_bannerps_banner.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e2772f2b9_89856515',
+  'unifunc' => 'content_6a5d4d5ba22889_89268500',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -18,7 +18,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   ),
   'cache_lifetime' => 31536000,
 ),true)) {
-function content_6a5c1e2772f2b9_89856515 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d4d5ba22889_89268500 (Smarty_Internal_Template $_smarty_tpl) {
 ?>  <section class="ps-banner">
     <div class="container">
       <a class="banner d-block text-center" href="http://localhost:8080/more-home/" title="">

@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-19 13:14:27
+/* Smarty version 4.5.5, created on 2026-07-19 19:34:16
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\components\section-title.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5cf7e3067573_42700663',
+  'unifunc' => 'content_6a5d50e830b4a7_98818095',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,23 +20,23 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5cf7e3067573_42700663 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d50e830b4a7_98818095 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, false);
 $_smarty_tpl->_assignInScope('componentName', 'section-title');?>
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_3144398066a5cf7e3066657_69662541', 'section_title');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_11119918026a5d50e8309e03_59434800', 'section_title');
 ?>
 
 <?php }
 /* {block 'section_title'} */
-class Block_3144398066a5cf7e3066657_69662541 extends Smarty_Internal_Block
+class Block_11119918026a5d50e8309e03_59434800 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'section_title' => 
   array (
-    0 => 'Block_3144398066a5cf7e3066657_69662541',
+    0 => 'Block_11119918026a5d50e8309e03_59434800',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {

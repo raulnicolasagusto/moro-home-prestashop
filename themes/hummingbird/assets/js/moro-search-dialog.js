@@ -39,6 +39,10 @@
   }
 
   function open() {
+    // Cerrar el mega menu si está abierto
+    if (typeof window.closeMoroMegaMenu === 'function') {
+      window.closeMoroMegaMenu();
+    }
     isOpen = true;
     panel.classList.add('is-open');
     document.body.classList.add('moro-search-dialog-open');
@@ -55,6 +59,7 @@
     toggleBtn.setAttribute('aria-expanded', 'false');
     if (input) input.value = '';
   }
+  window.closeMoroSearchPanel = close;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

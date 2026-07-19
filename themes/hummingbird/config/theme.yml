@@ -67,6 +67,8 @@ global_settings:
         - blockreassurance
         # Keep existing hooks and append them after
         - ~
+      displayHeader:
+        - moromegamedia
       displayTop:
         - ps_mainmenu
         - ps_searchbar

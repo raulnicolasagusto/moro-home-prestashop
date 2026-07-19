@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:35
+/* Smarty version 4.5.5, created on 2026-07-19 19:19:17
   from 'module:ps_linklistviewstemplateshooklinkblock.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e2f7e7585_66884839',
+  'unifunc' => 'content_6a5d4d6574e954_46966215',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -18,13 +18,13 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   ),
   'cache_lifetime' => 31536000,
 ),true)) {
-function content_6a5c1e2f7e7585_66884839 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d4d6574e954_46966215 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->smarty->ext->_tplFunction->registerTplFunctions($_smarty_tpl, array (
   'renderLogo' => 
   array (
     'compiled_filepath' => 'C:\\xampp-8-2\\htdocs\\more-home\\var\\cache\\prod\\smarty\\compile\\hummingbirdlayouts_layout_full_width_tpl\\74\\de\\50\\74de507f283517fa1de4bbeef7081bf495cccf53_2.file.helpers.tpl.php',
     'uid' => '74de507f283517fa1de4bbeef7081bf495cccf53',
-    'call_name' => 'smarty_template_function_renderLogo_9396262246a5c1e2ad121d0_33131243',
+    'call_name' => 'smarty_template_function_renderLogo_1612194636a5d4d5f383824_67789252',
   ),
 ));
 ?>      <nav

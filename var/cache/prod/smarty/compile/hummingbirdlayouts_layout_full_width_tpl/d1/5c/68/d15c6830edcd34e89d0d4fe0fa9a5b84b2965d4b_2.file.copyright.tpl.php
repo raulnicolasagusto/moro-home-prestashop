@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-19 13:14:37
+/* Smarty version 4.5.5, created on 2026-07-19 19:34:23
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\_partials\copyright.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5cf7ed1eed95_89753465',
+  'unifunc' => 'content_6a5d50ef805ec7_09744438',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,15 +20,15 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5cf7ed1eed95_89753465 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d50ef805ec7_09744438 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, false);
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_11316709606a5cf7ed1ea692_40533592', 'copyright');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_647139766a5d50ef801b17_74787853', 'copyright');
 ?>
 
 <?php }
 /* {block 'copyright_link'} */
-class Block_16581697706a5cf7ed1eaf26_56403284 extends Smarty_Internal_Block
+class Block_9262181306a5d50ef8024f0_05467771 extends Smarty_Internal_Block
 {
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
 ?>
@@ -42,16 +42,16 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
 }
 /* {/block 'copyright_link'} */
 /* {block 'copyright'} */
-class Block_11316709606a5cf7ed1ea692_40533592 extends Smarty_Internal_Block
+class Block_647139766a5d50ef801b17_74787853 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'copyright' => 
   array (
-    0 => 'Block_11316709606a5cf7ed1ea692_40533592',
+    0 => 'Block_647139766a5d50ef801b17_74787853',
   ),
   'copyright_link' => 
   array (
-    0 => 'Block_16581697706a5cf7ed1eaf26_56403284',
+    0 => 'Block_9262181306a5d50ef8024f0_05467771',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -59,7 +59,7 @@ public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
 
   <div class="copyright">
     <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_16581697706a5cf7ed1eaf26_56403284', 'copyright_link', $this->tplIndex);
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_9262181306a5d50ef8024f0_05467771', 'copyright_link', $this->tplIndex);
 ?>
 
   </div>
