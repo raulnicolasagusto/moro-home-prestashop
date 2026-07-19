@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:35
+/* Smarty version 4.5.5, created on 2026-07-18 23:40:09
   from 'module:ps_emailsubscriptionviewstemplateshookps_emailsubscription.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e2f1028b0_70445596',
+  'unifunc' => 'content_6a5c3909be0252_69770191',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5c1e2f1028b0_70445596 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5c3909be0252_69770191 (Smarty_Internal_Template $_smarty_tpl) {
 ?><section class="ps-emailsubscription bg-body-tertiary py-3 py-lg-4" id="emailsubscription_anchor_<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['hookName']->value), ENT_QUOTES, 'UTF-8');?>
 ">
   <div class="container">

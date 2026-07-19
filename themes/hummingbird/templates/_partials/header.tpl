@@ -1,14 +1,22 @@
 {**
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
+ * Moro Home — header rediseño (v1.0.0).
+ * Layout de 2 filas:
+ *   Fila 1: [search + mobile-toggle] [LOGO] [displayNav2 (account, cart…)]
+ *   Fila 2: [displayTop → ps_mainmenu (categorías + dropdown hover)]
+ * Conserva los hooks originales y los #_mobile_ps_customersignin /
+ * #_mobile_ps_shoppingcart que el JS del tema reemplaza en viewport < md.
  *}
 
 {$headerBanner = 'header-banner'}
-{$headerTop = 'header-top'}
-{$headerBottom = 'header-bottom'}
 {$headerNavFullWidth = 'header-nav-full-width'}
 
 {capture name="header_banner"}{hook h='displayBanner'}{/capture}
+{capture name="header_nav_1"}{hook h='displayNav1'}{/capture}
+{capture name="header_nav_2"}{hook h='displayNav2'}{/capture}
+
 {block name='header_banner'}
   {if !empty($smarty.capture.header_banner)}
     <div class="{$headerBanner}">
@@ -17,65 +25,93 @@
   {/if}
 {/block}
 
-{capture name="header_nav_1"}{hook h='displayNav1'}{/capture}
-{capture name="header_nav_2"}{hook h='displayNav2'}{/capture}
-{block name='header_nav'}
-  {if !empty($smarty.capture.header_nav_1) || !empty($smarty.capture.header_nav_2)}
-    <div class="{$headerTop} d-none d-md-block">
-      <div class="container-md">
-        <div class="row">
-          <div class="{$headerTop}__left col-md-4">
-            {$smarty.capture.header_nav_1 nofilter}
-          </div>
-
-          <div class="{$headerTop}__right col-md-8">
-            {$smarty.capture.header_nav_2 nofilter}
-          </div>
-        </div>
-      </div>
-    </div>
-  {/if}
-{/block}
-
 {block name='header_bottom'}
-  <div class="{$headerBottom}">
-    <div class="{$headerBottom}__container container-md">
-      <div class="{$headerBottom}__row row gx-2 gx-md-4 align-items-stretch">
-        <div class="{$headerBottom}__logo d-flex align-items-center col-auto me-auto me-md-0">
+  <header class="moro-header" data-ps-ref="moro-header">
+    <div class="moro-header__inner">
+
+      {* ===== Fila 1: top bar ===== *}
+      <div class="moro-header__top">
+
+        {* --- Izquierda: search + toggle mobile --- *}
+        <div class="moro-header__left">
+          {*
+            Botón de búsqueda. En desktop (≥md) abre el offcanvas de
+            ps_searchbar vía Bootstrap offcanvas. El offcanvas #searchCanvas
+            es renderizado por ps_searchbar dentro del hook displayTop.
+          *}
+          <button
+            type="button"
+            class="moro-header__icon-btn"
+            aria-label="{l s='Search' d='Shop.Theme.Actions'}"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#searchCanvas"
+          >
+            <i class="material-icons moro-header__icon" aria-hidden="true">&#xE8B6;</i>
+            <span class="moro-header__icon-label d-none d-md-inline">{l s='Search' d='Shop.Theme.Actions'}</span>
+          </button>
+
+          {* Toggle menú mobile *}
+          <button
+            type="button"
+            class="moro-header__icon-btn moro-header__menu-toggle d-xl-none"
+            aria-label="{l s='Toggle menu' d='Shop.Theme.Actions'}"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+          >
+            <i class="material-icons" aria-hidden="true">&#xE5D2;</i>
+          </button>
+        </div>
+
+        {* --- Centro: logo --- *}
+        <div class="moro-header__brand">
           {if $shop.logo_details}
-            {if $page.page_name == 'index'}<h1 class="{$headerBottom}__h1 mb-0">{/if}
+            {if $page.page_name == 'index'}<h1 class="moro-header__h1">{/if}
               {renderLogo}
             {if $page.page_name == 'index'}</h1>{/if}
           {/if}
         </div>
 
-        {hook h='displayTop'}
+        {* --- Derecha: displayNav2 + placeholders mobile --- *}
+        {*
+          displayNav2 inyecta ps_languageselector, ps_currencyselector,
+          ps_customersignin y ps_shoppingcart. En desktop se renderizan acá.
+          En mobile (< md), los #_mobile_ps_* placeholders reciben las
+          versiones responsivas vía el JS de Hummingbird.
+          Ocultamos idioma/moneda desde CSS para reducir ruido visual.
+        *}
+        <div class="moro-header__right">
+          {if !empty($smarty.capture.header_nav_2)}
+            {$smarty.capture.header_nav_2 nofilter}
+          {/if}
 
-        <div id="_mobile_ps_customersignin" class="d-md-none d-flex col-auto">
-          {* JUST PLACEHOLDER FOR RESPONSIVE COMPONENT TO LOAD REAL ONE *}
-          <div class="header-block">
-            <a href="{$urls.pages.my_account}" class="header-block__action-btn">
-              <i class="material-icons header-block__icon" aria-hidden="true">&#xE853;</i>
-            </a>
-          </div>
-          {* JUST PLACEHOLDER FOR RESPONSIVE COMPONENT TO LOAD REAL ONE *}
+          {* Wishlist (heart icon) — conectado al módulo blockwishlist *}
+          <a
+            class="moro-header__icon-btn moro-header__wishlist"
+            href="{$link->getModuleLink('blockwishlist', 'lists')}"
+            aria-label="{l s='My wishlists' d='Modules.Blockwishlist.Shop'}"
+            title="{l s='My wishlists' d='Modules.Blockwishlist.Shop'}"
+          >
+            <i class="material-icons" aria-hidden="true">&#xE87D;</i>
+          </a>
         </div>
+      </div>
 
-        {if !$configuration.is_catalog}
-          <div id="_mobile_ps_shoppingcart" class="d-md-none d-flex col-auto">
-            {* JUST PLACEHOLDER FOR RESPONSIVE COMPONENT TO LOAD REAL ONE *}
-            <div class="header-block">
-              <a href="{$urls.pages.cart}" class="header-block__action-btn">
-                <i class="material-icons header-block__icon" aria-hidden="true">&#xE8CC;</i>
-                <span class="header-block__badge">{$cart.products_count}</span>
-              </a>
-            </div>
-            {* JUST PLACEHOLDER FOR RESPONSIVE COMPONENT TO LOAD REAL ONE *}
-          </div>
-        {/if}
+      {* ===== Placeholders mobile ===== *}
+      <div id="_mobile_ps_customersignin" class="d-md-none d-flex col-auto"></div>
+      {if !$configuration.is_catalog}
+        <div id="_mobile_ps_shoppingcart" class="d-md-none d-flex col-auto"></div>
+      {/if}
+
+      {* ===== Fila 2: navegación de categorías (desktop ≥ xl) =====
+         displayTop inyecta ps_mainmenu (menú de categorías con dropdown
+         on-hover, <nav> con .ps-mainmenu--desktop, offcanvas mobile) y
+         ps_searchbar. El wrapper .moro-header__nav-wrapper solo provee
+         layout visual, no toca la lógica JS ni los data-ps-*. *}
+      <div class="moro-header__nav-wrapper">
+        {hook h='displayTop'}
       </div>
     </div>
-  </div>
+  </header>
 
   {capture name="nav_full_width"}{hook h='displayNavFullWidth'}{/capture}
   {if !empty($smarty.capture.nav_full_width)}

@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:32
+/* Smarty version 4.5.5, created on 2026-07-18 23:40:05
   from 'module:ps_languageselectorps_languageselector.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e2c95f054_87468053',
+  'unifunc' => 'content_6a5c39057aa269_74314570',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5c1e2c95f054_87468053 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5c39057aa269_74314570 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <div id="_desktop_ps_languageselector">
   <div class="ps-languageselector">

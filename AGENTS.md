@@ -181,8 +181,66 @@ When asked to write or modify code, you MUST follow these rules:
     ## Reglas específicas de este proyecto (Moro Home)
 
 - Este es el ecommerce de decoración del hogar "Moro Home". El tema en uso es Hummingbird 2.0.
-- Trabajar únicamente dentro de `prestashop/themes/hummingbird/` — nunca modificar archivos core de PrestaShop fuera de esa carpeta.
-- Priorizar cambios en archivos `.tpl` (Smarty) y configuración visual. Los archivos SCSS/TypeScript fuente no están compilables en este entorno todavía — avisar antes de tocarlos.
+- Trabajar únicamente dentro de `themes/hummingbird/` — nunca modificar archivos core de PrestaShop fuera de esa carpeta. (NOTA: la ruta real en esta instalación es `C:\xampp-8-2\htdocs\more-home\themes\hummingbird\`, sin prefijo `prestashop/`.)
+- Priorizar cambios en archivos `.tpl` (Smarty) y configuración visual. Los archivos SCSS/TypeScript fuente no están compilables en este entorno todavía — avisar antes de tocarlos. Como workaround temporal, los estilos nuevos se escriben en CSS plano bajo `themes/hummingbird/assets/css/` y se linkean desde `head.tpl`. Migrar a SCSS cuando el toolchain de build esté disponible.
 - Hacer cambios acotados y específicos, uno por vez, no reescribir componentes enteros de una.
 - Después de cualquier cambio en un `.tpl`, recordar que hace falta limpiar el caché de Smarty para verlo reflejado.
 - Idioma de la tienda: español (Argentina). Moneda: ARS.
+
+## 8. Paleta de colores Moro Home
+
+Sistema de colores de superficie + marca. Definir siempre como CSS custom properties en
+`themes/hummingbird/assets/css/moro-theme.css` (variables `--moro-*`) y, cuando se habilite
+el build de SCSS, migrarlas a `abstract/variables/` como `$moro-*`.
+
+### 8.1 Superficies (fondos)
+
+| Token | Hex | Uso |
+|---|---|---|
+| `--moro-surface` | `#fcf9f8` | Fondo principal de la página (blanco roto con matiz cálido). |
+| `--moro-surface-container-low` | `#f6f3f2` | Fondo secundario: footer, bloques destacados. |
+| `--moro-surface-dim` | `#dcd9d9` | Bordes y líneas divisorias (header, separadores). |
+
+### 8.2 Marca y acento
+
+| Token | Hex | Uso |
+|---|---|---|
+| `--moro-primary` | `#d46211` | CTAs, iconos destacados, estados activos, hover de links. Tono teja/sienna. |
+| `--moro-primary-hover` | `#b8500c` | Hover del primario (tono levemente más oscuro para feedback). |
+
+### 8.3 Tipografía y enlaces
+
+| Token | Hex | Uso |
+|---|---|---|
+| `--moro-on-surface` | `#1c1b1b` | Títulos y body. Negro casi puro suavizado para legibilidad. |
+| `--moro-on-surface-variant` | `#494544` | Texto secundario, labels, textos de menor jerarquía. |
+
+- **Links de navegación (header/footer):** color base = `--moro-on-surface` (#1c1b1b), color en hover = `--moro-primary` (#d46211).
+- **Accesibilidad:** todo texto `#1c1b1b` debe estar sobre fondos claros para garantizar contraste.
+- **Transiciones de hover:** usar `transition: color 300ms ease` (o `transition-colors duration-300`)
+  cuando links o iconos cambien del color de texto al color de acento teja.
+- **Jerarquía visual:** mantener `--moro-surface` como base predominante para que el diseño respire.
+
+## 9. Tipografía Moro Home
+
+| Fuente | Rol | Pesos |
+|---|---|---|
+| `Newsreader` | Tipografía serif para títulos display/headline (H1, H2, hero). | 300, 400, 500 (cursiva 300, 400) |
+| `Montserrat` | Tipografía sans para body, navegación, labels, UI. | 300, 400, 500, 600, 700 (cursiva 400) |
+
+- Cargarlas desde Google Fonts en `_partials/head.tpl` con `preconnect` para optimizar.
+- No sustituyen a las fuentes ya cargadas por Bootstrap/PrestaShop; se aplican vía clases BEM del
+  tema (`.moro-*`) a los elementos nuevos del header y se extenderá al resto del sitio en pasos
+  posteriores (un cambio por vez).
+- Tipos scale del diseño (referencia, se aplicará en pasos posteriores):
+  - `display-lg`: 64px / lh 72px / ls -0.02em / weight 300 (Newsreader)
+  - `headline-md`: 32px / lh 40px / weight 400 (Newsreader)
+  - `nav-item`: 14px / lh 20px / ls 0.05em / weight 500 (Montserrat)
+  - `body-md`: 16px / lh 24px / ls 0.01em / weight 400 (Montserrat)
+  - `label-md`: 12px / lh 16px / ls 0.1em / weight 600 (Montserrat, uppercase)
+
+  ## 10. Borrar cache manual ( no para el agente, esto es para el humano)
+  Ingresar a "C:\xampp-8-2\htdocs\more-home\var\cache\prod\smarty\compile" y eliminar el contenido, esto es para que los cambios de css hagan efecto.
+  Sino tambien directamente con el siguiente comando en powershell: 
+  
+  'Remove-Item -Path "C:\xampp-8-2\htdocs\more-home\var\cache\prod\smarty\compile\*" -Recurse -Force'.

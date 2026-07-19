@@ -1,0 +1,440 @@
+/* ==========================================================================
+   Moro Home — Header (moro-header.css)
+   --------------------------------------------------------------------------
+   Rediseño del header basado en desgine/header.html.
+   Layout BEM de 2 filas: top bar + nav de categorías.
+   Workaround temporal: SCSS no compilable en este entorno.
+   ========================================================================== */
+
+/* ================================================================
+   1. Contenedor principal
+   ================================================================ */
+
+.moro-header {
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+  background-color: rgba(252, 249, 248, 0.9); /* --moro-surface / 90% */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--moro-surface-dim);
+}
+
+.moro-header__inner {
+  max-width: 1920px;
+  margin: 0 auto;
+  padding: 0 20px; /* px-margin-mobile */
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .moro-header__inner {
+    padding: 0 64px; /* px-margin-desktop */
+  }
+}
+
+/* ================================================================
+   2. Fila 1 — Top bar
+   ================================================================ */
+
+.moro-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0; /* py-4 → 1rem */
+  border-bottom: 1px solid var(--moro-surface-dim);
+}
+
+/* ---- 2a. Izquierda: search + toggle mobile ---- */
+
+.moro-header__left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+/* Botón genérico de icono (search, account, menu toggle) */
+
+.moro-header__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  color: var(--moro-on-surface);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: var(--moro-fw-nav-item);
+  line-height: var(--moro-lh-nav-item);
+  letter-spacing: var(--moro-ls-nav-item);
+  text-decoration: none;
+  transition: var(--moro-transition-color);
+}
+
+.moro-header__icon-btn:hover,
+.moro-header__icon-btn:focus-visible {
+  color: var(--moro-primary);
+}
+
+.moro-header__icon-btn .material-icons {
+  font-size: 24px;
+}
+
+/* Label de texto junto al icono (visible solo en desktop) */
+
+.moro-header__icon-label {
+  white-space: nowrap;
+}
+
+/* ---- 2b. Centro: logo ---- */
+
+.moro-header__brand {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.moro-header__h1 {
+  margin: 0;
+}
+
+.moro-header__brand img,
+.moro-header__brand .logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+}
+
+@media (min-width: 768px) {
+  .moro-header__brand img,
+  .moro-header__brand .logo {
+    height: 64px; /* md:h-16 */
+  }
+}
+
+/* ---- 2c. Derecha: módulos (displayNav2 → header-block) ---- */
+
+.moro-header__right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .moro-header__right {
+    gap: 24px;
+  }
+}
+
+/* ===== Iconos de acción (header-block: sign-in, cart, mobile search trigger) ===== */
+
+.moro-header__right .header-block {
+  display: flex;
+  align-items: center;
+}
+
+.moro-header__right .header-block__action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  color: var(--moro-on-surface);
+  text-decoration: none;
+  border: 0;
+  background: transparent;
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: var(--moro-fw-nav-item);
+  line-height: var(--moro-lh-nav-item);
+  letter-spacing: var(--moro-ls-nav-item);
+  cursor: pointer;
+  transition: var(--moro-transition-color);
+}
+
+.moro-header__right .header-block__action-btn[href]:hover,
+.moro-header__right .header-block__action-btn[href]:focus,
+.moro-header__right .header-block__action-btn:hover {
+  color: var(--moro-primary);
+}
+
+.moro-header__right .header-block__icon {
+  font-size: 24px;
+  transition: var(--moro-transition-color);
+}
+
+/* Solo iconos — sin texto en sign-in ni carrito (todos los viewports) */
+.moro-header__right .header-block__title {
+  display: none !important;
+}
+@media (min-width: 768px) {
+  .moro-header__right .header-block__title {
+    display: none !important;
+  }
+}
+
+/* ---- Badge del carrito ---- */
+
+.moro-header__right .header-block__badge {
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-label-md);
+  font-weight: var(--moro-fw-label-md);
+  background-color: var(--moro-primary);
+  color: #fff;
+  border-radius: 9999px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ---- Dropdown del sign-in ---- */
+
+.moro-header__right .dropdown .header-block__action-btn {
+  position: relative;
+}
+
+/* Ocultar caret de Bootstrap en el botón dropdown */
+.moro-header__right .dropdown .header-block__action-btn::after {
+  display: none;
+}
+
+/* ---- Wishlist heart icon ---- */
+
+.moro-header__wishlist {
+  order: 1;
+}
+.moro-header__right #_desktop_ps_languageselector,
+.moro-header__right #_desktop_ps_currencyselector {
+  display: none !important;
+}
+
+/* ================================================================
+   3. Botón menú mobile (moro-header__menu-toggle)
+   ================================================================ */
+
+.moro-header__menu-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  color: var(--moro-on-surface);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: var(--moro-fw-nav-item);
+  line-height: var(--moro-lh-nav-item);
+  letter-spacing: var(--moro-ls-nav-item);
+  transition: var(--moro-transition-color);
+}
+
+.moro-header__menu-toggle:hover,
+.moro-header__menu-toggle:focus {
+  color: var(--moro-primary);
+}
+
+.moro-header__menu-toggle .material-icons {
+  font-size: 24px;
+}
+
+/* ================================================================
+   4. Fila 2 — Nav de categorías (ps_mainmenu output)
+   ================================================================ */
+
+.moro-header__nav-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 0;
+}
+
+/* ---- Contenedor del menú desktop ---- */
+
+.moro-header__nav-wrapper .ps-mainmenu {
+  flex: 0 0 auto;
+}
+
+/* ===== Top-level category links ===== */
+
+.moro-header__nav-wrapper .ps-mainmenu__tree {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.moro-header__nav-wrapper .ps-mainmenu__tree-item-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.moro-header__nav-wrapper .ps-mainmenu__tree-link {
+  display: inline-block;
+  padding: 8px 0 6px;
+  color: var(--moro-on-surface-variant);
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: var(--moro-fw-nav-item);
+  line-height: var(--moro-lh-nav-item);
+  letter-spacing: var(--moro-ls-nav-item);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: var(--moro-transition-color), border-color 300ms ease;
+}
+
+.moro-header__nav-wrapper .ps-mainmenu__tree-link:hover,
+.moro-header__nav-wrapper .ps-mainmenu__tree-link:focus {
+  color: var(--moro-primary);
+  border-bottom-color: var(--moro-primary);
+}
+
+/* Estado activo / página actual */
+.moro-header__nav-wrapper .ps-mainmenu__tree-item.current .ps-mainmenu__tree-link {
+  color: var(--moro-primary);
+  border-bottom-color: var(--moro-primary);
+}
+
+/* ---- Dropdown toggle (caret) ---- */
+
+.moro-header__nav-wrapper .ps-mainmenu__tree-dropdown-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0 0 4px;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  color: var(--moro-on-surface-variant);
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--moro-transition-color), transform 300ms ease;
+}
+
+.moro-header__nav-wrapper .ps-mainmenu__tree-dropdown-toggle:hover {
+  color: var(--moro-primary);
+}
+
+/* ---- Ocultar dropdown-toggle de Bootstrap ::after ya que ps_mainmenu tiene su propio caret ---- */
+
+.moro-header__nav-wrapper .ps-mainmenu__tree-dropdown-toggle.dropdown-toggle::after {
+  display: none;
+}
+
+/* ===== Submenu dropdown ===== */
+
+.moro-header__nav-wrapper .submenu {
+  background-color: var(--moro-surface);
+  border: 1px solid var(--moro-surface-dim);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.moro-header__nav-wrapper .submenu__left-item {
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: var(--moro-fw-nav-item);
+  color: var(--moro-on-surface-variant);
+  transition: var(--moro-transition-color);
+}
+
+.moro-header__nav-wrapper .submenu__left-item:hover,
+.moro-header__nav-wrapper .submenu__left-item.active {
+  color: var(--moro-primary);
+}
+
+.moro-header__nav-wrapper .menu-item {
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: 400;
+  color: var(--moro-on-surface);
+  text-decoration: none;
+  transition: var(--moro-transition-color);
+}
+
+.moro-header__nav-wrapper .menu-item:hover {
+  color: var(--moro-primary);
+}
+
+/* ---- Ocultar searchbar de displayTop en escritorio (está en el top bar) ---- */
+
+.moro-header__nav-wrapper #_desktop_ps_searchbar {
+  display: none !important;
+}
+
+/* ================================================================
+   5. Ajustes responsive para placeholders #_mobile_*
+   ================================================================ */
+
+/* Asegurar que los placeholders mobile de sign-in y cart sean visibles
+   solo en viewport < md y ocupen su espacio correctamente */
+
+#_mobile_ps_customersignin,
+#_mobile_ps_shoppingcart {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  #_mobile_ps_customersignin,
+  #_mobile_ps_shoppingcart {
+    display: flex;
+  }
+
+  #_mobile_ps_customersignin .header-block,
+  #_mobile_ps_shoppingcart .header-block {
+    display: flex;
+    align-items: center;
+  }
+
+  #_mobile_ps_customersignin .header-block__action-btn,
+  #_mobile_ps_shoppingcart .header-block__action-btn {
+    color: var(--moro-on-surface);
+    padding: 8px;
+    transition: var(--moro-transition-color);
+  }
+
+  #_mobile_ps_customersignin .header-block__action-btn:hover,
+  #_mobile_ps_shoppingcart .header-block__action-btn:hover {
+    color: var(--moro-primary);
+  }
+
+  #_mobile_ps_shoppingcart .header-block__badge {
+    background-color: var(--moro-primary);
+    color: #fff;
+  }
+}
+
+/* ================================================================
+   6. Ajustes displayNav2 utility row (si se inyecta en nav2)
+   ================================================================ */
+
+/*
+   displayNav2 inyecta ps_languageselector, ps_currencyselector,
+   ps_customersignin, ps_shoppingcart.
+   Los envolví en .moro-header__right donde ya usamos header-block
+   para sign-in y cart. Ocultamos idioma/moneda en §2c.
+   Pero si hay otros elementos residuales, los ocultamos también.
+*/
+
+/* ================================================================
+   7. Full-width hook (displayNavFullWidth → blockreassurance)
+   ================================================================ */
+
+.header-nav-full-width {
+  background-color: var(--moro-surface-container-low);
+  border-bottom: 1px solid var(--moro-surface-dim);
+}

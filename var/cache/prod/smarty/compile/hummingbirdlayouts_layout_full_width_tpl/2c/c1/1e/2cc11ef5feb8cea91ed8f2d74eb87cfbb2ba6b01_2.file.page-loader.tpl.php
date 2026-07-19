@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:36
+/* Smarty version 4.5.5, created on 2026-07-18 23:40:10
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\components\page-loader.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e302bb608_17257906',
+  'unifunc' => 'content_6a5c390ab78b84_79512064',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,23 +20,23 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5c1e302bb608_17257906 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5c390ab78b84_79512064 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, false);
 $_smarty_tpl->_assignInScope('componentName', 'page-loader');?>
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_21353641596a5c1e302ba618_79012031', 'page_loader');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_5646054406a5c390ab771d7_87779527', 'page_loader');
 ?>
 
 <?php }
 /* {block 'page_loader'} */
-class Block_21353641596a5c1e302ba618_79012031 extends Smarty_Internal_Block
+class Block_5646054406a5c390ab771d7_87779527 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'page_loader' => 
   array (
-    0 => 'Block_21353641596a5c1e302ba618_79012031',
+    0 => 'Block_5646054406a5c390ab771d7_87779527',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {

@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:25
+/* Smarty version 4.5.5, created on 2026-07-18 23:39:54
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\catalog\_partials\productlist.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e25621558_79390310',
+  'unifunc' => 'content_6a5c38fa9aa3d2_40414145',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -21,7 +21,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
     'file:catalog/_partials/miniatures/product.tpl' => 1,
   ),
 ),false)) {
-function content_6a5c1e25621558_79390310 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5c38fa9aa3d2_40414145 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <div class="products">
   <?php

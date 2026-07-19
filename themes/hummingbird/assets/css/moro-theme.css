@@ -1,0 +1,62 @@
+/* ==========================================================================
+   Moro Home — Theme tokens (paleta + tipografía)
+   --------------------------------------------------------------------------
+   Workaround temporal: SCSS no es compilable en este entorno todavía.
+   Estas variables deberán migrarse a `abstract/variables/` como $moro-* cuando
+   el toolchain de build (Vite) esté disponible. (Ver AGENTS.md §8 y §9.)
+   ========================================================================== */
+
+:root {
+  /* ---- Superficies (fondos) ---- */
+  --moro-surface: #fcf9f8;
+  --moro-surface-container-low: #f6f3f2;
+  --moro-surface-container-highest: #e4e2e1;
+  --moro-surface-dim: #dcd9d9;
+
+  /* ---- Marca y acento ---- */
+  --moro-primary: #d46211;
+  --moro-primary-hover: #b8500c;
+  --moro-primary-container: #c05500;
+
+  /* ---- Tipografía y enlaces ---- */
+  --moro-on-surface: #1c1b1b;
+  --moro-on-surface-variant: #494544;
+
+  /* ---- Tipografía familias ---- */
+  --moro-font-serif: "Newsreader", "Georgia", serif;
+  --moro-font-sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+
+  /* ---- Tipografía scale (referencia, se aplica incrementalmente) ---- */
+  --moro-fs-display-lg: 64px;
+  --moro-lh-display-lg: 72px;
+  --moro-ls-display-lg: -0.02em;
+  --moro-fw-display-lg: 300;
+
+  --moro-fs-headline-md: 32px;
+  --moro-lh-headline-md: 40px;
+  --moro-fw-headline-md: 400;
+
+  --moro-fs-nav-item: 14px;
+  --moro-lh-nav-item: 20px;
+  --moro-ls-nav-item: 0.05em;
+  --moro-fw-nav-item: 500;
+
+  --moro-fs-body-md: 16px;
+  --moro-lh-body-md: 24px;
+  --moro-ls-body-md: 0.01em;
+  --moro-fw-body-md: 400;
+
+  --moro-fs-label-md: 12px;
+  --moro-lh-label-md: 16px;
+  --moro-ls-label-md: 0.1em;
+  --moro-fw-label-md: 600;
+
+  /* ---- Transición de hover de marca ---- */
+  --moro-transition-color: color 300ms ease;
+}
+
+/* Selección de texto consistente con la paleta */
+::selection {
+  background-color: var(--moro-surface-container-low);
+  color: var(--moro-on-surface);
+}

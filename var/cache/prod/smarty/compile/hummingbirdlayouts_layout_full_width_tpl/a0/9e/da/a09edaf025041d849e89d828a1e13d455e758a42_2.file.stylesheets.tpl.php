@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:31
+/* Smarty version 4.5.5, created on 2026-07-18 23:40:04
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\_partials\stylesheets.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e2be0f0f2_47637635',
+  'unifunc' => 'content_6a5c39044d0932_30419461',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5c1e2be0f0f2_47637635 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5c39044d0932_30419461 (Smarty_Internal_Template $_smarty_tpl) {
 $_from = $_smarty_tpl->smarty->ext->_foreach->init($_smarty_tpl, $_smarty_tpl->tpl_vars['stylesheets']->value['external'], 'stylesheet');
 $_smarty_tpl->tpl_vars['stylesheet']->do_else = true;
 if ($_from !== null) foreach ($_from as $_smarty_tpl->tpl_vars['stylesheet']->value) {

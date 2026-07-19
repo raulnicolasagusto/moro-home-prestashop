@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:32
+/* Smarty version 4.5.5, created on 2026-07-18 23:40:05
   from 'module:ps_customersigninps_customersignin.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e2cb02401_70525547',
+  'unifunc' => 'content_6a5c3905b0f276_27097063',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
     'd5f8f570180f74d1dbdd1a1d2af0445e90a6650c' => 
     array (
       0 => 'module:ps_customersigninps_customersignin.tpl',
-      1 => 1784413142,
+      1 => 1784428513,
       2 => 'module',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5c1e2cb02401_70525547 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5c3905b0f276_27097063 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_checkPlugins(array(0=>array('file'=>'C:\\xampp-8-2\\htdocs\\more-home\\vendor\\smarty\\smarty\\libs\\plugins\\modifier.capitalize.php','function'=>'smarty_modifier_capitalize',),1=>array('file'=>'C:\\xampp-8-2\\htdocs\\more-home\\vendor\\smarty\\smarty\\libs\\plugins\\modifier.count.php','function'=>'smarty_modifier_count',),));
 ?>
 
@@ -38,13 +38,10 @@ $_smarty_tpl->_checkPlugins(array(0=>array('file'=>'C:\\xampp-8-2\\htdocs\\more-
 "
         >
           <i class="material-icons header-block__icon" aria-hidden="true">&#xE853;</i>
-          <span class="header-block__title d-none d-md-block d-lg-none">
+          <span class="header-block__title d-none">
             <?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'truncate' ][ 0 ], array( smarty_modifier_capitalize($_smarty_tpl->tpl_vars['customer']->value['firstname']),2,".",true ))), ENT_QUOTES, 'UTF-8');
 echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'truncate' ][ 0 ], array( smarty_modifier_capitalize($_smarty_tpl->tpl_vars['customer']->value['lastname']),2,".",true ))), ENT_QUOTES, 'UTF-8');?>
-
-          </span>
-          <span class="header-block__title d-lg-inline d-none">
-            <?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'truncate' ][ 0 ], array( smarty_modifier_capitalize($_smarty_tpl->tpl_vars['customerName']->value),22,"...",true ))), ENT_QUOTES, 'UTF-8');?>
+ - <?php echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_plugins[ 'modifier' ][ 'truncate' ][ 0 ], array( smarty_modifier_capitalize($_smarty_tpl->tpl_vars['customerName']->value),22,"...",true ))), ENT_QUOTES, 'UTF-8');?>
 
           </span>
         </button>
@@ -184,10 +181,8 @@ echo htmlspecialchars((string) (call_user_func_array($_smarty_tpl->registered_pl
 "
         >
           <i class="material-icons header-block__icon" aria-hidden="true">&#xE853;</i>
-          <span class="d-none d-md-inline header-block__title">
-            <?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Sign in','d'=>'Shop.Theme.Actions'),$_smarty_tpl ) );?>
-
-          </span>
+          <span class="header-block__title d-none"><?php echo call_user_func_array( $_smarty_tpl->smarty->registered_plugins[Smarty::PLUGIN_FUNCTION]['l'][0], array( array('s'=>'Sign in','d'=>'Shop.Theme.Actions'),$_smarty_tpl ) );?>
+</span>
         </a>
       </div>
     <?php }?>

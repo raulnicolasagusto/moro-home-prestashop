@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-18 21:45:36
+/* Smarty version 4.5.5, created on 2026-07-18 23:40:11
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\components\toast.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5c1e304b3081_99740091',
+  'unifunc' => 'content_6a5c390b043aa2_69926864',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5c1e304b3081_99740091 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5c390b043aa2_69926864 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_assignInScope('componentName', 'toast');?>
 
 <template class="js-<?php echo htmlspecialchars((string) ($_smarty_tpl->tpl_vars['componentName']->value), ENT_QUOTES, 'UTF-8');?>

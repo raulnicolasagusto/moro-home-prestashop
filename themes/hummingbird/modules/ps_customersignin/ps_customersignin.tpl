@@ -16,11 +16,8 @@
           aria-label="{l s='View my account (%customerName%)' sprintf=['%customerName%' => $customerName] d='Shop.Theme.Customeraccount'}"
         >
           <i class="material-icons header-block__icon" aria-hidden="true">&#xE853;</i>
-          <span class="header-block__title d-none d-md-block d-lg-none">
-            {$customer.firstname|capitalize|truncate:2:".":true}{$customer.lastname|capitalize|truncate:2:".":true}
-          </span>
-          <span class="header-block__title d-lg-inline d-none">
-            {$customerName|capitalize|truncate:22:"...":true}
+          <span class="header-block__title d-none">
+            {$customer.firstname|capitalize|truncate:2:".":true}{$customer.lastname|capitalize|truncate:2:".":true} - {$customerName|capitalize|truncate:22:"...":true}
           </span>
         </button>
 
@@ -138,9 +135,7 @@
           aria-label="{l s='Sign in' d='Shop.Theme.Actions'}"
         >
           <i class="material-icons header-block__icon" aria-hidden="true">&#xE853;</i>
-          <span class="d-none d-md-inline header-block__title">
-            {l s='Sign in' d='Shop.Theme.Actions'}
-          </span>
+          <span class="header-block__title d-none">{l s='Sign in' d='Shop.Theme.Actions'}</span>
         </a>
       </div>
     {/if}
