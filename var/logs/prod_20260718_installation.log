@@ -1,0 +1,13 @@
+*INFO* 	v9.1.4	2026/07/18 - 20:27:43: Installing database
+*INFO* 	v9.1.4	2026/07/18 - 20:27:43: Dropping database tables
+*INFO* 	v9.1.4	2026/07/18 - 20:27:49: Installing default data
+*INFO* 	v9.1.4	2026/07/18 - 20:27:49: Truncating database
+*INFO* 	v9.1.4	2026/07/18 - 20:27:57: Creating shop
+*INFO* 	v9.1.4	2026/07/18 - 20:27:57: Installing languages: es, ag
+*INFO* 	v9.1.4	2026/07/18 - 20:30:49: Populating database
+*INFO* 	v9.1.4	2026/07/18 - 20:30:54: Configuring shop
+*INFO* 	v9.1.4	2026/07/18 - 20:31:06: Installing modules on disk
+*INFO* 	v9.1.4	2026/07/18 - 20:39:15: Installing theme hummingbird
+*INFO* 	v9.1.4	2026/07/18 - 20:43:36: Installing fixtures
+*INFO* 	v9.1.4	2026/07/18 - 20:51:08: The admin folder was renamed into admin801vwctefof35ais5ve/
+*INFO* 	v9.1.4	2026/07/18 - 20:51:13: You can now access your backoffice at http://localhost:8080/more-home/admin801vwctefof35ais5ve/.
