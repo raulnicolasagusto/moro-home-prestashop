@@ -46,19 +46,20 @@
             aria-label="{l s='Search' d='Shop.Theme.Actions'}"
             aria-expanded="false"
           >
-            <i class="material-icons moro-header__icon" aria-hidden="true">&#xE8B6;</i>
+            <i class="material-symbols-outlined moro-header__icon" aria-hidden="true">search</i>
             <span class="moro-header__icon-label d-none d-md-inline">{l s='Search' d='Shop.Theme.Actions'}</span>
           </button>
 
           {* Toggle menú mobile *}
           <button
             type="button"
-            class="moro-header__icon-btn moro-header__menu-toggle d-xl-none"
+            class="moro-header__icon-btn moro-header__menu-toggle"
             aria-label="{l s='Toggle menu' d='Shop.Theme.Actions'}"
             aria-expanded="false"
             aria-controls="mobile-menu"
+            data-ps-action="toggle-mobile-drawer"
           >
-            <i class="material-icons" aria-hidden="true">&#xE5D2;</i>
+            <i class="material-symbols-outlined" aria-hidden="true">menu</i>
           </button>
         </div>
 
@@ -77,11 +78,19 @@
           ps_customersignin y ps_shoppingcart. En desktop se renderizan acá.
           En mobile (< md), los #_mobile_ps_* placeholders reciben las
           versiones responsivas vía el JS de Hummingbird.
+          Los movimos dentro de .moro-header__right para que los iconos
+          mobile aparezcan en la barra header, nunca abajo.
           Ocultamos idioma/moneda desde CSS para reducir ruido visual.
         *}
         <div class="moro-header__right">
           {if !empty($smarty.capture.header_nav_2)}
             {$smarty.capture.header_nav_2 nofilter}
+          {/if}
+
+          {* Placeholders mobile: el toggler mete content aquí en < md *}
+          <div id="_mobile_ps_customersignin" class="d-md-none d-flex col-auto"></div>
+          {if !$configuration.is_catalog}
+            <div id="_mobile_ps_shoppingcart" class="d-md-none d-flex col-auto"></div>
           {/if}
 
           {* Wishlist (heart icon) — conectado al módulo blockwishlist *}
@@ -91,16 +100,10 @@
             aria-label="{l s='My wishlists' d='Modules.Blockwishlist.Shop'}"
             title="{l s='My wishlists' d='Modules.Blockwishlist.Shop'}"
           >
-            <i class="material-icons" aria-hidden="true">&#xE87D;</i>
+            <i class="material-symbols-outlined" aria-hidden="true">favorite</i>
           </a>
         </div>
       </div>
-
-      {* ===== Placeholders mobile ===== *}
-      <div id="_mobile_ps_customersignin" class="d-md-none d-flex col-auto"></div>
-      {if !$configuration.is_catalog}
-        <div id="_mobile_ps_shoppingcart" class="d-md-none d-flex col-auto"></div>
-      {/if}
 
       {* ===== Fila 2: navegación de categorías =====
          El hook displayTop sigue inyectando ps_mainmenu (su offcanvas
@@ -214,7 +217,7 @@
                 method="get"
                 class="moro-search-dialog__input-group"
                 role="search">
-            <i class="material-icons moro-search-dialog__search-icon" aria-hidden="true">&#xE8B6;</i>
+            <i class="material-symbols-outlined moro-search-dialog__search-icon" aria-hidden="true">search</i>
             <input type="search"
                    name="s"
                    id="moro-search-dialog-input"
@@ -229,7 +232,7 @@
                   class="moro-search-dialog__close"
                   aria-label="{l s='Close' d='Shop.Theme.Actions'}"
                   data-ps-action="close-search-dialog">
-            <i class="material-icons" aria-hidden="true">&#xE14C;</i>
+              <i class="material-symbols-outlined" aria-hidden="true">close</i>
           </button>
 
         </div>
@@ -238,6 +241,79 @@
 
     </div>
   </header>
+
+  {* ===== Mobile drawer (data from moromegamedia, outside header to avoid backdrop-filter containing block) — desgine/header.html:329-350 ===== *}
+  {if !empty($mega_menu_categories)}
+    <div class="moro-mobile-drawer__overlay"
+         data-ps-action="close-mobile-drawer"
+         aria-hidden="true">
+    </div>
+
+    <aside id="mobile-menu"
+           class="moro-mobile-drawer"
+           role="dialog"
+           aria-modal="true"
+           aria-label="{l s='Menu' d='Shop.Theme.Menu'}"
+           data-ps-component="mobile-menu"
+           aria-hidden="true"
+           hidden>
+
+      <div class="moro-mobile-drawer__header">
+        <button type="button"
+                class="moro-mobile-drawer__close"
+                data-ps-action="close-mobile-drawer"
+                aria-label="{l s='Close menu' d='Shop.Theme.Actions'}">
+          <i class="material-symbols-outlined" aria-hidden="true">close</i>
+        </button>
+      </div>
+
+      <div class="moro-mobile-drawer__panels">
+
+        {* Panel principal: lista de categorías *}
+        <div class="moro-mobile-drawer__main"
+             data-ps-target="mobile-main">
+          <ul class="moro-mobile-drawer__list" role="list">
+            {foreach from=$mega_menu_categories item=cat name=moroDrawerLoop}
+              <li class="moro-mobile-drawer__item"
+                  style="--moro-stagger: {$smarty.foreach.moroDrawerLoop.index * 60}ms;">
+                {if !empty($cat.subs) || !empty($mega_menu_media[$cat.id_category])}
+                  <button type="button"
+                          class="moro-mobile-drawer__link"
+                          data-ps-action="open-mobile-subpanel"
+                          data-ps-data='{ldelim}"category":"{$cat.id_category}"{rdelim}'>
+                    <span>{$cat.name|escape:'html':'UTF-8'}</span>
+                    <i class="material-symbols-outlined" aria-hidden="true">chevron_right</i>
+                  </button>
+                {else}
+                  <a class="moro-mobile-drawer__link" href="{$cat.url}">
+                    <span>{$cat.name|escape:'html':'UTF-8'}</span>
+                  </a>
+                {/if}
+              </li>
+            {/foreach}
+          </ul>
+        </div>
+
+        {* Sub-panel: contenido de la categoría *}
+        <div class="moro-mobile-drawer__sub"
+             data-ps-target="mobile-sub"
+             aria-hidden="true"
+             hidden>
+          <button type="button"
+                  class="moro-mobile-drawer__back"
+                  data-ps-action="close-mobile-subpanel">
+            <i class="material-symbols-outlined" aria-hidden="true">chevron_left</i>
+            <span data-ps-ref="mobile-sub-title"></span>
+          </button>
+          <div class="moro-mobile-drawer__sub-content"
+               data-ps-target="mobile-sub-content">
+          </div>
+        </div>
+
+      </div>
+
+    </aside>
+  {/if}
 
   {capture name="nav_full_width"}{hook h='displayNavFullWidth'}{/capture}
   {if !empty($smarty.capture.nav_full_width)}

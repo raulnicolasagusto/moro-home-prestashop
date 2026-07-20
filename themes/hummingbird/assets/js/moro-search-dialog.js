@@ -39,9 +39,12 @@
   }
 
   function open() {
-    // Cerrar el mega menu si está abierto
+    // Cerrar el mega menu y mobile drawer si están abiertos
     if (typeof window.closeMoroMegaMenu === 'function') {
       window.closeMoroMegaMenu();
+    }
+    if (typeof window.closeMoroMobileDrawer === 'function') {
+      window.closeMoroMobileDrawer();
     }
     isOpen = true;
     panel.classList.add('is-open');

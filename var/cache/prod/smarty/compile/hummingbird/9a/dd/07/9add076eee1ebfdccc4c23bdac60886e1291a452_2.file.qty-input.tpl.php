@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-19 19:34:18
+/* Smarty version 4.5.5, created on 2026-07-19 22:02:59
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\components\qty-input.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5d50ea24ff79_45037498',
+  'unifunc' => 'content_6a5d73c338b834_97851785',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5d50ea24ff79_45037498 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d73c338b834_97851785 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_assignInScope('increment_icon', "E145");
 $_smarty_tpl->_assignInScope('decrement_icon', "E15B");
 $_smarty_tpl->_assignInScope('submit_icon', "E5CA");

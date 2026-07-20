@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-19 19:34:17
+/* Smarty version 4.5.5, created on 2026-07-19 22:02:58
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\catalog\_partials\miniatures\product-quickview.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5d50e9aef5b2_00948914',
+  'unifunc' => 'content_6a5d73c2b6d053_39227211',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,25 +20,25 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5d50e9aef5b2_00948914 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d73c2b6d053_39227211 (Smarty_Internal_Template $_smarty_tpl) {
 $_smarty_tpl->_loadInheritance();
 $_smarty_tpl->inheritance->init($_smarty_tpl, false);
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_3532173946a5d50e9ae8fc6_97903423', 'quick_view');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_3489672686a5d73c2b67971_63253558', 'quick_view');
 ?>
 
 
 <?php 
-$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_10296982566a5d50e9aecbd4_60747099', 'quick_view_touch');
+$_smarty_tpl->inheritance->instanceBlock($_smarty_tpl, 'Block_15628632436a5d73c2b6b5a3_04152342', 'quick_view_touch');
 ?>
 
 <?php }
 /* {block 'quick_view'} */
-class Block_3532173946a5d50e9ae8fc6_97903423 extends Smarty_Internal_Block
+class Block_3489672686a5d73c2b67971_63253558 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'quick_view' => 
   array (
-    0 => 'Block_3532173946a5d50e9ae8fc6_97903423',
+    0 => 'Block_3489672686a5d73c2b67971_63253558',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {
@@ -59,12 +59,12 @@ __quickview-button btn btn-tertiary btn-square-icon outline js-quickview"
 }
 /* {/block 'quick_view'} */
 /* {block 'quick_view_touch'} */
-class Block_10296982566a5d50e9aecbd4_60747099 extends Smarty_Internal_Block
+class Block_15628632436a5d73c2b6b5a3_04152342 extends Smarty_Internal_Block
 {
 public $subBlocks = array (
   'quick_view_touch' => 
   array (
-    0 => 'Block_10296982566a5d50e9aecbd4_60747099',
+    0 => 'Block_15628632436a5d73c2b6b5a3_04152342',
   ),
 );
 public function callBlock(Smarty_Internal_Template $_smarty_tpl) {

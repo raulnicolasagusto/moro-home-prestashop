@@ -73,9 +73,12 @@
   }
 
   function open(category) {
-    // Cerrar el search panel si está abierto
+    // Cerrar el search panel y mobile drawer si están abiertos
     if (typeof window.closeMoroSearchPanel === 'function') {
       window.closeMoroSearchPanel();
+    }
+    if (typeof window.closeMoroMobileDrawer === 'function') {
+      window.closeMoroMobileDrawer();
     }
 
     showPanel(category);

@@ -6,6 +6,31 @@
    Workaround temporal: SCSS no compilable en este entorno.
    ========================================================================== */
 
+/* Material Symbols Outlined (header icons) — estilo de desgine/header.html */
+
+.moro-header .material-symbols-outlined {
+  font-size: 24px;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* Ajustes de tamaño específicos */
+
+.moro-header__icon-btn .material-symbols-outlined,
+.moro-header__icon-btn .material-icons {
+  font-size: 24px;
+}
+
+.moro-header__menu-toggle .material-symbols-outlined,
+.moro-header__menu-toggle .material-icons {
+  font-size: 24px;
+}
+
+.moro-search-dialog__close .material-symbols-outlined,
+.moro-search-dialog__close .material-icons {
+  font-size: 32px;
+}
+
 /* ================================================================
    1. Contenedor principal
    ================================================================ */
@@ -806,4 +831,366 @@ body.moro-search-dialog-open {
 
 body.moro-mega-menu-open {
   overflow: hidden;
+}
+
+/* ================================================================
+   7. Correccion breakpoint menu toggle: oculto a 1280px+ (mismo punto que el mega menu nav)
+   ================================================================ */
+
+@media (min-width: 1280px) {
+  .moro-header__menu-toggle {
+    display: none !important;
+  }
+}
+
+/* ================================================================
+   8. Mobile Drawer (moro-mobile-drawer)
+   Copia de desgine/header.html:329-350
+   ================================================================ */
+
+/* ---- Overlay ---- */
+
+.moro-mobile-drawer__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+  background: rgba(28, 27, 27, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.moro-mobile-drawer__overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---- Drawer ---- */
+
+.moro-mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1050;
+  height: 100%;
+  width: 85%;
+  max-width: 380px;
+  background: var(--moro-surface);
+  transform: translateX(-100%);
+  transition: transform 400ms cubic-bezier(0.65, 0, 0.35, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.moro-mobile-drawer.is-open {
+  transform: translateX(0);
+}
+
+/* ---- Header con bot�n cerrar ---- */
+
+.moro-mobile-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--moro-surface-dim);
+  flex-shrink: 0;
+}
+
+.moro-mobile-drawer__close {
+  background: transparent;
+  border: 0;
+  color: var(--moro-on-surface);
+  cursor: pointer;
+  padding: 8px;
+  transition: color 300ms ease;
+}
+
+.moro-mobile-drawer__close:hover {
+  color: var(--moro-primary);
+}
+
+.moro-mobile-drawer__close .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* ---- Contenedor de paneles (main + sub) ---- */
+
+.moro-mobile-drawer__panels {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ---- Panel principal ---- */
+
+.moro-mobile-drawer__main {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  transition: transform 350ms cubic-bezier(0.65, 0, 0.35, 1),
+              opacity 350ms ease;
+}
+
+.moro-mobile-drawer__main.is-pushed {
+  transform: translateX(-30%);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* ---- Lista de categor�as ---- */
+
+.moro-mobile-drawer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.moro-mobile-drawer__item {
+  border-bottom: 1px solid var(--moro-surface-dim);
+  opacity: 0;
+  transform: translateX(-1rem);
+  transition: opacity 350ms cubic-bezier(0.65, 0, 0.35, 1),
+              transform 350ms cubic-bezier(0.65, 0, 0.35, 1);
+  transition-delay: var(--moro-stagger, 0ms);
+}
+
+.moro-mobile-drawer.is-open .moro-mobile-drawer__item {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ---- Links del panel principal ---- */
+
+.moro-mobile-drawer__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px 20px;
+  background: transparent;
+  border: 0;
+  color: var(--moro-on-surface);
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: var(--moro-fw-nav-item);
+  line-height: 20px;
+  letter-spacing: var(--moro-ls-nav-item);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 300ms ease;
+}
+
+.moro-mobile-drawer__link:hover,
+.moro-mobile-drawer__link:focus {
+  color: var(--moro-primary);
+}
+
+.moro-mobile-drawer__link .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--moro-on-surface-variant);
+}
+
+/* ---- Sub-panel ---- */
+
+.moro-mobile-drawer__sub {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  background: var(--moro-surface);
+  transform: translateX(100%);
+  transition: transform 350ms cubic-bezier(0.65, 0, 0.35, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.moro-mobile-drawer__sub.is-open {
+  transform: translateX(0);
+}
+
+/* ---- Bot�n volver ---- */
+
+.moro-mobile-drawer__back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 20px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--moro-surface-dim);
+  color: var(--moro-on-surface);
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: var(--moro-fw-nav-item);
+  line-height: 20px;
+  cursor: pointer;
+  text-align: left;
+  transition: color 300ms ease;
+  flex-shrink: 0;
+}
+
+.moro-mobile-drawer__back:hover {
+  color: var(--moro-primary);
+}
+
+.moro-mobile-drawer__back .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* ---- Contenido del sub-panel ---- */
+
+.moro-mobile-drawer__sub-content {
+  padding: 24px 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.moro-mobile-drawer__sub-group {
+  margin-bottom: 32px;
+}
+
+.moro-mobile-drawer__sub-group:last-child {
+  margin-bottom: 0;
+}
+
+.moro-mobile-drawer__sub-group-title {
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-label-md);
+  font-weight: var(--moro-fw-label-md);
+  line-height: 16px;
+  letter-spacing: var(--moro-ls-label-md);
+  text-transform: uppercase;
+  color: var(--moro-on-surface-variant);
+  opacity: 0.6;
+  margin: 0 0 12px;
+  padding: 0;
+}
+
+.moro-mobile-drawer__sub-link {
+  display: block;
+  padding: 8px 0;
+  color: var(--moro-on-surface-variant);
+  font-family: var(--moro-font-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  text-decoration: none;
+  transition: color 300ms ease;
+}
+
+.moro-mobile-drawer__sub-link:hover,
+.moro-mobile-drawer__sub-link:focus {
+  color: var(--moro-primary);
+}
+
+.moro-mobile-drawer__sub-link--all {
+  color: var(--moro-on-surface);
+}
+
+/* ---- Im�genes en sub-panel ---- */
+
+.moro-mobile-drawer__sub-media {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.moro-mobile-drawer__sub-card {
+  text-decoration: none;
+  display: block;
+}
+
+.moro-mobile-drawer__sub-image-wrap {
+  overflow: hidden;
+}
+
+.moro-mobile-drawer__sub-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  transition: transform 700ms ease;
+}
+
+.moro-mobile-drawer__sub-card:hover .moro-mobile-drawer__sub-image {
+  transform: scale(1.05);
+}
+
+.moro-mobile-drawer__sub-card-label {
+  font-family: var(--moro-font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--moro-on-surface);
+  margin: 8px 0 0;
+  transition: color 300ms ease;
+}
+
+.moro-mobile-drawer__sub-card:hover .moro-mobile-drawer__sub-card-label {
+  color: var(--moro-primary);
+}
+
+/* ---- Scroll lock ---- */
+
+/* ---- Iconos Material Symbols dentro del drawer (fuera del header) ---- */
+
+.moro-mobile-drawer .material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* Asegurar que [hidden] funcione en el drawer (CSS propio compite con UA stylesheet) */
+
+.moro-mobile-drawer[hidden],
+.moro-mobile-drawer__overlay[hidden],
+.moro-mobile-drawer__sub[hidden] {
+  display: none !important;
+}
+
+/* ---- Scroll lock ---- */
+
+body.moro-mobile-drawer-open {
+  overflow: hidden;
+}
+
+/* ---- Ocultar drawer en desktop ---- */
+
+@media (min-width: 1280px) {
+  .moro-mobile-drawer,
+  .moro-mobile-drawer__overlay {
+    display: none !important;
+  }
+}
+
+
+/* ================================================================
+   9. Icono wishlist: oculto en responsive (< 1280px). Cart ocupa su lugar.
+   ================================================================ */
+
+@media (max-width: 1279.98px) {
+  .moro-header__wishlist {
+    display: none !important;
+  }
+}
+/* ================================================================
+   9. Phone (< 768px): solo cart en header bar. Person y wishlist ocultos.
+   ================================================================ */
+
+@media (max-width: 767.98px) {
+  .moro-header__wishlist {
+    display: none !important;
+  }
+  #_desktop_ps_customersignin {
+    display: none !important;
+  }
+}
+/* ================================================================
+   9. Phone (< 768px): solo cart en header bar, nada abajo.
+   ================================================================ */
+
+@media (max-width: 767.98px) {
+  #_mobile_ps_customersignin,
+  .moro-header__wishlist {
+    display: none !important;
+  }
 }

@@ -164,33 +164,33 @@
 <div class="px-margin-mobile md:px-margin-desktop py-4 max-w-[1920px] mx-auto flex flex-col">
 <!-- Row 1: Top -->
 <div class="flex items-center justify-between pb-4 border-b border-outline-variant">
-<!-- Left: Search & Mobile Menu -->
-<div class="flex-1 flex items-center justify-start space-x-2">
-<button aria-label="Search" id="searchToggleBtn" class="flex items-center text-on-surface hover:text-primary transition-colors p-2 space-x-2">
-<span class="material-symbols-outlined text-[24px]">search</span>
-<span class="font-nav-item text-nav-item hidden md:inline-block">Search</span>
-</button>
+<!-- Left: Mobile Menu & Search -->
+<div class="flex-1 flex items-center justify-start space-x-1 sm:space-x-2">
 <!-- Mobile Menu Toggle -->
-<button class="lg:hidden text-on-surface p-2">
-<span class="material-symbols-outlined text-[24px]">menu</span>
+<button aria-label="Menu" id="mobileMenuToggle" aria-expanded="false" class="lg:hidden text-on-surface p-2">
+<span class="material-symbols-outlined text-[22px] sm:text-[24px]">menu</span>
+</button>
+<button aria-label="Search" id="searchToggleBtn" class="flex items-center text-on-surface hover:text-primary transition-colors p-2 space-x-2">
+<span class="material-symbols-outlined text-[22px] sm:text-[24px]">search</span>
+<span class="font-nav-item text-nav-item hidden md:inline-block">Search</span>
 </button>
 </div>
 <!-- Center: Logo -->
 <div class="flex-1 flex justify-center">
 <a class="shrink-0" href="#">
-<img alt="Moro Home Logo" class="h-12 md:h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoQ9nmXkl9KTyEBuyXicCEF9RqfdclBDxOPibuZUtoh7ioAGg-J4uVOCX_EjEgWyvZj67TUfCXNngtTy1TQYKvCLfU3LfJjPhaHuDqQRt9hh901KcloG_P3VXFbvdrtobG-FipT5MwxI-p5A9xVIOoEaBf4s-QbnruBspKFg5k888XyWsjtRGdLJW-_W8QbNocFl49eKkJjGgynFmsloNh3iJ9I204wKkw1mCUr8Z5nVRim8k3aYmcm-wuuF9xcR5uMPVAOibCdnU">
+<img alt="Moro Home Logo" class="h-9 sm:h-12 md:h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoQ9nmXkl9KTyEBuyXicCEF9RqfdclBDxOPibuZUtoh7ioAGg-J4uVOCX_EjEgWyvZj67TUfCXNngtTy1TQYKvCLfU3LfJjPhaHuDqQRt9hh901KcloG_P3VXFbvdrtobG-FipT5MwxI-p5A9xVIOoEaBf4s-QbnruBspKFg5k888XyWsjtRGdLJW-_W8QbNocFl49eKkJjGgynFmsloNh3iJ9I204wKkw1mCUr8Z5nVRim8k3aYmcm-wuuF9xcR5uMPVAOibCdnU">
 </a>
 </div>
 <!-- Right: Action Icons -->
-<div class="flex-1 flex items-center justify-end space-x-2 md:space-x-4">
-<button aria-label="Account" class="text-on-surface hover:text-primary transition-colors p-2">
-<span class="material-symbols-outlined text-[24px]">person</span>
+<div class="flex-1 flex items-center justify-end space-x-1 sm:space-x-2 md:space-x-4">
+<button aria-label="Account" class="hidden min-[700px]:inline-flex text-on-surface hover:text-primary transition-colors p-2">
+<span class="material-symbols-outlined text-[22px] sm:text-[24px]">person</span>
 </button>
-<button aria-label="Favorites" class="text-on-surface hover:text-primary transition-colors p-2">
-<span class="material-symbols-outlined text-[24px]">favorite</span>
+<button aria-label="Favorites" class="hidden min-[700px]:inline-flex text-on-surface hover:text-primary transition-colors p-2">
+<span class="material-symbols-outlined text-[22px] sm:text-[24px]">favorite</span>
 </button>
 <button aria-label="Shopping Bag" class="text-on-surface hover:text-primary transition-colors p-2">
-<span class="material-symbols-outlined text-[24px]">shopping_bag</span>
+<span class="material-symbols-outlined text-[22px] sm:text-[24px]">shopping_bag</span>
 </button>
 </div>
 </div>
@@ -314,17 +314,41 @@
 </template>
 <div id="searchPanel" class="w-full bg-surface border-outline-variant px-margin-mobile md:px-margin-desktop overflow-hidden transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] grid" style="grid-template-rows: 0fr; border-top-width: 0;">
 <div class="min-h-0 overflow-hidden">
-<div class="max-w-[1920px] mx-auto flex items-center justify-between w-full py-2 md:py-3 opacity-0 -translate-y-2 transition-all duration-400 ease-out delay-75" id="searchPanelInner">
-<div class="flex items-center flex-1">
-<span class="material-symbols-outlined text-[24px] text-on-surface mr-4">search</span>
-<input id="searchInput" class="w-full bg-transparent border-0 p-0 font-display-lg-mobile md:font-display-lg text-[24px] md:text-[32px] text-on-surface placeholder:text-on-surface-variant/30 focus:ring-0" placeholder="Search for..." type="text">
+<div class="max-w-[1920px] mx-auto flex items-center justify-between w-full py-3 md:py-3 opacity-0 -translate-y-2 transition-all duration-400 ease-out delay-75" id="searchPanelInner">
+<div class="flex items-center flex-1 min-w-0">
+<span class="material-symbols-outlined text-[18px] sm:text-[20px] md:text-[24px] text-on-surface mr-2 sm:mr-3 md:mr-4 shrink-0">search</span>
+<input id="searchInput" class="w-full min-w-0 bg-transparent border-0 p-0 font-body-md md:font-display-lg-mobile lg:font-display-lg text-[16px] sm:text-[18px] md:text-[24px] lg:text-[32px] text-on-surface placeholder:text-on-surface-variant/30 focus:ring-0" placeholder="Search for..." type="text">
 </div>
-<button id="searchCloseBtn" aria-label="Close search" class="ml-4 text-on-surface hover:text-primary transition-colors">
-<span class="material-symbols-outlined text-[32px]">close</span>
+<button id="searchCloseBtn" aria-label="Close search" class="ml-3 sm:ml-4 shrink-0 text-on-surface hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[22px] sm:text-[24px] md:text-[32px]">close</span>
 </button>
 </div>
 </div>
-</div></header>
+</div>
+<!-- Mobile Drawer -->
+<div id="mobileDrawerOverlay" class="fixed inset-0 z-[100] bg-on-surface/40 opacity-0 pointer-events-none transition-opacity duration-300 lg:hidden"></div>
+<aside id="mobileDrawer" aria-hidden="true" aria-label="Menú" role="dialog" aria-modal="true" class="fixed top-0 left-0 z-[110] h-full w-[85%] max-w-[380px] bg-surface -translate-x-full transition-transform duration-400 ease-[cubic-bezier(0.65,0,0.35,1)] lg:hidden flex flex-col">
+<div class="flex items-center justify-end px-margin-mobile py-4 border-b border-outline-variant shrink-0">
+<button id="drawerCloseBtn" aria-label="Cerrar menú" type="button" class="text-on-surface p-2">
+<span class="material-symbols-outlined text-[24px]">close</span>
+</button>
+</div>
+<div class="relative flex-1 overflow-hidden">
+<!-- Panel principal: lista de categorías (copiada del nav desktop) -->
+<div id="drawerMainPanel" class="absolute inset-0 overflow-y-auto transition-transform duration-350 ease-[cubic-bezier(0.65,0,0.35,1)]">
+<ul id="drawerMainList" class="divide-y divide-outline-variant" role="list"></ul>
+</div>
+<!-- Sub-panel: contenido de la categoría seleccionada -->
+<div id="drawerSubPanel" class="absolute inset-0 overflow-y-auto translate-x-full transition-transform duration-350 ease-[cubic-bezier(0.65,0,0.35,1)] bg-surface">
+<button id="drawerBackBtn" type="button" class="flex items-center gap-2 px-margin-mobile py-4 border-b border-outline-variant w-full text-left font-nav-item text-nav-item text-on-surface">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+<span id="drawerSubTitle"></span>
+</button>
+<div id="drawerSubContent" class="px-margin-mobile py-6"></div>
+</div>
+</div>
+</aside>
+</header>
 <main>
 <!-- Hero Section: Asymmetrical Layout -->
 <section class="px-margin-mobile md:px-margin-desktop py-12 md:py-24 max-w-[1920px] mx-auto">
@@ -414,6 +438,7 @@
 
   function openSearch() {
     if (typeof window.closeMegaMenu === 'function') window.closeMegaMenu();
+    if (typeof window.closeMobileDrawer === 'function') window.closeMobileDrawer();
     isOpen = true;
     panel.style.borderTopWidth = '1px';
     panel.style.gridTemplateRows = '1fr';
@@ -474,6 +499,7 @@
 
   function openMenu(menuKey) {
     if (typeof window.closeSearchPanel === 'function') window.closeSearchPanel();
+    if (typeof window.closeMobileDrawer === 'function') window.closeMobileDrawer();
 
     if (activeMenu === menuKey) {
       closeMegaMenu();
@@ -528,6 +554,158 @@
   });
 
   window.closeMegaMenu = closeMegaMenu;
+})();
+
+(function () {
+  var hamburgerBtn = document.getElementById('mobileMenuToggle');
+  var overlay = document.getElementById('mobileDrawerOverlay');
+  var drawer = document.getElementById('mobileDrawer');
+  var closeBtn = document.getElementById('drawerCloseBtn');
+  var mainPanel = document.getElementById('drawerMainPanel');
+  var mainList = document.getElementById('drawerMainList');
+  var subPanel = document.getElementById('drawerSubPanel');
+  var subTitle = document.getElementById('drawerSubTitle');
+  var subContent = document.getElementById('drawerSubContent');
+  var backBtn = document.getElementById('drawerBackBtn');
+  var isOpen = false;
+
+  function buildMainList() {
+    mainList.innerHTML = '';
+    var navBtns = Array.prototype.slice.call(document.querySelectorAll('.nav-menu-btn'));
+    navBtns.forEach(function (btn, index) {
+      var menuKey = btn.getAttribute('data-menu');
+      var label = btn.textContent;
+
+      var li = document.createElement('li');
+      var item = document.createElement('button');
+      item.type = 'button';
+      item.setAttribute('data-menu', menuKey);
+      item.className = 'drawer-item flex items-center justify-between w-full px-margin-mobile py-4 font-nav-item text-nav-item text-on-surface hover:text-primary transition-colors opacity-0 -translate-x-4';
+      item.style.transitionProperty = 'opacity, transform';
+      item.style.transitionDuration = '350ms';
+      item.style.transitionTimingFunction = 'cubic-bezier(0.65,0,0.35,1)';
+      item.style.transitionDelay = (index * 60) + 'ms';
+
+      var span = document.createElement('span');
+      span.textContent = label;
+      var chevron = document.createElement('span');
+      chevron.className = 'material-symbols-outlined text-[18px] text-on-surface-variant';
+      chevron.setAttribute('aria-hidden', 'true');
+      chevron.textContent = 'chevron_right';
+
+      item.appendChild(span);
+      item.appendChild(chevron);
+      item.addEventListener('click', function () {
+        openSubPanel(menuKey, label);
+      });
+
+      li.appendChild(item);
+      mainList.appendChild(li);
+    });
+  }
+
+  function animateMainListIn() {
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        var items = mainList.querySelectorAll('.drawer-item');
+        items.forEach(function (item) {
+          item.classList.remove('opacity-0', '-translate-x-4');
+        });
+      });
+    });
+  }
+
+  // Reconstruye el contenido del sub-panel a partir del mismo <template> que usa
+  // el mega menu de desktop (misma fuente, sin duplicar datos): grupos de links +
+  // hasta 2 imágenes.
+  function buildSubContent(menuKey) {
+    subContent.innerHTML = '';
+    var tpl = document.getElementById('tpl-' + menuKey);
+    if (!tpl || !tpl.content.firstElementChild) return;
+
+    var root = tpl.content.firstElementChild.cloneNode(true);
+    var linksWrap = root.children[0];
+    var mediaWrap = root.children[1];
+
+    if (linksWrap) {
+      linksWrap.className = 'flex flex-col gap-6 mb-8';
+      subContent.appendChild(linksWrap);
+    }
+
+    if (mediaWrap) {
+      var mediaLinks = Array.prototype.slice.call(mediaWrap.children, 0, 2);
+      var mobileMedia = document.createElement('div');
+      mobileMedia.className = 'grid grid-cols-2 gap-3';
+      mediaLinks.forEach(function (a) {
+        a.className = 'group block';
+        var img = a.querySelector('img');
+        if (img) img.className = 'w-full h-[150px] object-cover transition-transform duration-700 group-hover:scale-105';
+        var p = a.querySelector('p');
+        if (p) p.className = 'font-body-md text-body-md text-on-surface mt-2 text-sm';
+        mobileMedia.appendChild(a);
+      });
+      if (mediaLinks.length) subContent.appendChild(mobileMedia);
+    }
+  }
+
+  function openSubPanel(menuKey, label) {
+    subTitle.textContent = label;
+    buildSubContent(menuKey);
+    subPanel.classList.remove('translate-x-full');
+    mainPanel.classList.add('-translate-x-full');
+    subPanel.scrollTop = 0;
+  }
+
+  function closeSubPanel() {
+    subPanel.classList.add('translate-x-full');
+    mainPanel.classList.remove('-translate-x-full');
+  }
+
+  function openDrawer() {
+    if (typeof window.closeSearchPanel === 'function') window.closeSearchPanel();
+    if (typeof window.closeMegaMenu === 'function') window.closeMegaMenu();
+
+    buildMainList();
+    closeSubPanel();
+    overlay.classList.remove('opacity-0', 'pointer-events-none');
+    drawer.classList.remove('-translate-x-full');
+    drawer.setAttribute('aria-hidden', 'false');
+    hamburgerBtn.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('overflow-hidden');
+    isOpen = true;
+    animateMainListIn();
+  }
+
+  function closeDrawer() {
+    overlay.classList.add('opacity-0');
+    setTimeout(function () {
+      if (!isOpen) overlay.classList.add('pointer-events-none');
+    }, 300);
+    drawer.classList.add('-translate-x-full');
+    drawer.setAttribute('aria-hidden', 'true');
+    hamburgerBtn.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('overflow-hidden');
+    isOpen = false;
+    setTimeout(closeSubPanel, 400);
+  }
+
+  hamburgerBtn.addEventListener('click', function () {
+    isOpen ? closeDrawer() : openDrawer();
+  });
+  closeBtn.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  backBtn.addEventListener('click', closeSubPanel);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape' || !isOpen) return;
+    if (!subPanel.classList.contains('translate-x-full')) {
+      closeSubPanel();
+    } else {
+      closeDrawer();
+    }
+  });
+
+  window.closeMobileDrawer = closeDrawer;
 })();
 </script>
 </body></html>

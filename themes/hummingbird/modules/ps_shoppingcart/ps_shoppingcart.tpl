@@ -12,7 +12,7 @@
         <span class="header-block__action-btn pe-md-0">
       {/if}
 
-      <i class="material-icons header-block__icon" aria-hidden="true">&#xE8CC;</i>
+      <i class="material-symbols-outlined header-block__icon" aria-hidden="true">shopping_bag</i>
       <span class="header-block__badge">{$cart.products_count}</span>
 
       {if $cart.products_count> 0}

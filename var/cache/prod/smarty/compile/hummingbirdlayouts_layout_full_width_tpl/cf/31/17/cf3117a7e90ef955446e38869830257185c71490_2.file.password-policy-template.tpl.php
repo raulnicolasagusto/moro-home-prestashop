@@ -1,11 +1,11 @@
 <?php
-/* Smarty version 4.5.5, created on 2026-07-19 19:34:23
+/* Smarty version 4.5.5, created on 2026-07-19 22:03:09
   from 'C:\xampp-8-2\htdocs\more-home\themes\hummingbird\templates\components\password-policy-template.tpl' */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   'version' => '4.5.5',
-  'unifunc' => 'content_6a5d50efdb0549_53707981',
+  'unifunc' => 'content_6a5d73cd541224_69935007',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_6a5d50efdb0549_53707981 (Smarty_Internal_Template $_smarty_tpl) {
+function content_6a5d73cd541224_69935007 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 
 <template data-ps-ref="password-feedback-template">
