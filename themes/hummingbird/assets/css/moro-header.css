@@ -659,7 +659,7 @@ body.moro-search-dialog-open {
   position: absolute;
   top: 0;
   left: 50%;
-  width: 100vw;
+  width: 100%;
   border-top: 1px solid var(--moro-surface-dim);
   transform: translateX(-50%);
 }
