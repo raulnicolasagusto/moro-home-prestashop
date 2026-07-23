@@ -2,16 +2,14 @@
 /**
  * Moro Mega Media — fetch de imágenes nativas para el mega menu del header.
  *
- * Lee la configuración MOD_BLOCKTOPMENU_ITEMS (la misma que usa ps_mainmenu),
- * arma el árbol de categorías top-level + subcategorías + media (imágenes
- * nativas de subcat / productos) y lo pasa a Smarty.
+ * Lee dinámicamente todas las categorías top-level activas (hijas de Home),
+ * arma el árbol categorías + subcategorías + media (imágenes nativas de
+ * subcat / productos) y lo pasa a Smarty.
  *
  * - No escribe en BD.
  * - No agrega campos nuevos en el BO.
  * - No crea tabla nueva.
- * - Solo consume clases nativas del core: Configuration, Category, Link, Context.
- *
- * Shim temporal hasta que ps_mainmenu exponga imágenes nativamente (ver AGENTS.md §7.3).
+ * - Solo consume clases nativas del core: Category, Link, Context.
  */
 if (!defined('_PS_VERSION_')) {
     exit;
@@ -58,8 +56,8 @@ class MoroMegaMedia extends Module
         $id_lang = (int) $this->context->language->id;
         $id_shop = (int) $this->context->shop->id;
 
-        $configuredCategoryIds = $this->getConfiguredCategoryIds();
-        if (empty($configuredCategoryIds)) {
+        $topCategoryIds = $this->getTopLevelCategoryIds();
+        if (empty($topCategoryIds)) {
             $this->context->smarty->assign([
                 'mega_menu_categories' => [],
                 'mega_menu_media'      => [],
@@ -70,7 +68,7 @@ class MoroMegaMedia extends Module
         $mega_menu_categories = [];
         $mega_menu_media = [];
 
-        foreach ($configuredCategoryIds as $catId) {
+        foreach ($topCategoryIds as $catId) {
             $cat = new Category((int) $catId, (int) $id_lang, (int) $id_shop);
             if (!Validate::isLoadedObject($cat)) {
                 continue;
@@ -116,37 +114,27 @@ class MoroMegaMedia extends Module
     }
 
     /**
-     * Lee MOD_BLOCKTOPMENU_ITEMS (mismo config que ps_mainmenu) y devuelve
-     * el array de IDs de categorías top-level configuradas.
+     * Devuelve los IDs de las categorías top-level activas (hijas directas
+     * de la categoría "Inicio" / Home, id_category = 2 por convención de
+     * PrestaShop), ordenadas por position ASC.
+     *
+     * Es dinámico: cuando desde el BO se crea una nueva categoría hija de
+     * Home, aparece acá automáticamente sin tocar configuración manual.
      *
      * @return int[]
      */
-    private function getConfiguredCategoryIds(): array
+    private function getTopLevelCategoryIds(): array
     {
-        $shops = Shop::getContextListShopID();
-        $conf = '';
-        if (count($shops) > 1) {
-            foreach ($shops as $key => $shop_id) {
-                $shop_group_id = Shop::getGroupFromShop($shop_id);
-                $conf .= (string) ($key > 0 ? ',' : '') .
-                    Configuration::get('MOD_BLOCKTOPMENU_ITEMS', null, $shop_group_id, $shop_id);
-            }
-        } else {
-            $shop_id = (int) $shops[0];
-            $shop_group_id = Shop::getGroupFromShop($shop_id);
-            $conf = (string) Configuration::get('MOD_BLOCKTOPMENU_ITEMS', null, $shop_group_id, $shop_id);
-        }
+        $id_lang = (int) $this->context->language->id;
+        $id_shop = (int) $this->context->shop->id;
 
-        if (!strlen($conf)) {
-            return [];
-        }
+        // id_category = 2 es "Inicio" / Home por convención en PrestaShop.
+        // Usamos getChildren (activo=true) que ya ordena por position ASC.
+        $rows = Category::getChildren(2, (int) $id_lang, true, (int) $id_shop);
 
         $ids = [];
-        foreach (explode(',', $conf) as $item) {
-            $item = trim($item);
-            if (preg_match('/^CAT(\d+)$/', $item, $m)) {
-                $ids[] = (int) $m[1];
-            }
+        foreach ($rows as $row) {
+            $ids[] = (int) $row['id_category'];
         }
         return $ids;
     }
@@ -173,7 +161,7 @@ class MoroMegaMedia extends Module
             }
             $images[] = [
                 'image' => $this->context->link->getCatImageLink(
-                    $sub['link_rewrite'], $catId, 'category_default'
+                    $sub['link_rewrite'], $catId, 'medium_default'
                 ),
                 'label' => $sub['name'],
                 'url'   => $this->context->link->getCategoryLink(

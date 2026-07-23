@@ -26,6 +26,26 @@
 {/block}
 
 {block name='header_bottom'}
+  {literal}
+  <style>
+    .moro-header .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 100,'GRAD' 0,'opsz' 24!important}
+    .moro-mobile-drawer .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 100,'GRAD' 0,'opsz' 24!important}
+    .moro-header__right{align-items:center!important;gap:4px!important}
+    .moro-header__right #_desktop_ps_languageselector,
+    .moro-header__right #_desktop_ps_currencyselector{display:none!important}
+    .moro-header__right #_desktop_ps_customersignin,
+    .moro-header__right #_desktop_ps_shoppingcart,
+    .moro-header__right .ps-customersignin,
+    .moro-header__right .ps-shoppingcart,
+    .moro-header__right .header-block{display:flex!important;align-items:center!important;margin:0!important;padding:0!important}
+    .moro-header__right .header-block__action-btn,
+    .moro-header__right .moro-header__wishlist{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:40px!important;height:40px!important;margin:0!important;padding:8px!important;position:relative!important}
+    .moro-header__right #_desktop_ps_customersignin{margin-right:-8px!important}
+    .moro-header__right .header-block__action-btn{gap:0!important}
+    .moro-header__right .header-block__badge{position:absolute!important;top:2px!important;right:0!important;min-width:16px!important;height:16px!important;padding:0 4px!important;font-size:10px!important;line-height:1!important}
+    @media(min-width:768px){.moro-header__right{gap:6px!important}}
+  </style>
+  {/literal}
   <header class="moro-header{if !empty($mega_menu_categories)} moro-header--has-mega-menu{/if}" data-ps-ref="moro-header">
     <div class="moro-header__inner">
 

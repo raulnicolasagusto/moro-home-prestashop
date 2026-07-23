@@ -1,3 +1,0 @@
-<?php //PrestaShopBundle%255CEntity%255CMutation%2523setMutationRowId
-
-return [PHP_INT_MAX, []];

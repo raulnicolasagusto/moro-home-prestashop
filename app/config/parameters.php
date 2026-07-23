@@ -2,8 +2,8 @@
   'parameters' => 
   array (
     'database_host' => '127.0.0.1',
-    'database_port' => '3307',
-    'database_name' => 'moro-home',
+    'database_port' => '3308',
+    'database_name' => 'moro_home_db',
     'database_user' => 'root',
     'database_password' => '',
     'database_prefix' => 'vovsk_',

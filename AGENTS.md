@@ -191,11 +191,30 @@ When asked to write or modify code, you MUST follow these rules:
     ## Reglas específicas de este proyecto (Moro Home)
 
 - Este es el ecommerce de decoración del hogar "Moro Home". El tema en uso es Hummingbird 2.0.
-- Trabajar únicamente dentro de `themes/hummingbird/` — nunca modificar archivos core de PrestaShop fuera de esa carpeta. (NOTA: la ruta real en esta instalación es `C:\xampp-8-2\htdocs\more-home\themes\hummingbird\`, sin prefijo `prestashop/`.)
+- Trabajar únicamente dentro de `themes/hummingbird/` — nunca modificar archivos core de PrestaShop fuera de esa carpeta. (NOTA: la ruta real en esta instalación es `C:\laragon\www\more-home\themes\hummingbird\`, sin prefijo `prestashop/`.)
 - Priorizar cambios en archivos `.tpl` (Smarty) y configuración visual. Los archivos SCSS/TypeScript fuente no están compilables en este entorno todavía — avisar antes de tocarlos. Como workaround temporal, los estilos nuevos se escriben en CSS plano bajo `themes/hummingbird/assets/css/` y se linkean desde `head.tpl`. Migrar a SCSS cuando el toolchain de build esté disponible.
 - Hacer cambios acotados y específicos, uno por vez, no reescribir componentes enteros de una.
 - Después de cualquier cambio en un `.tpl`, recordar que hace falta limpiar el caché de Smarty para verlo reflejado.
 - Idioma de la tienda: español (Argentina). Moneda: ARS.
+
+### Diagnóstico CSS / Smarty en Moro Home
+
+Cuando un cambio visual en `themes/hummingbird/` no se vea reflejado en
+`http://localhost:8090/more-home/`, NO seguir probando reglas CSS a ciegas.
+Primero verificar qué HTML/CSS está sirviendo PrestaShop:
+
+1. Pedir la home por HTTP y buscar el marcador esperado, por ejemplo el
+   cache-buster del CSS (`moro-header.css?v=4`) o una regla inline nueva.
+2. Si el HTML servido muestra valores viejos (`v=2`, `gap:8px`, etc.), el
+   problema es caché de Smarty/PrestaShop, no especificidad CSS.
+3. Limpiar `C:\laragon\www\more-home\var\cache\prod\smarty\compile` y volver a
+   pedir la página. Confirmar luego que el HTML servido contenga el cambio.
+4. Al cambiar CSS plano linkeado desde `head.tpl`, subir el query param
+   (`?v=...`) para evitar caché de navegador.
+5. Solo si el HTML servido ya contiene la regla nueva y aun así no aplica,
+   investigar cascada/especificidad con los selectores reales generados por los
+   módulos (`#_desktop_ps_customersignin`, `#_desktop_ps_shoppingcart`,
+   `.ps-customersignin`, `.ps-shoppingcart`, `.header-block__action-btn`).
 
 ## 8. Paleta de colores Moro Home
 
@@ -250,7 +269,7 @@ el build de SCSS, migrarlas a `abstract/variables/` como `$moro-*`.
   - `label-md`: 12px / lh 16px / ls 0.1em / weight 600 (Montserrat, uppercase)
 
   ## 10. Borrar cache manual ( no para el agente, esto es para el humano)
-  Ingresar a "C:\xampp-8-2\htdocs\more-home\var\cache\prod\smarty\compile" y eliminar el contenido, esto es para que los cambios de css hagan efecto.
+  Ingresar a "Remove-Item -Path "C:\laragon\www\more-home\var\cache\prod\smarty\compile\*" -Recurse -Force " y eliminar el contenido, esto es para que los cambios de css hagan efecto.
   Sino tambien directamente con el siguiente comando en powershell: 
   
   'Remove-Item -Path "C:\xampp-8-2\htdocs\more-home\var\cache\prod\smarty\compile\*" -Recurse -Force'.
@@ -302,3 +321,37 @@ imagen, labels) es un placeholder de ese sitio ajeno — no un dato de Moro Home
    una categoría nueva no hace que aparezca sola en el frontend con este
    código, la implementación está mal y hay que corregirla, no documentarla
    como limitación.
+
+ ## Flujo de despliegue a producción (WinSCP)
+
+Este proyecto se edita en local (Laragon) y se despliega manualmente a un servidor de producción en AWS Lightsail, usando WinSCP con dos paneles (izquierdo = local, derecho = remoto). No hay Git ni sincronización automática — cada archivo modificado se sube a mano arrastrándolo de un panel al otro.
+
+**Rutas raíz:**
+- Local (panel izquierdo de WinSCP): `C:\laragon\www\more-home\`
+- Remoto / producción (panel derecho de WinSCP): `/var/www/moro-home/`
+
+**Regla:** la ruta relativa dentro del proyecto es siempre la misma en ambos lados. Ejemplo: si un archivo local es `C:\laragon\www\more-home\modules\moroannouncementbar\moroannouncementbar.php`, su equivalente remoto es `/var/www/moro-home/modules/moroannouncementbar/moroannouncementbar.php`.
+
+### Qué tenés que hacer vos (el agente) después de CADA cambio de código
+
+Al terminar cualquier modificación, creación o eliminación de archivos, agregá siempre al final de tu respuesta una sección con este formato exacto:
+
+```
+Archivos a subir a producción (WinSCP):
+
+| Archivo | Ruta local (panel izquierdo) | Ruta remota (panel derecho) |
+|---|---|---|
+| nombre_archivo.ext | C:\laragon\www\more-home\ruta\completa\ | /var/www/moro-home/ruta/completa/ |
+```
+
+- Listá **todos** los archivos tocados en el cambio (nuevos, modificados o eliminados), uno por fila.
+- Si es un archivo nuevo o una carpeta nueva que no existe todavía en el servidor, aclarálo explícitamente (ej: "⚠️ Carpeta nueva, crear en el servidor antes de subir").
+- Si el cambio requiere limpiar caché de Smarty para verse reflejado, agregá también el recordatorio:
+```
+Después de subir, limpiar caché en el servidor (SSH):
+sudo rm -rf /var/www/moro-home/var/cache/prod/smarty/*
+sudo rm -f /var/www/moro-home/var/cache/prod/FrontContainer.php
+```
+- Si el cambio es un módulo nuevo que hay que instalar o un ajuste que requiere acción en el Back Office (instalar módulo, limpiar caché desde el panel, etc.), incluí ese paso final también.
+
+No asumas que el usuario va a sincronizar la carpeta completa — el objetivo es que suba solo los archivos puntuales listados, a mano, con WinSCP.

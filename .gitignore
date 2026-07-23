@@ -1,0 +1,48 @@
+# ===================================
+# Moro Home - PrestaShop .gitignore
+# ===================================
+
+# ----- Caché y compilación -----
+var/cache/
+var/logs/
+var/sessions/
+themes/hummingbird/assets/cache/
+
+# ----- Dependencias (se reinstalan con composer) -----
+vendor/
+
+# ----- Entorno local / IDE -----
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ----- Archivos de entorno / configuración sensible -----
+.env
+.env.local
+.env.*.local
+config/settings.inc.php
+config/settings.old.php
+config/xml/
+
+# ----- Backups / comprimidos -----
+*.zip
+*.tar.gz
+*.rar
+*.sql
+*.sql.gz
+
+# ----- Logs sueltos -----
+*.log
+
+# ----- Node (si llegás a usar build tools) -----
+node_modules/
+
+# ----- Composer lock (opcional; si querés traquear dependencias, sacá esta línea) -----
+composer.lock
+
+# ----- Paquetes de sistema -----
+.DS_Store

@@ -48,6 +48,10 @@ global_settings:
       displaySearch:
         - ps_searchbar
     modules_to_hook:
+      displayBanner:
+        - moroannouncementbar
+        # Keep existing hooks and append them after
+        - ~
       displayAfterBodyOpeningTag:
         - blockreassurance
         # Keep existing hooks and append them after
