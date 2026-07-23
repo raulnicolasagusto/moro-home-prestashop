@@ -194,7 +194,7 @@
                   </div>
                 {/if}
 
-                {* Columna derecha: imágenes dinámicas (subcats/portadas de productos) *}
+                {* Columna derecha: solo subcategorías con imagen de portada cargada (sin productos) *}
                 {if !empty($mega_menu_media[$cat.id_category])}
                   <div class="moro-mega-menu__media">
                     {foreach from=$mega_menu_media[$cat.id_category] item=media}

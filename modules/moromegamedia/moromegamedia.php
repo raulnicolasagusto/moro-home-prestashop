@@ -140,8 +140,9 @@ class MoroMegaMedia extends Module
     }
 
     /**
-     * Construye el array de media (imágenes) para una categoría top-level,
-     * aplicando el fallback: hasta 3 subcats con imagen → productos con imagen.
+     * Construye el array de media (imágenes) para una categoría top-level.
+     * Solo incluye subcategorías con imagen de portada cargada en el BO.
+     * Máximo 3 cards. Si ninguna subcats tiene imagen, retorna array vacío.
      *
      * @return array<int, array{image: string, label: string, url: string}>
      */
@@ -150,7 +151,7 @@ class MoroMegaMedia extends Module
         $images = [];
         $maxImages = 3;
 
-        // 1) Subcategorías con imagen de portada cargada
+        // Solo subcategorías con imagen de portada cargada
         foreach ($rawSubs as $sub) {
             if (count($images) >= $maxImages) {
                 break;
@@ -161,46 +162,13 @@ class MoroMegaMedia extends Module
             }
             $images[] = [
                 'image' => $this->context->link->getCatImageLink(
-                    $sub['link_rewrite'], $catId, 'medium_default'
+                    $sub['link_rewrite'], $catId, 'default_lg'
                 ),
                 'label' => $sub['name'],
                 'url'   => $this->context->link->getCategoryLink(
                     $catId, $sub['link_rewrite'], $id_lang
                 ),
             ];
-        }
-
-        // 2) Si faltan, completar con productos de la categoría
-        $remaining = $maxImages - count($images);
-        if ($remaining > 0) {
-            $products = $cat->getProducts($id_lang, 1, $remaining, 'position', 'ASC');
-            if (is_array($products)) {
-                foreach ($products as $prod) {
-                    if (count($images) >= $maxImages) {
-                        break;
-                    }
-                    $idImage = (int) ($prod['id_image'] ?? 0);
-                    if ($idImage <= 0) {
-                        continue;
-                    }
-                    $images[] = [
-                        'image' => $this->context->link->getImageLink(
-                            (string) $prod['link_rewrite'],
-                            (int) $prod['id_product'] . '-' . $idImage,
-                            'medium_default'
-                        ),
-                        'label' => $prod['name'],
-                        'url'   => $this->context->link->getProductLink(
-                            (int) $prod['id_product'],
-                            (string) $prod['link_rewrite'],
-                            null,
-                            null,
-                            $id_lang,
-                            (int) $this->context->shop->id
-                        ),
-                    ];
-                }
-            }
         }
 
         return $images;

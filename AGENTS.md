@@ -322,7 +322,18 @@ imagen, labels) es un placeholder de ese sitio ajeno — no un dato de Moro Home
    código, la implementación está mal y hay que corregirla, no documentarla
    como limitación.
 
- ## Flujo de despliegue a producción (WinSCP)
+ ## Rutas críticas que NO hay que corromper al armar las tablas WinSCP
+
+El nombre real de la carpeta dentro de `templates` es **`_partials`** (con guión bajo al inicio). Es por convención de PrestaShop/Hummingbird.
+
+**Rutas absolutas correctas:**
+- Local: `C:\laragon\www\more-home\themes\hummingbird\templates\_partials\`
+- Remoto: `/var/www/moro-home/themes/hummingbird/templates/_partials/`
+
+**Problema conocido:** si en el markdown de la tabla escribo `\` antes de `_`, el backslash se interpreta como escape de underscore y se pierde al renderizar (queda `templates_partials`). 
+**Solución:** escribir la ruta en la tabla sin usar backslash antes del `_`. ej> `C:\laragon\www\more-home\themes\hummingbird\templates\`_partials` o usar comillas simples como delimitador en torno a la ruta entera. NUNCA escribir `templates\_partials` dentro de una tabla markdown.
+
+## Flujo de despliegue a producción (WinSCP)
 
 Este proyecto se edita en local (Laragon) y se despliega manualmente a un servidor de producción en AWS Lightsail, usando WinSCP con dos paneles (izquierdo = local, derecho = remoto). No hay Git ni sincronización automática — cada archivo modificado se sube a mano arrastrándolo de un panel al otro.
 
