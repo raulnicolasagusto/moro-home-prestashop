@@ -178,11 +178,14 @@
 
   const openDrawer = () => {
     if (!drawer) return;
-    // Always refresh cart data when opening
     fetchCart();
+    // Quitar hidden primero para que el navegador renderice el elemento
+    drawer.hidden = false;
+    // Forzar reflow: el navegador registra el estado inicial (panel en translateX(100%))
+    // antes de agregar .is-open que lo lleva a translateX(0) → la transici\u00f3n se ejecuta.
+    void drawer.offsetWidth;
     drawer.classList.add('is-open');
     drawer.setAttribute('aria-hidden', 'false');
-    drawer.hidden = false;
     document.body.classList.add('moro-cart-drawer-open');
     isOpen = true;
     const closeBtn = $('[data-ps-action="close-cart-drawer"]');
@@ -195,9 +198,12 @@
     drawer.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('moro-cart-drawer-open');
     isOpen = false;
-    window.setTimeout(() => {
+    // Esperar que termine la transici\u00f3n CSS antes de ocultar con hidden
+    const onTransitionEnd = () => {
       if (!drawer.classList.contains('is-open')) drawer.hidden = true;
-    }, 500);
+      drawer.removeEventListener('transitionend', onTransitionEnd);
+    };
+    drawer.addEventListener('transitionend', onTransitionEnd);
   };
 
   /* =================================================================
