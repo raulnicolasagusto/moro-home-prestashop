@@ -73,6 +73,7 @@ global_settings:
         - ~
       displayHeader:
         - moromegamedia
+        - morocartdrawer
       displayTop:
         - ps_mainmenu
         - ps_searchbar
@@ -97,6 +98,7 @@ global_settings:
         - ps_linklist
         - ps_customeraccountlinks
         - ps_contactinfo
+        - morocartdrawer
         # Keep existing hooks and append them after
         - ~
       displayFooterAfter:

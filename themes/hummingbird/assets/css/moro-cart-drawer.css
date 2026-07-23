@@ -1,0 +1,406 @@
+/* ================================================================
+   Moro Cart Drawer — cart lateral (refs designe/cart.html y designe/empty-cart.html)
+   Mapeo de tokens del diseño HTML a tokens Moro:
+     surface=#fcf9f8         -> --moro-surface
+     surface-container-low=#f6f3f2 -> --moro-surface-container-low
+     surface-container-highest=#e4e2e1 -> --moro-surface-dim (reapropiado para fonfo mas oscuro)
+     on-surface=#1b1c1c     -> --moro-on-surface
+     on-surface-variant=#574238 -> --moro-on-surface-variant
+     outline-variant=#dec0b2 -> --moro-surface-dim (borde sutil)
+     primary=#994200         -> --moro-primary (#d46211, tu paleta Moro)
+   ================================================================ */
+
+.moro-cart-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.moro-cart-drawer.is-open {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Backdrop */
+.moro-cart-drawer__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(28, 27, 27, 0.30);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  cursor: pointer;
+}
+
+.moro-cart-drawer.is-open .moro-cart-drawer__overlay {
+  opacity: 1;
+}
+
+/* Panel lateral */
+.moro-cart-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 90%;
+  max-width: 450px;
+  background: var(--moro-surface);
+  border-left: 1px solid var(--moro-surface-dim);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 500ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.moro-cart-drawer.is-open .moro-cart-drawer__panel {
+  transform: translateX(0);
+}
+
+/* Header */
+.moro-cart-drawer__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--moro-surface-dim);
+}
+
+.moro-cart-drawer__title {
+  font-family: var(--moro-font-serif, "Newsreader", Georgia, serif);
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 400;
+  color: var(--moro-on-surface);
+  margin: 0;
+}
+
+.moro-cart-drawer__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--moro-on-surface-variant);
+  cursor: pointer;
+  transition: color 300ms ease;
+}
+
+.moro-cart-drawer__close:hover,
+.moro-cart-drawer__close:focus-visible {
+  color: var(--moro-primary);
+}
+
+.moro-cart-drawer__close .material-symbols-outlined {
+  font-size: 24px;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Body (scrollable) */
+.moro-cart-drawer__body {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--moro-surface-container-low, #f6f3f2);
+}
+
+/* ---- Estado vacío ---- */
+.moro-cart-drawer__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 32px;
+  min-height: 100%;
+}
+
+.moro-cart-drawer__empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--moro-surface-dim, #dcd9d9);
+  margin: 0 0 24px 0;
+}
+
+.moro-cart-drawer__empty-icon .material-symbols-outlined {
+  font-size: 40px;
+  font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 40;
+  color: var(--moro-on-surface-variant);
+}
+
+.moro-cart-drawer__empty-title {
+  font-family: var(--moro-font-serif, "Newsreader", Georgia, serif);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 400;
+  color: var(--moro-on-surface);
+  margin: 0 0 8px 0;
+}
+
+.moro-cart-drawer__empty-text {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.01em;
+  color: var(--moro-on-surface-variant);
+  max-width: 250px;
+  margin: 0 0 32px 0;
+}
+
+.moro-cart-drawer__empty-link {
+  display: inline-block;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--moro-primary);
+  border-bottom: 1px solid var(--moro-primary);
+  padding-bottom: 4px;
+  text-decoration: none;
+  transition: color 300ms ease, border-color 300ms ease;
+}
+
+.moro-cart-drawer__empty-link:hover,
+.moro-cart-drawer__empty-link:focus {
+  color: var(--moro-on-surface);
+  border-bottom-color: var(--moro-on-surface);
+}
+
+/* ---- Drawer Footer ---- */
+.moro-cart-drawer__footer {
+  flex-shrink: 0;
+  padding: 24px 28px;
+  border-top: 1px solid var(--moro-surface-dim);
+  background: var(--moro-surface);
+}
+
+.moro-cart-drawer__subtotal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.moro-cart-drawer__subtotal-label {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--moro-on-surface);
+}
+
+.moro-cart-drawer__subtotal-value {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  color: var(--moro-on-surface);
+}
+
+.moro-cart-drawer__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.moro-cart-drawer__btn {
+  display: block;
+  width: 100%;
+  padding: 16px;
+  text-align: center;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid var(--moro-on-surface-variant, #494544);
+  transition: border-color 300ms ease, color 300ms ease, background 300ms ease;
+}
+
+.moro-cart-drawer__btn--secondary {
+  background: transparent;
+  color: var(--moro-on-surface);
+  border-color: var(--moro-on-surface-variant, #494544);
+}
+
+.moro-cart-drawer__btn--secondary:hover,
+.moro-cart-drawer__btn--secondary:focus-visible {
+  border-color: var(--moro-primary);
+  color: var(--moro-primary);
+}
+
+.moro-cart-drawer__btn--primary {
+  background: var(--moro-on-surface);
+  color: var(--moro-surface);
+  border-color: var(--moro-on-surface);
+}
+
+.moro-cart-drawer__btn--primary:hover,
+.moro-cart-drawer__btn--primary:focus-visible {
+  background: #000000;
+  border-color: #000000;
+}
+
+/* ---- Items ---- */
+.moro-cart-drawer__items {
+  padding: 24px 28px;
+}
+
+.moro-cart-drawer__item {
+  display: flex;
+  gap: 24px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--moro-surface-dim);
+}
+
+.moro-cart-drawer__item:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+}
+
+.moro-cart-drawer__item-image-wrap {
+  flex-shrink: 0;
+  display: block;
+  width: 128px;
+  height: 128px;
+  background: var(--moro-surface-container-low, #f6f3f2);
+  overflow: hidden;
+}
+
+.moro-cart-drawer__item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.moro-cart-drawer__item-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4px 0;
+  min-width: 0;
+}
+
+.moro-cart-drawer__item-name {
+  font-family: var(--moro-font-serif, "Newsreader", Georgia, serif);
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--moro-on-surface);
+  margin: 0 0 4px 0;
+  text-decoration: none;
+}
+
+.moro-cart-drawer__item-name:hover,
+.moro-cart-drawer__item-name:focus {
+  color: var(--moro-primary);
+}
+
+.moro-cart-drawer__item-price {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--moro-on-surface-variant);
+  margin: 0 0 4px 0;
+}
+
+.moro-cart-drawer__item-variant {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--moro-on-surface-variant);
+  margin: 0;
+}
+
+.moro-cart-drawer__item-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.moro-cart-drawer__qty {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--moro-surface-dim);
+}
+
+.moro-cart-drawer__qty-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 0;
+  color: var(--moro-on-surface-variant);
+  cursor: pointer;
+  transition: color 300ms ease;
+}
+
+.moro-cart-drawer__qty-btn:hover,
+.moro-cart-drawer__qty-btn:focus-visible {
+  color: var(--moro-primary);
+}
+
+.moro-cart-drawer__qty-btn .material-symbols-outlined {
+  font-size: 18px;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+}
+
+.moro-cart-drawer__qty-value {
+  width: 32px;
+  text-align: center;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 14px;
+  color: var(--moro-on-surface);
+}
+
+.moro-cart-drawer__item-remove {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 14px;
+  color: var(--moro-on-surface-variant);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 300ms ease;
+}
+
+.moro-cart-drawer__item-remove:hover,
+.moro-cart-drawer__item-remove:focus-visible {
+  color: var(--moro-primary);
+}
+
+/* Bloqueo scroll del body */
+body.moro-cart-drawer-open {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moro-cart-drawer__panel,
+  .moro-cart-drawer__overlay {
+    transition: none;
+  }
+}

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Atelier Home - Cart</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Montserrat:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#eae7e7",
+                    "primary-fixed-dim": "#ffb68f",
+                    "on-surface-variant": "#574238",
+                    "secondary": "#6b5b53",
+                    "on-primary": "#ffffff",
+                    "surface-bright": "#fcf9f8",
+                    "primary-container": "#c05500",
+                    "primary": "#994200",
+                    "inverse-on-surface": "#f3f0f0",
+                    "on-primary-fixed-variant": "#773200",
+                    "surface-dim": "#dcd9d9",
+                    "primary-fixed": "#ffdbca",
+                    "surface-container-highest": "#e4e2e1",
+                    "on-tertiary-fixed": "#001d36",
+                    "outline": "#8b7266",
+                    "tertiary-fixed": "#d1e4ff",
+                    "background": "#fcf9f8",
+                    "surface-container-low": "#f6f3f2",
+                    "surface-container": "#f0eded",
+                    "outline-variant": "#dec0b2",
+                    "on-tertiary": "#ffffff",
+                    "tertiary-container": "#0078c9",
+                    "surface-container-lowest": "#ffffff",
+                    "on-background": "#1b1c1c",
+                    "on-secondary-fixed": "#241913",
+                    "inverse-surface": "#303030",
+                    "inverse-primary": "#ffb68f",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#d7c2b9",
+                    "secondary-fixed": "#f4ded4",
+                    "on-error-container": "#93000a",
+                    "surface-tint": "#9d4400",
+                    "on-surface": "#1b1c1c",
+                    "on-tertiary-fixed-variant": "#00497d",
+                    "on-secondary-container": "#716159",
+                    "tertiary-fixed-dim": "#9fcaff",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#f4ded4",
+                    "on-primary-container": "#fffbff",
+                    "on-tertiary-container": "#fdfcff",
+                    "tertiary": "#005fa0",
+                    "on-secondary-fixed-variant": "#52443d",
+                    "surface-variant": "#e4e2e1",
+                    "on-primary-fixed": "#331100",
+                    "surface": "#fcf9f8",
+                    "error": "#ba1a1a",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-desktop": "64px",
+                    "gutter": "24px",
+                    "section-gap": "120px",
+                    "unit": "4px",
+                    "margin-mobile": "20px"
+            },
+            "fontFamily": {
+                    "headline-sm": [
+                            "Newsreader"
+                    ],
+                    "headline-md": [
+                            "Newsreader"
+                    ],
+                    "display-lg-mobile": [
+                            "Newsreader"
+                    ],
+                    "body-md": [
+                            "Montserrat"
+                    ],
+                    "body-lg": [
+                            "Montserrat"
+                    ],
+                    "label-md": [
+                            "Montserrat"
+                    ],
+                    "display-lg": [
+                            "Newsreader"
+                    ],
+                    "nav-item": [
+                            "Montserrat"
+                    ]
+            },
+            "fontSize": {
+                    "headline-sm": [
+                            "24px",
+                            {
+                                    "lineHeight": "32px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-md": [
+                            "32px",
+                            {
+                                    "lineHeight": "40px",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-lg-mobile": [
+                            "40px",
+                            {
+                                    "lineHeight": "48px",
+                                    "letterSpacing": "-0.01em",
+                                    "fontWeight": "300"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "24px",
+                                    "letterSpacing": "0.01em",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "28px",
+                                    "letterSpacing": "0.02em",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "label-md": [
+                            "12px",
+                            {
+                                    "lineHeight": "16px",
+                                    "letterSpacing": "0.1em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "display-lg": [
+                            "64px",
+                            {
+                                    "lineHeight": "72px",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "300"
+                            }
+                    ],
+                    "nav-item": [
+                            "14px",
+                            {
+                                    "lineHeight": "20px",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "500"
+                            }
+                    ]
+            }
+    },
+        },
+      }
+    </script>
+<style>
+        .drawer-slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen relative overflow-hidden font-body-md">
+<!-- Page Content (Blurred/Darkened for overlay) -->
+<div class="absolute inset-0 bg-black/40 z-10"></div>
+<!-- Background Image simulating the actual page beneath -->
+<div class="absolute inset-0 bg-cover bg-center -z-10 blur-sm brightness-75" data-alt="A beautiful, bright, airy coastal kitchen interior with white shaker cabinets, brass hardware, and woven barstools. Natural light floods the space, highlighting the warm terracotta and soft cream tones consistent with a high-end editorial lifestyle aesthetic." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAtGdHmnNPLCIIpFleM430xK_UZSm6AukpbEZXDp3QjW55iXXBgtK2ds0bmKUQiE2-TrHdtUs2ZchsrEz0fKUs0qBMpQ0R9hVjRFvi-bEhfKMXj0C7kP4Zn3aTHYEgjKf0qG-EZxsxL7uHY3bRFMQ_OhpkTs6tJXXhZufx3ROoRjebBJd5YhDiMiuYt8gKNunaw_WQEk7n5C1xwvV3fmVsT0SqA1MVZqQdnJeDZeEGFPPuWw1KiSJiqztKDhM3p_xCi_lQcPjmX4Hg')"></div>
+<!-- Header (Integrated as requested, but simplified to fit context of being behind overlay) -->
+<header class="bg-surface flex flex-col items-center w-full px-margin-mobile md:px-margin-desktop py-4 absolute top-0 left-0 z-0 border-b border-outline-variant">
+<div class="w-full flex justify-between items-center mb-6">
+<div class="flex items-center gap-2 text-on-surface-variant cursor-pointer">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">search</span>
+<span class="font-nav-item text-nav-item uppercase">Search</span>
+</div>
+<a class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary tracking-tighter" href="#">
+                LUMINA DECOR
+            </a>
+<div class="flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">favorite</span>
+</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">person</span>
+</a>
+<button class="text-primary hover:text-primary transition-colors duration-300 relative">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">shopping_bag</span>
+<span class="absolute -top-1 -right-2 bg-primary text-on-primary text-[10px] w-4 h-4 flex items-center justify-center rounded-full">1</span>
+</button>
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-8">
+<a class="font-nav-item text-nav-item text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Furniture</a>
+<a class="font-nav-item text-nav-item text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Lighting</a>
+<a class="font-nav-item text-nav-item text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Textiles</a>
+<a class="font-nav-item text-nav-item text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Kitchen</a>
+<a class="font-nav-item text-nav-item text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Living</a>
+<a class="font-nav-item text-nav-item text-on-surface-variant hover:text-primary transition-colors duration-300" href="#">Art</a>
+</nav>
+</header>
+<!-- Cart Drawer -->
+<div class="fixed top-0 right-0 h-full w-[90%] sm:w-[400px] md:w-[35vw] max-w-[450px] bg-surface z-50 flex flex-col shadow-2xl drawer-slide-in border-l border-outline-variant">
+<!-- Drawer Header -->
+<div class="flex items-center justify-between px-6 py-8 border-b border-outline-variant shrink-0">
+<h2 class="font-headline-md text-headline-md text-on-surface">Your Cart</h2>
+<button aria-label="Close cart" class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined font-light">close</span>
+</button>
+</div>
+<!-- Drawer Body (Scrollable) -->
+<div class="flex-1 overflow-y-auto p-6">
+<!-- Product Item -->
+<div class="flex gap-6 pb-6 border-b border-outline-variant">
+<!-- Image -->
+<div class="w-32 h-32 shrink-0 bg-surface-container-low flex items-center justify-center relative overflow-hidden">
+<img alt="Palmetto Table Lamp" class="w-full h-full object-cover" data-alt="A beautifully crafted natural woven rattan table lamp with a scalloped shade, sitting on a clean surface against a light background. Soft studio lighting highlights the texture of the wicker. High-end editorial product photography style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz2hZNZrkG6_xFLJbDNDlUUALp7RU7LUGFHjkfe3f-TWCjxNYO-LDcZ0WBNOz5VqCT7BU5U2B0uJs9vDNsHPR7MVVBHqUkWwUlPIYCkz4YXTgFtZFiua-Hvmjp4PE2xPe-twNxiELXSOl_62RVZVHiICKVDw4T2ZGCCtftZYxHZsT5OmsVPTPSNGbtkZuylttsSfxPHovwOu29xjXs3F6U5R5pJwo3R3KIUnb-GRLIwn4Ux3fmOW8MegC5K0gW8a9oqodPtilK8RM"/>
+</div>
+<!-- Details -->
+<div class="flex flex-col justify-between flex-1 py-1">
+<div>
+<h3 class="font-headline-sm text-[20px] leading-tight text-on-surface mb-1">Palmetto Table Lamp</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-1">$368.00</p>
+<p class="font-body-md text-sm text-on-surface-variant">Natural</p>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4 mt-4">
+<!-- Quantity Selector -->
+<div class="flex items-center border border-outline-variant">
+<button aria-label="Decrease quantity" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="w-8 text-center font-body-md text-on-surface">1</span>
+<button aria-label="Increase quantity" class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+<!-- Remove -->
+<button class="font-body-md text-sm text-on-surface-variant underline hover:text-primary transition-colors">
+                            Remove
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Drawer Footer -->
+<div class="border-t border-outline-variant p-6 shrink-0 bg-surface">
+<div class="flex justify-between items-center mb-6">
+<span class="font-label-md text-label-md uppercase text-on-surface font-bold">Subtotal</span>
+<span class="font-body-md text-body-md font-bold text-on-surface">$368.00</span>
+</div>
+<div class="flex flex-col gap-4">
+<button class="w-full py-4 border border-outline text-on-surface font-label-md text-label-md uppercase hover:border-primary hover:text-primary transition-colors">
+                    View Cart
+                </button>
+<button class="w-full py-4 bg-[#2C2C2C] text-white font-label-md text-label-md uppercase hover:bg-black transition-colors">
+                    Checkout
+                </button>
+</div>
+</div>
+</div>
+</body></html>
