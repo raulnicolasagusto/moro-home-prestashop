@@ -32,8 +32,10 @@
   let ajaxUrl = '';
   let lastBadgeCount = -1;
   let isOpen = false;
-  let shippingConfig = { enabled: false, showHome: false, showBranch: true };
+  let shippingConfig = { enabled: false, showHome: false, showBranch: true, showPickupPoints: true };
   let shippingEstimate = null;
+  const pickupPointsCache = new Map();
+  const PICKUP_POINTS_CACHE_TTL_MS = 10 * 60 * 1000;
 
   const drawerSel = '[data-ps-component="moro-cart-drawer"]';
   /** @type {HTMLElement | null} */
@@ -119,6 +121,37 @@
       .catch(() => {
         showShippingError('No pudimos calcular el envío en este momento.');
       });
+  };
+
+  const getPickupPointsAjax = (/** @type {string} */ postalCode) => {
+    const params = new URLSearchParams();
+    params.append('ajax', '1');
+    params.append('action', 'getPickupPoints');
+    params.append('postal_code', postalCode);
+
+    return fetch(ajaxUrl, { method: 'POST', body: params })
+      .then(r => r.json());
+  };
+
+  const getCachedPickupPoints = (/** @type {string} */ postalCode) => {
+    const cached = pickupPointsCache.get(postalCode);
+    if (!cached || !cached.ts || !Array.isArray(cached.points)) {
+      return null;
+    }
+
+    if ((Date.now() - cached.ts) > PICKUP_POINTS_CACHE_TTL_MS) {
+      pickupPointsCache.delete(postalCode);
+      return null;
+    }
+
+    return cached.points;
+  };
+
+  const setCachedPickupPoints = (/** @type {string} */ postalCode, /** @type {Array<{id:string,name:string,address:string,city:string,province:string,postalCode:string,hours:string}>} */ points) => {
+    pickupPointsCache.set(postalCode, {
+      points,
+      ts: Date.now(),
+    });
   };
 
   /* =================================================================
@@ -239,6 +272,7 @@
     const options = $('[data-ps-ref="cart-shipping-options"]');
     const error = $('[data-ps-ref="cart-shipping-error"]');
     const shippingValueEl = $('[data-ps-ref="cart-shipping-value"]');
+    const pickupLink = $('[data-ps-ref="cart-pickup-points-link"]');
 
     if (result) result.hidden = true;
     if (options) options.innerHTML = '';
@@ -247,9 +281,25 @@
       error.textContent = '';
     }
     if (shippingValueEl) shippingValueEl.textContent = '$0,00';
+    if (pickupLink) pickupLink.hidden = true;
 
     shippingEstimate = null;
+    closePickupPointsModal();
     updateGrandTotal();
+  };
+
+  const setShippingLoading = (/** @type {boolean} */ isLoading) => {
+    const button = /** @type {HTMLButtonElement|null} */ ($('[data-ps-action="calculate-shipping"]'));
+    if (!button) return;
+
+    if (!button.dataset.defaultLabel) {
+      button.dataset.defaultLabel = button.textContent || 'Calcular';
+    }
+
+    button.disabled = isLoading;
+    button.classList.toggle('is-loading', isLoading);
+    button.setAttribute('aria-busy', isLoading ? 'true' : 'false');
+    button.textContent = isLoading ? 'Consultando...' : (button.dataset.defaultLabel || 'Calcular');
   };
 
   const showShippingError = (/** @type {string} */ message) => {
@@ -270,6 +320,7 @@
     const options = $('[data-ps-ref="cart-shipping-options"]');
     const error = $('[data-ps-ref="cart-shipping-error"]');
     const shippingValueEl = $('[data-ps-ref="cart-shipping-value"]');
+    const pickupLink = $('[data-ps-ref="cart-pickup-points-link"]');
 
     if (!result || !cpLabel || !options || !shippingValueEl) return;
 
@@ -308,7 +359,106 @@
     shippingValueEl.textContent = data.shipping || '$0,00';
     result.hidden = false;
     shippingEstimate = data;
+    if (pickupLink) {
+      const canShowPickupLink = Boolean(shippingConfig.showPickupPoints) && (data.options || []).length > 0;
+      pickupLink.hidden = !canShowPickupLink;
+    }
     updateGrandTotal();
+  };
+
+  const closePickupPointsModal = () => {
+    const modal = /** @type {HTMLDialogElement|null} */ ($('[data-ps-ref="pickup-points-modal"]'));
+    if (modal && modal.open) {
+      modal.close();
+    }
+  };
+
+  const renderPickupPointsList = (/** @type {Array<{id:string,name:string,address:string,city:string,province:string,postalCode:string,hours:string}>} */ points) => {
+    const container = $('[data-ps-target="pickup-points-list"]');
+    if (!container) return;
+
+    if (!Array.isArray(points) || points.length === 0) {
+      container.innerHTML = '<p class="moro-cart-drawer__pickup-empty">No encontramos puntos de retiro para este código postal.</p>';
+      return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    points.forEach((point) => {
+      const card = document.createElement('article');
+      card.className = 'moro-cart-drawer__pickup-point';
+
+      const name = document.createElement('h4');
+      name.className = 'moro-cart-drawer__pickup-point-name';
+      name.textContent = point.name || 'Sucursal Correo Argentino';
+
+      const address = document.createElement('p');
+      address.className = 'moro-cart-drawer__pickup-point-address';
+      const addressLine = [point.address, point.city, point.province].filter(Boolean).join(' - ');
+      address.textContent = addressLine + (point.postalCode ? ' (' + point.postalCode + ')' : '');
+
+      card.appendChild(name);
+      card.appendChild(address);
+
+      if (point.hours) {
+        const hours = document.createElement('p');
+        hours.className = 'moro-cart-drawer__pickup-point-hours';
+        hours.textContent = point.hours;
+        card.appendChild(hours);
+      }
+
+      fragment.appendChild(card);
+    });
+
+    container.innerHTML = '';
+    container.appendChild(fragment);
+  };
+
+  const openPickupPointsModal = () => {
+    if (!shippingConfig.showPickupPoints) return;
+
+    const modal = /** @type {HTMLDialogElement|null} */ ($('[data-ps-ref="pickup-points-modal"]'));
+    const cpLabel = $('[data-ps-ref="pickup-points-postcode"]');
+    const list = $('[data-ps-target="pickup-points-list"]');
+    const input = /** @type {HTMLInputElement|null} */ ($('[data-ps-ref="cart-shipping-postcode"]'));
+    const postalCode = shippingEstimate && shippingEstimate.postalCode
+      ? String(shippingEstimate.postalCode)
+      : (input ? input.value.trim() : '');
+
+    if (!modal || !/^[0-9]{4}$/.test(postalCode)) {
+      showShippingError('Primero calculá el envío para un código postal válido.');
+      return;
+    }
+
+    if (cpLabel) cpLabel.textContent = 'Código postal: ' + postalCode;
+    if (!modal.open) {
+      modal.showModal();
+    }
+
+    const cachedPoints = getCachedPickupPoints(postalCode);
+    if (cachedPoints) {
+      renderPickupPointsList(cachedPoints);
+      return;
+    }
+
+    if (list) list.innerHTML = '<p class="moro-cart-drawer__pickup-loading">Buscando puntos de retiro...</p>';
+
+    getPickupPointsAjax(postalCode)
+      .then((data) => {
+        if (!data || !data.success) {
+          if (list) {
+            list.innerHTML = '<p class="moro-cart-drawer__pickup-error">' + (data && data.error ? data.error : 'No pudimos cargar los puntos de retiro.') + '</p>';
+          }
+          return;
+        }
+        const points = Array.isArray(data.points) ? data.points : [];
+        setCachedPickupPoints(postalCode, points);
+        renderPickupPointsList(points);
+      })
+      .catch(() => {
+        if (list) {
+          list.innerHTML = '<p class="moro-cart-drawer__pickup-error">No pudimos cargar los puntos de retiro.</p>';
+        }
+      });
   };
 
   /* =================================================================
@@ -445,6 +595,16 @@
         }
         break;
       }
+      case 'view-pickup-points': {
+        e.preventDefault();
+        openPickupPointsModal();
+        break;
+      }
+      case 'close-pickup-points-modal': {
+        e.preventDefault();
+        closePickupPointsModal();
+        break;
+      }
     }
   };
 
@@ -455,14 +615,24 @@
     const input = form.querySelector('[data-ps-ref="cart-shipping-postcode"]');
     const cp = input ? /** @type {HTMLInputElement} */ (input).value.trim() : '';
     if (!/^\d{4}$/.test(cp)) {
+      setShippingLoading(false);
       showShippingError('Ingresá un código postal válido de 4 cifras.');
       return;
     }
 
-    estimateShippingAjax(cp);
+    setShippingLoading(true);
+    estimateShippingAjax(cp).finally(() => {
+      setShippingLoading(false);
+    });
   };
 
   const onKeydown = (/** @type {KeyboardEvent} */ e) => {
+    const modal = /** @type {HTMLDialogElement|null} */ ($('[data-ps-ref="pickup-points-modal"]'));
+    if (e.key === 'Escape' && modal && modal.open) {
+      closePickupPointsModal();
+      return;
+    }
+
     if (e.key === 'Escape' && drawer && isOpen) {
       closeDrawer();
     }
@@ -487,6 +657,7 @@
             enabled: Boolean(parsed.shipping.enabled),
             showHome: Boolean(parsed.shipping.showHome),
             showBranch: Boolean(parsed.shipping.showBranch),
+            showPickupPoints: parsed.shipping.showPickupPoints !== false,
           };
         }
         console.log('[moroCart] ajaxUrl:', ajaxUrl);
@@ -500,6 +671,17 @@
     const shippingForm = $('form[data-ps-ref="cart-shipping-form"]');
     if (shippingForm instanceof HTMLFormElement) {
       shippingForm.addEventListener('submit', onShippingSubmit);
+    }
+
+    const pickupModal = /** @type {HTMLDialogElement|null} */ ($('[data-ps-ref="pickup-points-modal"]'));
+    if (pickupModal) {
+      pickupModal.addEventListener('click', (ev) => {
+        const rect = pickupModal.getBoundingClientRect();
+        const isOutside = ev.clientX < rect.left || ev.clientX > rect.right || ev.clientY < rect.top || ev.clientY > rect.bottom;
+        if (isOutside) {
+          closePickupPointsModal();
+        }
+      });
     }
 
     syncEmptyState();

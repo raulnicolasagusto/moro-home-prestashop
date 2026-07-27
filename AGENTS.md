@@ -216,6 +216,35 @@ Primero verificar qué HTML/CSS está sirviendo PrestaShop:
    módulos (`#_desktop_ps_customersignin`, `#_desktop_ps_shoppingcart`,
    `.ps-customersignin`, `.ps-shoppingcart`, `.header-block__action-btn`).
 
+### Problemas comunes con CSS en módulos PrestaShop
+
+**1. Caché del navegador con CSS de módulos:**
+
+Cuando un módulo registra CSS con `registerStylesheet()`, el navegador puede cachear el archivo agresivamente. Si modificas el CSS y no ves los cambios:
+
+- **Solución rápida:** Renombrar el archivo CSS (ej: `front-v2.css` → `front-v3.css`) y actualizar la referencia en el PHP del módulo.
+- **Alternativa:** Agregar un query parameter con versión en el registro: `'media' => 'all', 'version' => '2.0'`
+
+**2. Componentes de PrestaShop con Bootstrap accordion/collapse:**
+
+Muchos templates del checkout y carrito usan Bootstrap collapse/accordion que se regeneran por AJAX. Intentar ocultarlos con CSS **no funciona** porque:
+- El HTML se regenera dinámicamente después de cada interacción
+- Bootstrap re-aplica clases `show`/`collapse` vía JavaScript
+- El caché de Smarty puede servir versiones viejas del template
+
+**Solución correcta:** NO intentar override con CSS. En su lugar:
+- Reescribir el template directamente en el módulo (no incluir el `.tpl` del tema)
+- Renderizar el contenido manualmente sin usar componentes collapse/accordion del tema
+- Ejemplo: en vez de `{include file='checkout/_partials/cart-summary.tpl'}`, escribir el resumen del carrito directamente en el template del módulo
+
+**3. Selectores CSS que no aplican:**
+
+Si agregaste CSS pero no se aplica, verificar:
+- ¿El HTML real tiene las clases que esperas? (inspeccionar con DevTools)
+- ¿El CSS se está cargando? (ver Network tab en DevTools)
+- ¿Hay otro CSS con mayor especificidad sobrescribiendo? (usar `!important` solo como último recurso)
+- ¿El breakpoint del media query coincide con el ancho de la ventana?
+
 ## 8. Paleta de colores Moro Home
 
 Sistema de colores de superficie + marca. Definir siempre como CSS custom properties en
@@ -366,3 +395,107 @@ sudo rm -f /var/www/moro-home/var/cache/prod/FrontContainer.php
 - Si el cambio es un módulo nuevo que hay que instalar o un ajuste que requiere acción en el Back Office (instalar módulo, limpiar caché desde el panel, etc.), incluí ese paso final también.
 
 No asumas que el usuario va a sincronizar la carpeta completa — el objetivo es que suba solo los archivos puntuales listados, a mano, con WinSCP.
+
+## 12. Creación de módulos con páginas custom — Reglas obligatorias
+
+Cuando se crea un módulo nuevo que inyecta templates, CSS, JS o variables Smarty (como `moroonepagecheckout`), hay que seguir estas reglas para evitar que "no funcione" después de subir archivos.
+
+### 12.1 El problema de los hooks desincronizados
+
+PrestaShop registra los hooks de un módulo en la base de datos **una sola vez**, durante el `install()`. Si después se modifica el código del módulo para registrar hooks diferentes, **PrestaShop NO actualiza los hooks automáticamente** al activar/desactivar el módulo. Los hooks en la DB quedan como estaban en el `install()` original.
+
+**Consecuencia:** si cambiaste los hooks registrados en el PHP pero solo desactivaste/reactivaste el módulo, los hooks viejos siguen en la DB y los nuevos no se registran. El módulo parece activo pero no hace nada.
+
+### 12.2 Reglas para crear módulos nuevos
+
+1. **Hooks definitivos desde el principio:** al crear el módulo, definir TODOS los hooks necesarios en el `install()` desde la primera versión. Si después hay que agregar/quitar hooks, el módulo debe desinstalarse y reinstalarse.
+
+2. **Override de `enable()` obligatorio:** todo módulo custom debe tener un método `enable()` que re-registre los hooks al activarse:
+   ```php
+   public function enable($force_all = false)
+   {
+       if (parent::enable($force_all)) {
+           $this->registerHook('actionFrontControllerInitAfter');
+           $this->registerHook('actionFrontControllerSetMedia');
+           // ... todos los hooks necesarios
+           return true;
+       }
+       return false;
+   }
+   ```
+
+3. **Detección de controller robusta:** no confiar solo en `$this->context->controller->php_self`. Verificar también con `Tools::getValue('controller')` y `get_class()`:
+   ```php
+   private function isOrderController()
+   {
+       if (isset($this->context->controller->php_self) && $this->context->controller->php_self === 'order') {
+           return true;
+       }
+       if (Tools::getValue('controller') === 'order') {
+           return true;
+       }
+       if (isset($this->context->controller) && get_class($this->context->controller) === 'OrderController') {
+           return true;
+       }
+       return false;
+   }
+   ```
+
+4. **Variables Smarty en múltiples hooks:** para máxima compatibilidad, asignar variables Smarty en `actionFrontControllerInitAfter` (fire early) Y en `actionFrontControllerSetMedia`. Si uno falla, el otro compensa.
+
+5. **NO depender solo de hooks para el switch de template:** si es posible, complementar con una verificación directa en el template usando `isset($variable) && $variable` para evitar errores silenciosos.
+
+### 12.3 Flujo correcto de despliegue de módulos
+
+Cuando se sube un módulo nuevo o modificado al servidor, seguir este orden exacto:
+
+1. **Subir archivos** por WinSCP (PHP, templates, CSS, JS).
+2. **Si el módulo YA estaba instalado:**
+   - Ir al Back Office > Módulos > buscar el módulo
+   - Click en la flecha del módulo → **Desinstalar** (confirmar)
+   - Luego click en **Instalar**
+   - Luego click en **Activar** (si no se activó solo)
+3. **Si el módulo es NUEVO (nunca instalado):**
+   - Ir al Back Office > Módulos > buscar el módulo
+   - Click en **Instalar**
+   - Luego click en **Activar** (si no se activó solo)
+4. **Limpiar caché** Smarty en el servidor (SSH):
+   ```bash
+   sudo rm -rf /var/www/moro-home/var/cache/prod/smarty/*
+   sudo rm -f /var/www/moro-home/var/cache/prod/FrontContainer.php
+   ```
+5. **Hard-refresh** del navegador (Ctrl+Shift+R) para evitar caché de assets.
+
+### 12.4 Diagnóstico rápido si el módulo "no funciona"
+
+Si el módulo está activo pero no hace nada (no cambia el template, no carga CSS, etc.):
+
+1. **Verificar que los hooks están registrados en la DB:**
+   ```sql
+   SELECT h.name, hm.id_module
+   FROM ps_module m
+   JOIN ps_hook_module hm ON hm.id_module = m.id_module
+   JOIN ps_hook h ON h.id_hook = hm.id_hook
+   WHERE m.name = 'nombre_del_modulo';
+   ```
+   Si los hooks esperados no aparecen → desinstalar y reinstalar el módulo.
+
+2. **Verificar que el archivo PHP en el servidor es la versión correcta:**
+   - Comparar el `$this->version` en el constructor del módulo local vs. el del servidor.
+   - Si el servidor tiene una versión vieja, subir el PHP actualizado.
+
+3. **Verificar que el template del módulo existe y es accesible:**
+   - El path debe ser `modules/nombre_del_modulo/views/templates/front/template.tpl`
+   - En el template que lo incluye, usar: `{include file='module:nombre_del_modulo/views/templates/front/template.tpl'}`
+   - En PrestaShop 9, el protocolo `module:` ya apunta a `views/templates/`, así que el path correcto es `module:nombre/views/templates/...`
+
+4. **Verificar que el controlador correcto está siendo detectado:**
+   - Agregar un `error_log('HOOK FIRED');` al inicio del método del hook para confirmar que se ejecuta.
+   - Si el hook no se ejecuta → problema de registro de hooks (ver paso 1).
+   - Si el hook se ejecuta pero la condición falla → problema de detección de controller (agregar más logs).
+
+### 12.5 Lección aprendida del módulo `moroonepagecheckout`
+
+El módulo `moroonepagecheckout` fue instalado con la versión 1.0.0 que registraba `actionFrontControllerInitAfter` + `actionFrontControllerSetMedia`. Después se modificó el PHP para usar solo `actionFrontControllerSetMedia`, pero el módulo ya estaba instalado con los 2 hooks originales en la DB. Al desactivar/reactivar, los hooks no se actualizaron, causando que el módulo no funcionara.
+
+**Solución aplicada:** se agregó el override de `enable()` que re-registra los hooks al activar, y se desinstaló/reinstaló el módulo para sincronizar los hooks en la DB con el código actual.

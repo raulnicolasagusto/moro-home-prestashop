@@ -17,6 +17,7 @@ class MoroCartDrawer extends Module
     private const SHIPPING_MODULE_KEY = 'MORO_CARTDRAWER_SHIPPING_MODULE';
     private const SHIPPING_SHOW_HOME_KEY = 'MORO_CARTDRAWER_SHIPPING_SHOW_HOME';
     private const SHIPPING_SHOW_BRANCH_KEY = 'MORO_CARTDRAWER_SHIPPING_SHOW_BRANCH';
+    private const SHIPPING_SHOW_PICKUP_POINTS_KEY = 'MORO_CARTDRAWER_SHIPPING_SHOW_PICKUP_POINTS';
 
     private const KNOWN_CARRIER_LABELS = [
         'correoargentino' => 'Correo Argentino',
@@ -93,6 +94,7 @@ class MoroCartDrawer extends Module
 
         $showHome = (int) Configuration::get(self::SHIPPING_SHOW_HOME_KEY);
         $showBranch = (int) Configuration::get(self::SHIPPING_SHOW_BRANCH_KEY);
+        $showPickupPoints = (int) Configuration::get(self::SHIPPING_SHOW_PICKUP_POINTS_KEY);
 
         if ((string) Configuration::get(self::SHIPPING_SHOW_HOME_KEY) === '') {
             $showHome = 0;
@@ -102,8 +104,16 @@ class MoroCartDrawer extends Module
             $showBranch = 1;
         }
 
+        if ((string) Configuration::get(self::SHIPPING_SHOW_PICKUP_POINTS_KEY) === '') {
+            $showPickupPoints = 1;
+        }
+
         if ($shippingEnabled && $showHome === 0 && $showBranch === 0) {
             $showBranch = 1;
+        }
+
+        if ($showBranch !== 1) {
+            $showPickupPoints = 0;
         }
 
         $this->context->smarty->assign([
@@ -114,12 +124,14 @@ class MoroCartDrawer extends Module
             'moro_cart_drawer_shipping_enabled' => $shippingEnabled,
             'moro_cart_drawer_shipping_show_home' => (bool) $showHome,
             'moro_cart_drawer_shipping_show_branch' => (bool) $showBranch,
+            'moro_cart_drawer_shipping_show_pickup_points' => (bool) $showPickupPoints,
             'moro_cart_drawer_ps_data'    => json_encode([
                 'ajaxUrl' => $ajaxUrl,
                 'shipping' => [
                     'enabled' => $shippingEnabled,
                     'showHome' => (bool) $showHome,
                     'showBranch' => (bool) $showBranch,
+                    'showPickupPoints' => (bool) $showPickupPoints,
                 ],
             ]),
         ]);
@@ -140,6 +152,7 @@ class MoroCartDrawer extends Module
             $moduleCode = (string) Tools::getValue(self::SHIPPING_MODULE_KEY, '');
             $showHome = (int) Tools::getValue(self::SHIPPING_SHOW_HOME_KEY, 0);
             $showBranch = (int) Tools::getValue(self::SHIPPING_SHOW_BRANCH_KEY, 1);
+            $showPickupPoints = (int) Tools::getValue(self::SHIPPING_SHOW_PICKUP_POINTS_KEY, 1);
 
             $available = $this->getAvailableCarrierModules();
             $validCodes = array_column($available, 'code');
@@ -166,10 +179,15 @@ class MoroCartDrawer extends Module
                 ));
             }
 
+            if ($showBranch !== 1) {
+                $showPickupPoints = 0;
+            }
+
             Configuration::updateValue(self::SHIPPING_ENABLED_KEY, $enabled);
             Configuration::updateValue(self::SHIPPING_MODULE_KEY, $enabled === 1 ? $moduleCode : '');
             Configuration::updateValue(self::SHIPPING_SHOW_HOME_KEY, $showHome);
             Configuration::updateValue(self::SHIPPING_SHOW_BRANCH_KEY, $showBranch);
+            Configuration::updateValue(self::SHIPPING_SHOW_PICKUP_POINTS_KEY, $showPickupPoints);
 
             $output .= $this->displayConfirmation($this->trans('Settings updated.', [], 'Admin.Notifications.Success'));
         }
@@ -185,6 +203,7 @@ class MoroCartDrawer extends Module
         $moduleCode = (string) Configuration::get(self::SHIPPING_MODULE_KEY);
         $showHome = (int) Configuration::get(self::SHIPPING_SHOW_HOME_KEY);
         $showBranch = (int) Configuration::get(self::SHIPPING_SHOW_BRANCH_KEY);
+        $showPickupPoints = (int) Configuration::get(self::SHIPPING_SHOW_PICKUP_POINTS_KEY);
 
         if ((string) Configuration::get(self::SHIPPING_SHOW_HOME_KEY) === '') {
             $showHome = 0;
@@ -192,6 +211,14 @@ class MoroCartDrawer extends Module
 
         if ((string) Configuration::get(self::SHIPPING_SHOW_BRANCH_KEY) === '') {
             $showBranch = 1;
+        }
+
+        if ((string) Configuration::get(self::SHIPPING_SHOW_PICKUP_POINTS_KEY) === '') {
+            $showPickupPoints = 1;
+        }
+
+        if ($showBranch !== 1) {
+            $showPickupPoints = 0;
         }
 
         $inputs = [];
@@ -247,6 +274,19 @@ class MoroCartDrawer extends Module
                 ],
             ];
 
+            $inputs[] = [
+                'type' => 'switch',
+                'label' => $this->trans('Mostrar lista de puntos de retiro', [], 'Modules.Morocartdrawer.Admin'),
+                'name' => self::SHIPPING_SHOW_PICKUP_POINTS_KEY,
+                'is_bool' => true,
+                'desc' => $this->trans('Esta opción depende de "Mostrar envio a sucursal".', [], 'Modules.Morocartdrawer.Admin'),
+                'disabled' => $showBranch !== 1,
+                'values' => [
+                    ['id' => 'show_pickup_points_on', 'value' => 1, 'label' => $this->trans('Yes', [], 'Admin.Global')],
+                    ['id' => 'show_pickup_points_off', 'value' => 0, 'label' => $this->trans('No', [], 'Admin.Global')],
+                ],
+            ];
+
             if ($enabled === 1 && $moduleCode !== '') {
                 $resolvedLabel = self::KNOWN_CARRIER_LABELS[$moduleCode] ?? ucfirst($moduleCode);
                 $inputs[] = [
@@ -279,6 +319,7 @@ class MoroCartDrawer extends Module
         $helper->fields_value[self::SHIPPING_MODULE_KEY] = $moduleCode;
         $helper->fields_value[self::SHIPPING_SHOW_HOME_KEY] = $showHome;
         $helper->fields_value[self::SHIPPING_SHOW_BRANCH_KEY] = $showBranch;
+        $helper->fields_value[self::SHIPPING_SHOW_PICKUP_POINTS_KEY] = $showPickupPoints;
 
         return $helper->generateForm([[
             'form' => [

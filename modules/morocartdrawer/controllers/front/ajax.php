@@ -8,6 +8,12 @@ if (!defined('_PS_VERSION_')) {
 
 class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
 {
+    /** @var array<int, string> */
+    private const AGENCY_PROVINCE_CODES = [
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M',
+        'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    ];
+
     public $ajax;
 
     public function init()
@@ -44,6 +50,9 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
                     break;
                 case 'estimateShipping':
                     $this->ajaxEstimateShipping();
+                    break;
+                case 'getPickupPoints':
+                    $this->ajaxGetPickupPoints();
                     break;
                 default:
                     $this->ajaxGetCart();
@@ -180,28 +189,7 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $username = (string) Configuration::get('CORREOARGENTINO_USERNAME_MICORREO');
-        $password = (string) Configuration::get('CORREOARGENTINO_PASSWORD_MICORREO');
-        $authHash = trim((string) Configuration::get('CORREOARGENTINO_AUTH_HASH'));
-        $customerId = (string) Configuration::get('CORREOARGENTINO_CUSTOMER_ID');
         $postalCodeOrigin = preg_replace('/\D+/', '', (string) Configuration::get('CORREOARGENTINO_ZIP_CODE'));
-
-        $basicAuthHeader = '';
-        if ($username !== '' && $password !== '') {
-            $basicAuthHeader = 'Basic ' . base64_encode($username . ':' . $password);
-        } elseif ($authHash !== '') {
-            $basicAuthHeader = str_starts_with(strtolower($authHash), 'basic ')
-                ? $authHash
-                : 'Basic ' . $authHash;
-        }
-
-        if ($basicAuthHeader === '') {
-            echo json_encode([
-                'success' => false,
-                'error' => 'No encontramos credenciales de Correo Argentino en la configuración.',
-            ]);
-            return;
-        }
 
         if ($postalCodeOrigin === '') {
             echo json_encode([
@@ -211,52 +199,21 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $cart = $this->context->cart;
-        $dimensions = $this->buildCartDimensions($cart->getProducts());
-
-        $sandbox = (int) Configuration::get('CORREOARGENTINO_SANDBOX_MODE') === 1;
-        $baseUrl = $sandbox
-            ? 'https://apitest.correoargentino.com.ar/micorreo/v1'
-            : 'https://api.correoargentino.com.ar/micorreo/v1';
-
-        $tokenResponse = $this->doJsonRequest(
-            $baseUrl . '/token',
-            [],
-            [
-                'Authorization: ' . $basicAuthHeader,
-                'Content-Type: application/json',
-            ],
-            'POST'
-        );
-
-        if (!$tokenResponse['ok'] || empty($tokenResponse['data']['token'])) {
+        $authContext = $this->getCorreoAuthContext();
+        if (!$authContext['ok']) {
             echo json_encode([
                 'success' => false,
-                'error' => 'No se pudo autenticar con Correo Argentino.',
+                'error' => $authContext['error'],
             ]);
             return;
         }
 
-        $token = (string) $tokenResponse['data']['token'];
+        $baseUrl = $authContext['baseUrl'];
+        $token = $authContext['token'];
+        $customerId = $authContext['customerId'];
 
-        if ($customerId === '') {
-            if ($username === '' || $password === '') {
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'Falta customerId en Correo Argentino y no hay usuario/contraseña para resolverlo automáticamente.',
-                ]);
-                return;
-            }
-
-            $customerId = $this->resolveCustomerId($baseUrl, $token, $username, $password);
-            if ($customerId === '') {
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'No se pudo resolver el customerId de Correo Argentino con las credenciales cargadas.',
-                ]);
-                return;
-            }
-        }
+        $cart = $this->context->cart;
+        $dimensions = $this->buildCartDimensions($cart->getProducts());
 
         $ratesPayload = [
             'customerId' => $customerId,
@@ -327,6 +284,286 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
                 'selected' => true,
             ]],
         ]);
+    }
+
+    private function ajaxGetPickupPoints(): void
+    {
+        $postalCode = trim((string) Tools::getValue('postal_code', ''));
+        if (!preg_match('/^\d{4}$/', $postalCode)) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Ingresá un código postal válido de 4 cifras.',
+            ]);
+            return;
+        }
+
+        $showBranch = (int) Configuration::get('MORO_CARTDRAWER_SHIPPING_SHOW_BRANCH');
+        if ((string) Configuration::get('MORO_CARTDRAWER_SHIPPING_SHOW_BRANCH') === '') {
+            $showBranch = 1;
+        }
+
+        if ($showBranch !== 1) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'La opción de envío a sucursal está desactivada.',
+            ]);
+            return;
+        }
+
+        $showPickupPoints = (int) Configuration::get('MORO_CARTDRAWER_SHIPPING_SHOW_PICKUP_POINTS');
+        if ((string) Configuration::get('MORO_CARTDRAWER_SHIPPING_SHOW_PICKUP_POINTS') === '') {
+            $showPickupPoints = 1;
+        }
+
+        if ($showPickupPoints !== 1) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'La lista de puntos de retiro está desactivada.',
+            ]);
+            return;
+        }
+
+        $authContext = $this->getCorreoAuthContext();
+        if (!$authContext['ok']) {
+            echo json_encode([
+                'success' => false,
+                'error' => $authContext['error'],
+            ]);
+            return;
+        }
+
+        $points = $this->fetchPickupPointsByPostalCode(
+            $authContext['baseUrl'],
+            $authContext['token'],
+            $authContext['customerId'],
+            $postalCode
+        );
+
+        echo json_encode([
+            'success' => true,
+            'postalCode' => $postalCode,
+            'points' => $points,
+            'count' => count($points),
+        ]);
+    }
+
+    /**
+     * @return array{ok:bool,error:string,baseUrl:string,token:string,customerId:string}
+     */
+    private function getCorreoAuthContext(): array
+    {
+        $username = (string) Configuration::get('CORREOARGENTINO_USERNAME_MICORREO');
+        $password = (string) Configuration::get('CORREOARGENTINO_PASSWORD_MICORREO');
+        $authHash = trim((string) Configuration::get('CORREOARGENTINO_AUTH_HASH'));
+        $customerId = (string) Configuration::get('CORREOARGENTINO_CUSTOMER_ID');
+
+        $basicAuthHeader = '';
+        if ($username !== '' && $password !== '') {
+            $basicAuthHeader = 'Basic ' . base64_encode($username . ':' . $password);
+        } elseif ($authHash !== '') {
+            $basicAuthHeader = str_starts_with(strtolower($authHash), 'basic ')
+                ? $authHash
+                : 'Basic ' . $authHash;
+        }
+
+        if ($basicAuthHeader === '') {
+            return [
+                'ok' => false,
+                'error' => 'No encontramos credenciales de Correo Argentino en la configuración.',
+                'baseUrl' => '',
+                'token' => '',
+                'customerId' => '',
+            ];
+        }
+
+        $sandbox = (int) Configuration::get('CORREOARGENTINO_SANDBOX_MODE') === 1;
+        $baseUrl = $sandbox
+            ? 'https://apitest.correoargentino.com.ar/micorreo/v1'
+            : 'https://api.correoargentino.com.ar/micorreo/v1';
+
+        $tokenResponse = $this->doJsonRequest(
+            $baseUrl . '/token',
+            [],
+            [
+                'Authorization: ' . $basicAuthHeader,
+                'Content-Type: application/json',
+            ],
+            'POST'
+        );
+
+        if (!$tokenResponse['ok'] || empty($tokenResponse['data']['token'])) {
+            return [
+                'ok' => false,
+                'error' => 'No se pudo autenticar con Correo Argentino.',
+                'baseUrl' => '',
+                'token' => '',
+                'customerId' => '',
+            ];
+        }
+
+        $token = (string) $tokenResponse['data']['token'];
+
+        if ($customerId === '') {
+            if ($username === '' || $password === '') {
+                return [
+                    'ok' => false,
+                    'error' => 'Falta customerId en Correo Argentino y no hay usuario/contraseña para resolverlo automáticamente.',
+                    'baseUrl' => '',
+                    'token' => '',
+                    'customerId' => '',
+                ];
+            }
+
+            $customerId = $this->resolveCustomerId($baseUrl, $token, $username, $password);
+            if ($customerId === '') {
+                return [
+                    'ok' => false,
+                    'error' => 'No se pudo resolver el customerId de Correo Argentino con las credenciales cargadas.',
+                    'baseUrl' => '',
+                    'token' => '',
+                    'customerId' => '',
+                ];
+            }
+        }
+
+        return [
+            'ok' => true,
+            'error' => '',
+            'baseUrl' => $baseUrl,
+            'token' => $token,
+            'customerId' => $customerId,
+        ];
+    }
+
+    /**
+     * @return array<int, array{id:string,name:string,address:string,city:string,province:string,postalCode:string,hours:string,latitude:string,longitude:string}>
+     */
+    private function fetchPickupPointsByPostalCode(string $baseUrl, string $token, string $customerId, string $postalCode): array
+    {
+        $points = [];
+        $seen = [];
+
+        foreach (self::AGENCY_PROVINCE_CODES as $provinceCode) {
+            $query = http_build_query([
+                'customerId' => $customerId,
+                'provinceCode' => $provinceCode,
+                'services' => 'pickup_availability',
+            ]);
+
+            $agenciesResponse = $this->doJsonRequest(
+                $baseUrl . '/agencies?' . $query,
+                [],
+                [
+                    'Authorization: Bearer ' . $token,
+                    'Content-Type: application/json',
+                ],
+                'GET'
+            );
+
+            if (!$agenciesResponse['ok'] || !is_array($agenciesResponse['data'])) {
+                continue;
+            }
+
+            foreach ($agenciesResponse['data'] as $agency) {
+                if (!is_array($agency)) {
+                    continue;
+                }
+
+                $agencyCode = trim((string) ($agency['code'] ?? ''));
+                if ($agencyCode === '' || isset($seen[$agencyCode])) {
+                    continue;
+                }
+
+                $status = strtoupper((string) ($agency['status'] ?? ''));
+                if ($status !== '' && $status !== 'ACTIVE') {
+                    continue;
+                }
+
+                $services = $agency['services'] ?? null;
+                if (is_array($services) && array_key_exists('pickupAvailability', $services) && !$services['pickupAvailability']) {
+                    continue;
+                }
+
+                $address = is_array($agency['location']['address'] ?? null)
+                    ? $agency['location']['address']
+                    : [];
+
+                $agencyPostalCodeRaw = (string) ($address['postalCode'] ?? '');
+                $agencyPostalCode4 = $this->extractPostalCodeDigits($agencyPostalCodeRaw);
+                if ($agencyPostalCode4 !== $postalCode) {
+                    continue;
+                }
+
+                $seen[$agencyCode] = true;
+                $points[] = [
+                    'id' => $agencyCode,
+                    'name' => trim((string) ($agency['name'] ?? 'Sucursal Correo Argentino')),
+                    'address' => trim((string) ($address['streetName'] ?? '')) . ' ' . trim((string) ($address['streetNumber'] ?? '')),
+                    'city' => trim((string) ($address['city'] ?? $address['locality'] ?? '')),
+                    'province' => trim((string) ($address['province'] ?? '')),
+                    'postalCode' => $agencyPostalCodeRaw,
+                    'hours' => $this->formatAgencyHours($agency['hours'] ?? null),
+                    'latitude' => trim((string) ($agency['location']['latitude'] ?? '')),
+                    'longitude' => trim((string) ($agency['location']['longitude'] ?? '')),
+                ];
+            }
+        }
+
+        return $points;
+    }
+
+    private function extractPostalCodeDigits(string $postalCode): string
+    {
+        $digits = preg_replace('/\D+/', '', $postalCode);
+        if (!is_string($digits) || strlen($digits) < 4) {
+            return '';
+        }
+
+        return substr($digits, 0, 4);
+    }
+
+    private function formatAgencyHours($hours): string
+    {
+        if (!is_array($hours)) {
+            return '';
+        }
+
+        $dayLabels = [
+            'monday' => 'Lun',
+            'tuesday' => 'Mar',
+            'wednesday' => 'Mié',
+            'thursday' => 'Jue',
+            'friday' => 'Vie',
+            'saturday' => 'Sáb',
+        ];
+
+        $chunks = [];
+        foreach ($dayLabels as $dayKey => $dayLabel) {
+            $dayData = $hours[$dayKey] ?? null;
+            if (!is_array($dayData)) {
+                continue;
+            }
+
+            $start = $this->formatHourValue((string) ($dayData['start'] ?? ''));
+            $end = $this->formatHourValue((string) ($dayData['end'] ?? ''));
+            if ($start === '' || $end === '') {
+                continue;
+            }
+
+            $chunks[] = $dayLabel . ' ' . $start . '-' . $end;
+        }
+
+        return implode(' | ', $chunks);
+    }
+
+    private function formatHourValue(string $value): string
+    {
+        $value = preg_replace('/\D+/', '', $value);
+        if (!is_string($value) || strlen($value) !== 4) {
+            return '';
+        }
+
+        return substr($value, 0, 2) . ':' . substr($value, 2, 2);
     }
 
     /**

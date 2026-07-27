@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Checkout - ATELIER HOME</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&amp;family=Montserrat:wght@400;500;600&amp;family=Newsreader:opsz,wght@6..72,300;6..72,400;6..72,500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+                "on-surface": "#1b1c1c",
+                "background": "#fcf9f8",
+                "secondary-fixed": "#f4ded4",
+                "on-primary-fixed-variant": "#773200",
+                "inverse-on-surface": "#f3f0f0",
+                "tertiary-fixed": "#d1e4ff",
+                "on-tertiary-fixed-variant": "#00497d",
+                "inverse-primary": "#ffb68f",
+                "on-tertiary-fixed": "#001d36",
+                "on-background": "#1b1c1c",
+                "surface-tint": "#9d4400",
+                "surface": "#fcf9f8",
+                "tertiary-fixed-dim": "#9fcaff",
+                "tertiary-container": "#0078c9",
+                "on-error-container": "#93000a",
+                "on-error": "#ffffff",
+                "on-tertiary-container": "#fdfcff",
+                "tertiary": "#005fa0",
+                "surface-container": "#f0eded",
+                "primary-fixed-dim": "#ffb68f",
+                "outline": "#8b7266",
+                "on-primary-container": "#fffbff",
+                "primary-container": "#c05500",
+                "on-secondary": "#ffffff",
+                "secondary": "#6b5b53",
+                "on-secondary-fixed-variant": "#52443d",
+                "surface-container-highest": "#e4e2e1",
+                "surface-container-low": "#f6f3f2",
+                "outline-variant": "#dec0b2",
+                "surface-bright": "#fcf9f8",
+                "surface-variant": "#e4e2e1",
+                "surface-container-lowest": "#ffffff",
+                "error-container": "#ffdad6",
+                "on-surface-variant": "#574238",
+                "on-primary": "#ffffff",
+                "inverse-surface": "#303030",
+                "surface-dim": "#dcd9d9",
+                "on-secondary-fixed": "#241913",
+                "error": "#ba1a1a",
+                "secondary-container": "#f4ded4",
+                "on-tertiary": "#ffffff",
+                "secondary-fixed-dim": "#d7c2b9",
+                "on-primary-fixed": "#331100",
+                "primary-fixed": "#ffdbca",
+                "primary": "#994200",
+                "surface-container-high": "#eae7e7",
+                "on-secondary-container": "#716159",
+                
+                "custom-bg": "#fcf9f8",
+                "custom-text": "#1c1b1b",
+                "custom-accent": "#d46211",
+                "custom-border": "#dfdfdf",
+                "custom-summary-bg": "#f6f3f2"
+        },
+        "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px",
+                "mcgee": "14px"
+        },
+        "spacing": {
+                "margin-desktop": "64px",
+                "section-gap": "120px",
+                "margin-mobile": "20px",
+                "gutter": "24px",
+                "unit": "4px"
+        },
+        "fontFamily": {
+                "display": ["'Libre Caslon Display'", "serif"],
+                "body": ["'Newsreader'", "serif"],
+                "sans": ["'Montserrat'", "sans-serif"]
+        }
+},
+    },
+  }
+</script>
+<style>
+        body {
+            font-family: 'Newsreader', serif;
+            background-color: #fcf9f8;
+            color: #1c1b1b;
+        }
+        h1, h2, h3, h4, h5, h6, .font-display {
+            font-family: 'Libre Caslon Display', serif;
+        }
+        .mcgee-input {
+            width: 100%;
+            border: 1px solid #DEDEDE;
+            border-radius: 14px;
+            padding: 1.4rem 1rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            background-color: #ffffff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            -webkit-text-size-adjust: 100%;
+            box-shadow: 0 0 0 0 transparent;
+        }
+        .mcgee-input:focus {
+            outline: none;
+            border-color: #d46211;
+            box-shadow: 0 0 0 1px #d46211;
+        }
+        .mcgee-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .mcgee-button {
+            width: 100%;
+            background-color: #d46211;
+            color: white;
+            padding: 1rem;
+            border-radius: 14px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 1.125rem;
+            transition: background-color 0.2s;
+            text-align: center;
+            cursor: pointer;
+        }
+        .mcgee-button:hover {
+            background-color: #b5530e;
+        }
+        .divider-vertical {
+            width: 1px;
+            background-color: #dfdfdf;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased bg-custom-bg">
+<!-- Header / Nav -->
+<header class="w-full top-0 z-50 bg-white border-b border-custom-border">
+<div class="relative flex justify-center items-center w-full px-6 md:px-12 h-24 max-w-[1440px] mx-auto">
+<!-- Brand -->
+<a class="flex items-center" href="#">
+<img alt="Moro Home Logo" class="h-16 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAHpWSOI3SW7jeyD6SBc9arH-cNCTeJ5D_na-x1Yp5YI0jD5SxcbjpAmMNYV_UBbICLPvAy5OYfL0JwV4vqhaJrNC5hrruvgH92ToAPd8XDyakdMCLlDUWbmdZHlxhw3NPn4O8Qkjno1B3TIEFM5HeW_-Agz-Xg6xnp0kDrqnXxtFoh_9wg2D9XM_YFBxmpBHwBCERas08tL1lIlXLJLDdV93Isvi2x5Ta2d5UwbKSnAwiJbKnw4dtaxkGkYYN91WGYK2dkN31vZ1Y"/>
+</a>
+<!-- Secure Checkout Indicator -->
+<div class="absolute right-6 md:right-12 flex items-center gap-2 text-custom-text opacity-70">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">lock</span>
+<span class="text-sm uppercase tracking-widest font-medium font-sans hidden sm:inline-block">Pago Seguro</span>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow w-full mx-auto grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] min-h-[calc(100vh-6rem)]">
+<!-- Left Column: Forms -->
+<div class="px-6 md:px-12 py-10 lg:py-16 bg-white lg:pl-[12%] lg:pr-12">
+<div class="max-w-2xl ml-auto pr-0 lg:pr-8">
+<h2 class="text-3xl mb-8 font-display">Información de Contacto</h2>
+<form class="space-y-8">
+<!-- Contact Info -->
+<div class="space-y-4">
+<div>
+<label class="mcgee-label" for="email">Correo electrónico</label>
+<input class="mcgee-input rounded-mcgee" id="email" placeholder="tu@email.com" required="" type="email"/>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<input class="rounded border-custom-border text-custom-accent focus:ring-custom-accent" id="newsletter" type="checkbox"/>
+<label class="text-sm font-sans" for="newsletter">Enviarme noticias y ofertas exclusivas</label>
+</div>
+</div>
+<!-- Shipping Info -->
+<div class="pt-6">
+<h2 class="text-3xl mb-6 font-display">Dirección de Envío</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="mcgee-label" for="firstName">Nombre</label>
+<input class="mcgee-input rounded-mcgee" id="firstName" required="" type="text"/>
+</div>
+<div>
+<label class="mcgee-label" for="lastName">Apellidos</label>
+<input class="mcgee-input rounded-mcgee" id="lastName" required="" type="text"/>
+</div>
+<div class="md:col-span-2">
+<label class="mcgee-label" for="address">Dirección</label>
+<input class="mcgee-input rounded-mcgee" id="address" required="" type="text"/>
+</div>
+<div class="md:col-span-2">
+<label class="mcgee-label" for="apartment">Apartamento, suite, etc. (opcional)</label>
+<input class="mcgee-input rounded-mcgee" id="apartment" type="text"/>
+</div>
+<div>
+<label class="mcgee-label" for="city">Ciudad</label>
+<input class="mcgee-input rounded-mcgee" id="city" required="" type="text"/>
+</div>
+<div>
+<label class="mcgee-label" for="postalCode">Código Postal</label>
+<input class="mcgee-input rounded-mcgee" id="postalCode" required="" type="text"/>
+</div>
+<div class="md:col-span-2">
+<label class="mcgee-label" for="phone">Teléfono</label>
+<input class="mcgee-input rounded-mcgee" id="phone" required="" type="tel"/>
+</div>
+</div>
+</div>
+<!-- Payment Info -->
+<div class="pt-6">
+<h2 class="text-3xl mb-6 font-display">Pago</h2>
+<div class="text-sm mb-4 opacity-70 font-sans">Todas las transacciones son seguras y están encriptadas.</div>
+<div class="border border-[#DEDEDE] rounded-mcgee overflow-hidden">
+<div class="p-4 border-b border-[#DEDEDE] bg-gray-50 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<input checked="" class="text-custom-accent focus:ring-custom-accent" id="creditCard" name="paymentMethod" type="radio"/>
+<label class="font-medium font-sans" for="creditCard">Tarjeta de crédito</label>
+</div>
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-2xl">credit_card</span>
+</div>
+</div>
+<div class="p-4 space-y-4 bg-white">
+<div>
+<input class="mcgee-input rounded-mcgee" placeholder="Número de tarjeta" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<input class="mcgee-input rounded-mcgee" placeholder="Vencimiento (MM/AA)" type="text"/>
+<input class="mcgee-input rounded-mcgee" placeholder="Código de seguridad" type="text"/>
+</div>
+<div>
+<input class="mcgee-input rounded-mcgee" placeholder="Nombre en la tarjeta" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-8">
+<button class="mcgee-button" type="button">Completar Pedido</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Center Divider -->
+<div class="hidden lg:block bg-custom-summary-bg">
+<div class="divider-vertical"></div>
+</div>
+<!-- Right Column: Order Summary -->
+<div class="bg-custom-summary-bg px-6 md:px-12 py-10 lg:py-16 h-full lg:pr-[12%] lg:pl-12">
+<div class="max-w-2xl mr-auto pl-0 lg:pl-8">
+<h2 class="text-3xl mb-8 font-display">Resumen del Pedido</h2>
+<!-- Cart Items -->
+<div class="space-y-6 mb-8">
+<div class="flex gap-4">
+<div class="w-20 h-20 bg-gray-200 rounded-xl flex-shrink-0 border border-custom-border relative">
+<span class="absolute -top-2 -right-2 bg-custom-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-sans">1</span>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<h3 class="font-medium text-lg">Jarrón Cerámica Rústico</h3>
+<p class="text-sm opacity-70 font-sans">Color: Natural</p>
+</div>
+<div class="flex items-center font-medium font-sans">
+                    $125.00
+                </div>
+</div>
+<div class="flex gap-4">
+<div class="w-20 h-20 bg-gray-200 rounded-xl flex-shrink-0 border border-custom-border relative">
+<span class="absolute -top-2 -right-2 bg-custom-accent text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-sans">2</span>
+</div>
+<div class="flex-grow flex flex-col justify-center">
+<h3 class="font-medium text-lg">Cojín Lino Lavado</h3>
+<p class="text-sm opacity-70 font-sans">Color: Arena</p>
+</div>
+<div class="flex items-center font-medium font-sans">
+                    $90.00
+                </div>
+</div>
+</div>
+<!-- Discount Code -->
+<div class="flex gap-2 mb-8 border-t border-b border-custom-border py-6">
+<input class="mcgee-input flex-grow rounded-mcgee" placeholder="Código de descuento" type="text"/>
+<button class="bg-gray-200 text-gray-800 px-6 py-3 rounded-mcgee font-medium hover:bg-gray-300 transition-colors font-sans">Aplicar</button>
+</div>
+<!-- Totals -->
+<div class="space-y-3 mb-6 font-sans">
+<div class="flex justify-between text-lg">
+<span class="opacity-70">Subtotal</span>
+<span class="">$215.00</span>
+</div>
+<div class="flex justify-between text-lg">
+<span class="opacity-70">Envío</span>
+<span class="text-sm opacity-70 mt-1">Calculado en el siguiente paso</span>
+</div>
+<div class="flex justify-between text-lg">
+<span class="opacity-70">Impuestos</span>
+<span class="">$21.50</span>
+</div>
+</div>
+<div class="border-t border-custom-border pt-6 flex justify-between items-center">
+<span class="text-2xl font-display">Total</span>
+<span class="text-3xl font-display">$236.50</span>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -488,6 +488,30 @@
   color: var(--moro-primary);
 }
 
+.moro-cart-drawer__shipping-submit:disabled {
+  opacity: 1;
+  cursor: wait;
+}
+
+.moro-cart-drawer__shipping-submit.is-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--moro-primary);
+  border-color: var(--moro-primary);
+}
+
+.moro-cart-drawer__shipping-submit.is-loading::before {
+  content: '';
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--moro-surface-dim);
+  border-top-color: var(--moro-primary);
+  animation: moro-cart-drawer-spin 0.7s linear infinite;
+}
+
 .moro-cart-drawer__shipping-result {
   margin-top: 24px;
   padding-top: 24px;
@@ -593,6 +617,146 @@
   color: #9d2f2f;
 }
 
+.moro-cart-drawer__pickup-points-link {
+  margin-top: 14px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--moro-primary);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 300ms ease;
+}
+
+.moro-cart-drawer__pickup-points-link:hover,
+.moro-cart-drawer__pickup-points-link:focus-visible {
+  color: var(--moro-primary-hover, #b8500c);
+}
+
+.moro-cart-drawer__pickup-modal {
+  width: min(520px, calc(100vw - 32px));
+  max-height: 86vh;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.moro-cart-drawer__pickup-modal::backdrop {
+  background: rgba(28, 27, 27, 0.42);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.moro-cart-drawer__pickup-modal-card {
+  background: var(--moro-surface);
+  border: 1px solid var(--moro-surface-dim);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 86vh;
+}
+
+.moro-cart-drawer__pickup-modal-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px;
+  border-bottom: 1px solid var(--moro-surface-dim);
+}
+
+.moro-cart-drawer__pickup-modal-title {
+  margin: 0;
+  font-family: var(--moro-font-serif, "Newsreader", Georgia, serif);
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: 400;
+  color: var(--moro-on-surface);
+}
+
+.moro-cart-drawer__pickup-modal-subtitle {
+  margin: 6px 0 0;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--moro-on-surface-variant);
+}
+
+.moro-cart-drawer__pickup-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: var(--moro-on-surface-variant);
+  cursor: pointer;
+  transition: color 300ms ease;
+}
+
+.moro-cart-drawer__pickup-modal-close:hover,
+.moro-cart-drawer__pickup-modal-close:focus-visible {
+  color: var(--moro-primary);
+}
+
+.moro-cart-drawer__pickup-modal-body {
+  padding: 14px 20px;
+  overflow-y: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.moro-cart-drawer__pickup-point {
+  border: 1px solid var(--moro-surface-dim);
+  background: var(--moro-surface-container-low);
+  padding: 14px;
+}
+
+.moro-cart-drawer__pickup-point-name {
+  margin: 0 0 6px;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--moro-on-surface);
+}
+
+.moro-cart-drawer__pickup-point-address,
+.moro-cart-drawer__pickup-point-hours,
+.moro-cart-drawer__pickup-loading,
+.moro-cart-drawer__pickup-empty,
+.moro-cart-drawer__pickup-error {
+  margin: 0;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--moro-on-surface-variant);
+}
+
+.moro-cart-drawer__pickup-point-hours {
+  margin-top: 4px;
+}
+
+.moro-cart-drawer__pickup-error {
+  color: #9d2f2f;
+}
+
+.moro-cart-drawer__pickup-modal-note {
+  margin: 0;
+  padding: 14px 20px 16px;
+  border-top: 1px solid var(--moro-surface-dim);
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--moro-on-surface-variant);
+}
+
 .moro-cart-drawer__shipping-total,
 .moro-cart-drawer__grand-total {
   display: flex;
@@ -637,9 +801,41 @@ body.moro-cart-drawer-open {
   overflow: hidden;
 }
 
+@media (max-width: 576px) {
+  .moro-cart-drawer__pickup-modal {
+    width: 100vw;
+    max-width: 100vw;
+    max-height: 85vh;
+    margin: auto 0 0;
+  }
+
+  .moro-cart-drawer__pickup-modal-card {
+    border-radius: 16px 16px 0 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+    max-height: 85vh;
+  }
+
+  .moro-cart-drawer__pickup-modal-title {
+    font-size: 24px;
+    line-height: 28px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .moro-cart-drawer__panel,
   .moro-cart-drawer__overlay {
     transition: none;
+  }
+
+  .moro-cart-drawer__shipping-submit.is-loading::before {
+    animation: none;
+  }
+}
+
+@keyframes moro-cart-drawer-spin {
+  to {
+    transform: rotate(360deg);
   }
 }

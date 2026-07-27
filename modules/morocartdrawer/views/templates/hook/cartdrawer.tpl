@@ -95,6 +95,13 @@
           </div>
           <h4 class="moro-cart-drawer__shipping-result-title">Opciones de Envío</h4>
           <div class="moro-cart-drawer__shipping-options" data-ps-ref="cart-shipping-options"></div>
+          <button type="button"
+                  class="moro-cart-drawer__pickup-points-link"
+                  data-ps-action="view-pickup-points"
+                  data-ps-ref="cart-pickup-points-link"
+                  hidden>
+            Ver puntos de retiro
+          </button>
           <p class="moro-cart-drawer__shipping-error" data-ps-ref="cart-shipping-error" hidden></p>
         </div>
       </div>
@@ -127,6 +134,31 @@
       </div>
     </div>
   </div>
+
+  <dialog class="moro-cart-drawer__pickup-modal"
+          data-ps-ref="pickup-points-modal"
+          aria-label="Puntos de retiro disponibles">
+    <div class="moro-cart-drawer__pickup-modal-card">
+      <div class="moro-cart-drawer__pickup-modal-head">
+        <div>
+          <h3 class="moro-cart-drawer__pickup-modal-title">Puntos de retiro disponibles</h3>
+          <p class="moro-cart-drawer__pickup-modal-subtitle" data-ps-ref="pickup-points-postcode">Código postal: -</p>
+        </div>
+        <button type="button"
+                class="moro-cart-drawer__pickup-modal-close"
+                data-ps-action="close-pickup-points-modal"
+                aria-label="Cerrar">
+          <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+      </div>
+
+      <div class="moro-cart-drawer__pickup-modal-body" data-ps-target="pickup-points-list"></div>
+
+      <p class="moro-cart-drawer__pickup-modal-note">
+        Vas a poder elegir estas opciones antes de finalizar tu compra.
+      </p>
+    </div>
+  </dialog>
 
   {* ---- Template de item (clonado por JS) ---- *}
   <template data-ps-template="cart-item">
