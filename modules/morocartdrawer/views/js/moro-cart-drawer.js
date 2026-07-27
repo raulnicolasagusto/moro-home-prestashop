@@ -32,6 +32,8 @@
   let ajaxUrl = '';
   let lastBadgeCount = -1;
   let isOpen = false;
+  let shippingConfig = { enabled: false, showHome: false, showBranch: true };
+  let shippingEstimate = null;
 
   const drawerSel = '[data-ps-component="moro-cart-drawer"]';
   /** @type {HTMLElement | null} */
@@ -99,6 +101,26 @@
       .catch((err) => { console.error('[moroCart] removeItem failed:', err); });
   };
 
+  const estimateShippingAjax = (/** @type {string} */ postalCode) => {
+    const params = new URLSearchParams();
+    params.append('ajax', '1');
+    params.append('action', 'estimateShipping');
+    params.append('postal_code', postalCode);
+
+    return fetch(ajaxUrl, { method: 'POST', body: params })
+      .then(r => r.json())
+      .then(data => {
+        if (!data || !data.success) {
+          showShippingError(data && data.error ? data.error : 'No pudimos calcular el envío en este momento.');
+          return;
+        }
+        renderShippingResult(data);
+      })
+      .catch(() => {
+        showShippingError('No pudimos calcular el envío en este momento.');
+      });
+  };
+
   /* =================================================================
      Render
      ================================================================= */
@@ -151,6 +173,38 @@
   const updateSubtotal = (/** @type {string} */ val) => {
     const el = $('[data-ps-ref="cart-subtotal"]');
     if (el) el.textContent = val;
+    updateGrandTotal();
+  };
+
+  const parseMoney = (/** @type {string} */ value) => {
+    const normalized = String(value || '')
+      .replace(/[^0-9,.-]/g, '')
+      .replace(/\./g, '')
+      .replace(',', '.');
+    const parsed = parseFloat(normalized);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
+
+  const formatMoney = (/** @type {number} */ amount) =>
+    '$ ' + Number(amount || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const updateGrandTotal = () => {
+    const subtotalEl = $('[data-ps-ref="cart-subtotal"]');
+    const shippingValueEl = $('[data-ps-ref="cart-shipping-value"]');
+    const totalEl = $('[data-ps-ref="cart-total-value"]');
+    const shippingRow = $('[data-ps-ref="cart-shipping-total"]');
+    const grandTotalRow = $('[data-ps-ref="cart-grand-total"]');
+
+    if (!subtotalEl || !totalEl || !shippingRow || !grandTotalRow || !shippingValueEl) return;
+
+    const subtotalAmount = parseMoney(subtotalEl.textContent || '0');
+    const shippingAmount = parseMoney(shippingValueEl.textContent || '0');
+    const total = subtotalAmount + shippingAmount;
+
+    totalEl.textContent = formatMoney(total);
+    const hasShipping = shippingAmount > 0;
+    shippingRow.hidden = !hasShipping;
+    grandTotalRow.hidden = !hasShipping;
   };
 
   const updateBadge = (/** @type {number} */ count) => {
@@ -172,8 +226,89 @@
     itemsEl.hidden = !has;
     footerEl.hidden = !has;
     if (shippingEl) {
-      shippingEl.hidden = !has;
+      shippingEl.hidden = !has || !shippingConfig.enabled || !shippingConfig.showBranch;
     }
+
+    if (!has) {
+      resetShippingResult();
+    }
+  };
+
+  const resetShippingResult = () => {
+    const result = $('[data-ps-ref="cart-shipping-result"]');
+    const options = $('[data-ps-ref="cart-shipping-options"]');
+    const error = $('[data-ps-ref="cart-shipping-error"]');
+    const shippingValueEl = $('[data-ps-ref="cart-shipping-value"]');
+
+    if (result) result.hidden = true;
+    if (options) options.innerHTML = '';
+    if (error) {
+      error.hidden = true;
+      error.textContent = '';
+    }
+    if (shippingValueEl) shippingValueEl.textContent = '$0,00';
+
+    shippingEstimate = null;
+    updateGrandTotal();
+  };
+
+  const showShippingError = (/** @type {string} */ message) => {
+    const result = $('[data-ps-ref="cart-shipping-result"]');
+    const error = $('[data-ps-ref="cart-shipping-error"]');
+    const options = $('[data-ps-ref="cart-shipping-options"]');
+    if (result) result.hidden = false;
+    if (options) options.innerHTML = '';
+    if (error) {
+      error.hidden = false;
+      error.textContent = message;
+    }
+  };
+
+  const renderShippingResult = (/** @type {{postalCode:string,shipping:string,total:string,options:Array<{label:string,price:string,selected:boolean}>}} */ data) => {
+    const result = $('[data-ps-ref="cart-shipping-result"]');
+    const cpLabel = $('[data-ps-ref="cart-shipping-postcode-label"]');
+    const options = $('[data-ps-ref="cart-shipping-options"]');
+    const error = $('[data-ps-ref="cart-shipping-error"]');
+    const shippingValueEl = $('[data-ps-ref="cart-shipping-value"]');
+
+    if (!result || !cpLabel || !options || !shippingValueEl) return;
+
+    cpLabel.textContent = 'Entregas para el CP: ' + data.postalCode;
+    options.innerHTML = '';
+    if (error) {
+      error.hidden = true;
+      error.textContent = '';
+    }
+
+    (data.options || []).forEach((option) => {
+      const row = document.createElement('label');
+      row.className = 'moro-cart-drawer__shipping-option' + (option.selected ? ' is-selected' : '');
+
+      const left = document.createElement('div');
+      left.className = 'moro-cart-drawer__shipping-option-left';
+
+      const radio = document.createElement('span');
+      radio.className = 'moro-cart-drawer__shipping-option-radio' + (option.selected ? ' is-selected' : '');
+      left.appendChild(radio);
+
+      const text = document.createElement('span');
+      text.className = 'moro-cart-drawer__shipping-option-text';
+      text.textContent = option.label || '';
+      left.appendChild(text);
+
+      const price = document.createElement('span');
+      price.className = 'moro-cart-drawer__shipping-option-price';
+      price.textContent = option.price || '$0,00';
+
+      row.appendChild(left);
+      row.appendChild(price);
+      options.appendChild(row);
+    });
+
+    shippingValueEl.textContent = data.shipping || '$0,00';
+    result.hidden = false;
+    shippingEstimate = data;
+    updateGrandTotal();
   };
 
   /* =================================================================
@@ -290,38 +425,41 @@
         break;
       }
       case 'toggle-shipping-calc': {
-        // Fase 1: el form ya está siempre visible; este botón solo es la
-        // etiqueta clickleable del bloque. La lógica de colapsar/expandir
-        // se agrega en Fase 2 junto con la llamada a la API.
         e.preventDefault();
+        const input = /** @type {HTMLInputElement|null} */ ($('[data-ps-ref="cart-shipping-postcode"]'));
+        if (input) input.focus();
         break;
       }
       case 'calculate-shipping': {
-        // El submit real lo atrapa onShippingSubmit (listener dedicado).
-        // Acá solo frenamos el caso de click directo en el botón.
+        // No prevenir default acá: el submit real del form lo maneja
+        // onShippingSubmit(), que dispara la consulta AJAX.
+        break;
+      }
+      case 'change-shipping-postcode': {
         e.preventDefault();
+        const input = /** @type {HTMLInputElement|null} */ ($('[data-ps-ref="cart-shipping-postcode"]'));
+        resetShippingResult();
+        if (input) {
+          input.focus();
+          input.select();
+        }
         break;
       }
     }
   };
 
-  /**
-   * Fase 1: el botón Calcular no llama a ninguna API todavía.
-   * Prevenimos el submit default del form para que no recargue la página.
-   * En Fase 2 esto pegará al endpoint del módulo que actúa de proxy contra
-   * la API MiCorreo de Correo Argentino (o el carrier guardado en config).
-   */
   const onShippingSubmit = (/** @type {Event} */ ev) => {
     ev.preventDefault();
     const form = /** @type {HTMLFormElement | null} */ (ev.target);
     if (!form) return;
     const input = form.querySelector('[data-ps-ref="cart-shipping-postcode"]');
     const cp = input ? /** @type {HTMLInputElement} */ (input).value.trim() : '';
-    if (!cp) {
-      console.warn('[moroCart] shipping: código postal vacío, no se hace nada todavía (Fase 1)');
+    if (!/^\d{4}$/.test(cp)) {
+      showShippingError('Ingresá un código postal válido de 4 cifras.');
       return;
     }
-    console.log('[moroCart] shipping: cálculo pendiente de implementar — CP:', cp);
+
+    estimateShippingAjax(cp);
   };
 
   const onKeydown = (/** @type {KeyboardEvent} */ e) => {
@@ -344,6 +482,13 @@
       if (raw) {
         const parsed = JSON.parse(raw);
         ajaxUrl = parsed.ajaxUrl || '';
+        if (parsed.shipping) {
+          shippingConfig = {
+            enabled: Boolean(parsed.shipping.enabled),
+            showHome: Boolean(parsed.shipping.showHome),
+            showBranch: Boolean(parsed.shipping.showBranch),
+          };
+        }
         console.log('[moroCart] ajaxUrl:', ajaxUrl);
       }
     } catch (_) {}

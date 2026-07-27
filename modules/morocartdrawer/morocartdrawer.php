@@ -15,6 +15,8 @@ class MoroCartDrawer extends Module
 {
     private const SHIPPING_ENABLED_KEY = 'MORO_CARTDRAWER_SHIPPING_ENABLED';
     private const SHIPPING_MODULE_KEY = 'MORO_CARTDRAWER_SHIPPING_MODULE';
+    private const SHIPPING_SHOW_HOME_KEY = 'MORO_CARTDRAWER_SHIPPING_SHOW_HOME';
+    private const SHIPPING_SHOW_BRANCH_KEY = 'MORO_CARTDRAWER_SHIPPING_SHOW_BRANCH';
 
     private const KNOWN_CARRIER_LABELS = [
         'correoargentino' => 'Correo Argentino',
@@ -89,14 +91,36 @@ class MoroCartDrawer extends Module
             }
         }
 
+        $showHome = (int) Configuration::get(self::SHIPPING_SHOW_HOME_KEY);
+        $showBranch = (int) Configuration::get(self::SHIPPING_SHOW_BRANCH_KEY);
+
+        if ((string) Configuration::get(self::SHIPPING_SHOW_HOME_KEY) === '') {
+            $showHome = 0;
+        }
+
+        if ((string) Configuration::get(self::SHIPPING_SHOW_BRANCH_KEY) === '') {
+            $showBranch = 1;
+        }
+
+        if ($shippingEnabled && $showHome === 0 && $showBranch === 0) {
+            $showBranch = 1;
+        }
+
         $this->context->smarty->assign([
             'moro_cart_drawer_cart_url'   => $cartUrl,
             'moro_cart_drawer_order_url'  => $orderUrl,
             'moro_cart_drawer_new_url'    => $newProductsUrl,
             'moro_cart_drawer_ajax_url'   => $ajaxUrl,
             'moro_cart_drawer_shipping_enabled' => $shippingEnabled,
+            'moro_cart_drawer_shipping_show_home' => (bool) $showHome,
+            'moro_cart_drawer_shipping_show_branch' => (bool) $showBranch,
             'moro_cart_drawer_ps_data'    => json_encode([
                 'ajaxUrl' => $ajaxUrl,
+                'shipping' => [
+                    'enabled' => $shippingEnabled,
+                    'showHome' => (bool) $showHome,
+                    'showBranch' => (bool) $showBranch,
+                ],
             ]),
         ]);
 
@@ -114,6 +138,8 @@ class MoroCartDrawer extends Module
         if (Tools::isSubmit('submitMoroCartDrawer')) {
             $enabled = (int) Tools::getValue(self::SHIPPING_ENABLED_KEY, 0);
             $moduleCode = (string) Tools::getValue(self::SHIPPING_MODULE_KEY, '');
+            $showHome = (int) Tools::getValue(self::SHIPPING_SHOW_HOME_KEY, 0);
+            $showBranch = (int) Tools::getValue(self::SHIPPING_SHOW_BRANCH_KEY, 1);
 
             $available = $this->getAvailableCarrierModules();
             $validCodes = array_column($available, 'code');
@@ -131,8 +157,19 @@ class MoroCartDrawer extends Module
                 $moduleCode = $validCodes[0] ?? '';
             }
 
+            if ($enabled === 1 && $showHome === 0 && $showBranch === 0) {
+                $showBranch = 1;
+                $output .= $this->displayError($this->trans(
+                    'Debes activar al menos una opción: envío a domicilio o envío a sucursal.',
+                    [],
+                    'Modules.Morocartdrawer.Admin'
+                ));
+            }
+
             Configuration::updateValue(self::SHIPPING_ENABLED_KEY, $enabled);
             Configuration::updateValue(self::SHIPPING_MODULE_KEY, $enabled === 1 ? $moduleCode : '');
+            Configuration::updateValue(self::SHIPPING_SHOW_HOME_KEY, $showHome);
+            Configuration::updateValue(self::SHIPPING_SHOW_BRANCH_KEY, $showBranch);
 
             $output .= $this->displayConfirmation($this->trans('Settings updated.', [], 'Admin.Notifications.Success'));
         }
@@ -146,6 +183,16 @@ class MoroCartDrawer extends Module
         $hasCarriers = count($available) > 0;
         $enabled = (int) Configuration::get(self::SHIPPING_ENABLED_KEY);
         $moduleCode = (string) Configuration::get(self::SHIPPING_MODULE_KEY);
+        $showHome = (int) Configuration::get(self::SHIPPING_SHOW_HOME_KEY);
+        $showBranch = (int) Configuration::get(self::SHIPPING_SHOW_BRANCH_KEY);
+
+        if ((string) Configuration::get(self::SHIPPING_SHOW_HOME_KEY) === '') {
+            $showHome = 0;
+        }
+
+        if ((string) Configuration::get(self::SHIPPING_SHOW_BRANCH_KEY) === '') {
+            $showBranch = 1;
+        }
 
         $inputs = [];
 
@@ -173,6 +220,30 @@ class MoroCartDrawer extends Module
                     'query' => $available,
                     'id' => 'code',
                     'name' => 'label',
+                ],
+            ];
+
+            $inputs[] = [
+                'type' => 'switch',
+                'label' => $this->trans('Mostrar envio a domicilio', [], 'Modules.Morocartdrawer.Admin'),
+                'name' => self::SHIPPING_SHOW_HOME_KEY,
+                'is_bool' => true,
+                'desc' => $this->trans('Esta opción queda preparada para una etapa siguiente.', [], 'Modules.Morocartdrawer.Admin'),
+                'values' => [
+                    ['id' => 'show_home_on', 'value' => 1, 'label' => $this->trans('Yes', [], 'Admin.Global')],
+                    ['id' => 'show_home_off', 'value' => 0, 'label' => $this->trans('No', [], 'Admin.Global')],
+                ],
+            ];
+
+            $inputs[] = [
+                'type' => 'switch',
+                'label' => $this->trans('Mostrar envio a sucursal', [], 'Modules.Morocartdrawer.Admin'),
+                'name' => self::SHIPPING_SHOW_BRANCH_KEY,
+                'is_bool' => true,
+                'desc' => $this->trans('Esta opción es la que funciona por ahora.', [], 'Modules.Morocartdrawer.Admin'),
+                'values' => [
+                    ['id' => 'show_branch_on', 'value' => 1, 'label' => $this->trans('Yes', [], 'Admin.Global')],
+                    ['id' => 'show_branch_off', 'value' => 0, 'label' => $this->trans('No', [], 'Admin.Global')],
                 ],
             ];
 
@@ -206,6 +277,8 @@ class MoroCartDrawer extends Module
 
         $helper->fields_value[self::SHIPPING_ENABLED_KEY] = $enabled;
         $helper->fields_value[self::SHIPPING_MODULE_KEY] = $moduleCode;
+        $helper->fields_value[self::SHIPPING_SHOW_HOME_KEY] = $showHome;
+        $helper->fields_value[self::SHIPPING_SHOW_BRANCH_KEY] = $showBranch;
 
         return $helper->generateForm([[
             'form' => [

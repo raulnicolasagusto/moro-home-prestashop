@@ -81,6 +81,22 @@
             Calcular
           </button>
         </form>
+
+        <div class="moro-cart-drawer__shipping-result"
+             data-ps-ref="cart-shipping-result"
+             hidden>
+          <div class="moro-cart-drawer__shipping-result-head">
+            <span class="moro-cart-drawer__shipping-result-cp" data-ps-ref="cart-shipping-postcode-label">Entregas para el CP: -</span>
+            <button type="button"
+                    class="moro-cart-drawer__shipping-change"
+                    data-ps-action="change-shipping-postcode">
+              Cambiar CP
+            </button>
+          </div>
+          <h4 class="moro-cart-drawer__shipping-result-title">Opciones de Envío</h4>
+          <div class="moro-cart-drawer__shipping-options" data-ps-ref="cart-shipping-options"></div>
+          <p class="moro-cart-drawer__shipping-error" data-ps-ref="cart-shipping-error" hidden></p>
+        </div>
       </div>
       {/if}
     </div>
@@ -90,6 +106,14 @@
       <div class="moro-cart-drawer__subtotal">
         <span class="moro-cart-drawer__subtotal-label">Subtotal</span>
         <span class="moro-cart-drawer__subtotal-value" data-ps-ref="cart-subtotal">$0,00</span>
+      </div>
+      <div class="moro-cart-drawer__shipping-total" data-ps-ref="cart-shipping-total" hidden>
+        <span class="moro-cart-drawer__shipping-total-label">Envío</span>
+        <span class="moro-cart-drawer__shipping-total-value" data-ps-ref="cart-shipping-value">$0,00</span>
+      </div>
+      <div class="moro-cart-drawer__grand-total" data-ps-ref="cart-grand-total" hidden>
+        <span class="moro-cart-drawer__grand-total-label">Total</span>
+        <span class="moro-cart-drawer__grand-total-value" data-ps-ref="cart-total-value">$0,00</span>
       </div>
       <div class="moro-cart-drawer__actions">
         <a class="moro-cart-drawer__btn moro-cart-drawer__btn--secondary"
