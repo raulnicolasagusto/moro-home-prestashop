@@ -1,0 +1,367 @@
+.moro-spc {
+  --moro-spc-surface: #fcf9f8;
+  --moro-spc-surface-panel: #ffffff;
+  --moro-spc-surface-summary: #f6f3f2;
+  --moro-spc-border: #dfdfdf;
+  --moro-spc-text: #1c1b1b;
+  --moro-spc-muted: #494544;
+  --moro-spc-primary: #d46211;
+  --moro-spc-primary-hover: #b8500c;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: calc(100vh - 6rem);
+  margin-inline: calc(50% - 50vw);
+  color: var(--moro-spc-text);
+  background: var(--moro-spc-surface);
+}
+
+.moro-spc__panel {
+  padding: 2.5rem 1.25rem;
+}
+
+.moro-spc__panel--form {
+  background: var(--moro-spc-surface-panel);
+}
+
+.moro-spc__panel--summary {
+  background: var(--moro-spc-surface-summary);
+  border-top: 1px solid var(--moro-spc-border);
+}
+
+.moro-spc__panel-inner {
+  width: min(100%, 42rem);
+}
+
+.moro-spc__form,
+.moro-spc__section {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.moro-spc__section {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.moro-spc__section + .moro-spc__section {
+  padding-top: 1.5rem;
+}
+
+.moro-spc__title {
+  margin: 0;
+  color: var(--moro-spc-text);
+  font-family: "Libre Caslon Display", "Newsreader", Georgia, serif;
+  font-size: clamp(1.75rem, 1.45rem + 1vw, 2rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.moro-spc__helper,
+.moro-spc__pending,
+.moro-spc__label,
+.moro-spc__check-label,
+.moro-spc__input,
+.moro-spc__button,
+.moro-spc__secondary-button,
+.moro-spc__total-line {
+  font-family: "Montserrat", Arial, sans-serif;
+}
+
+.moro-spc__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.moro-spc__field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.moro-spc__label {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.moro-spc__input {
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--moro-spc-border);
+  border-radius: 0.875rem;
+  background: #ffffff;
+  color: var(--moro-spc-text);
+  font-size: 1rem;
+  line-height: 1.4;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.moro-spc__input:focus {
+  outline: none;
+  border-color: var(--moro-spc-primary);
+  box-shadow: 0 0 0 1px var(--moro-spc-primary);
+}
+
+.moro-spc__input:disabled {
+  color: var(--moro-spc-muted);
+  background: #f3f0f0;
+  cursor: not-allowed;
+}
+
+.moro-spc__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.625rem;
+}
+
+.moro-spc__checkbox {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.125rem;
+  accent-color: var(--moro-spc-primary);
+}
+
+.moro-spc__check-label,
+.moro-spc__helper {
+  color: var(--moro-spc-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.moro-spc__pending {
+  padding: 1rem;
+  border: 1px dashed var(--moro-spc-border);
+  border-radius: 0.875rem;
+  color: var(--moro-spc-muted);
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.moro-spc__pending--summary {
+  margin-top: 1.5rem;
+}
+
+.moro-spc__cart {
+  margin-top: 1.5rem;
+}
+
+.moro-spc__cart-count {
+  margin: 0 0 1rem;
+  color: var(--moro-spc-muted);
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.moro-spc__cart-list {
+  display: grid;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.moro-spc__cart-item {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+}
+
+.moro-spc__cart-image-wrap {
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  border: 1px solid var(--moro-spc-border);
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.moro-spc__cart-image {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.moro-spc__cart-badge {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  z-index: 1;
+  display: grid;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding-inline: 0.25rem;
+  place-items: center;
+  border-radius: 999px;
+  color: #ffffff;
+  background: var(--moro-spc-primary);
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.moro-spc__cart-info {
+  display: grid;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.moro-spc__cart-name {
+  color: var(--moro-spc-text);
+  font-family: "Newsreader", Georgia, serif;
+  font-size: 1.0625rem;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.moro-spc__cart-name:hover {
+  color: var(--moro-spc-primary);
+}
+
+.moro-spc__cart-attributes {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  color: var(--moro-spc-muted);
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.moro-spc__cart-attribute {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.moro-spc__cart-attribute dt,
+.moro-spc__cart-attribute dd {
+  margin: 0;
+}
+
+.moro-spc__cart-attribute dt::after {
+  content: ":";
+}
+
+.moro-spc__cart-price {
+  color: var(--moro-spc-text);
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.moro-spc__button,
+.moro-spc__secondary-button {
+  border: 0;
+  border-radius: 0.875rem;
+  font-weight: 500;
+  line-height: 1.3;
+  transition: background-color 300ms ease, color 300ms ease, opacity 200ms ease;
+}
+
+.moro-spc__button {
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 1rem 1.25rem;
+  color: #ffffff;
+  background: var(--moro-spc-primary);
+  font-size: 1.0625rem;
+}
+
+.moro-spc__button:not(:disabled):hover {
+  background: var(--moro-spc-primary-hover);
+}
+
+.moro-spc__button:disabled,
+.moro-spc__secondary-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.moro-spc__discount {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-block: 1.5rem;
+  border-block: 1px solid var(--moro-spc-border);
+}
+
+.moro-spc__secondary-button {
+  min-height: 3.5rem;
+  padding: 0.875rem 1.25rem;
+  color: var(--moro-spc-text);
+  background: #e4e2e1;
+  font-size: 0.9375rem;
+}
+
+.moro-spc__totals {
+  display: grid;
+  gap: 0.875rem;
+  margin-top: 1.5rem;
+}
+
+.moro-spc__total-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--moro-spc-muted);
+  font-size: 1rem;
+}
+
+.moro-spc__total-line--grand {
+  margin-top: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--moro-spc-border);
+  color: var(--moro-spc-text);
+  font-family: "Libre Caslon Display", "Newsreader", Georgia, serif;
+  font-size: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .moro-spc__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .moro-spc__field--wide {
+    grid-column: 1 / -1;
+  }
+
+  .moro-spc__discount {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (min-width: 992px) {
+  .moro-spc {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .moro-spc__panel {
+    padding-block: 4rem;
+  }
+
+  .moro-spc__panel--form {
+    display: flex;
+    justify-content: flex-end;
+    padding-left: max(3rem, 8vw);
+    padding-right: 3rem;
+  }
+
+  .moro-spc__panel--summary {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 3rem;
+    padding-right: max(3rem, 8vw);
+    border-top: 0;
+    border-left: 1px solid var(--moro-spc-border);
+  }
+}
