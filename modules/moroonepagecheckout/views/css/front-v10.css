@@ -130,13 +130,8 @@
 }
 
 .moro-opc .step.collapse {
-  display: block;
-  height: auto;
-  visibility: visible;
-}
-
-.moro-opc .step .js-back {
-  display: none;
+  height: auto !important;
+  overflow: visible !important;
 }
 
 .moro-opc .step__title .page-title-section {
@@ -202,25 +197,81 @@
 }
 
 /* === DELIVERY / PAYMENT OPTIONS === */
+.moro-opc .delivery-option__item {
+  margin-bottom: 0.5rem;
+}
+
 .moro-opc .delivery-option__label,
 .moro-opc .payment-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   border: 1px solid var(--moro-opc-border);
   border-radius: 8px;
-  overflow: hidden;
-}
-
-.moro-opc .delivery-option__label {
   padding: 0.875rem 1rem;
-  margin-bottom: 0.5rem;
-}
-
-.moro-opc .payment-option {
-  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 .moro-opc .delivery-option__label:hover,
 .moro-opc .payment-option:hover {
   border-color: #c0c0c0;
+  background-color: #fafafa;
+}
+
+.moro-opc .delivery-option__label:has(input:checked),
+.moro-opc .payment-option:has(input:checked) {
+  border-color: var(--moro-opc-accent);
+  background-color: #fef9f5;
+}
+
+.moro-opc .delivery-option__left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.moro-opc .delivery-option__check {
+  flex-shrink: 0;
+}
+
+.moro-opc .delivery-option__check .form-check-input {
+  margin: 0;
+}
+
+.moro-opc .delivery-option__carrier {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.moro-opc .delivery-option__carrier-logo {
+  width: 1.5rem;
+  height: 1.5rem;
+  object-fit: contain;
+}
+
+.moro-opc .delivery-option__carrier-name {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--moro-opc-text);
+}
+
+.moro-opc .delivery-option__content {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8125rem;
+  color: var(--moro-opc-text-muted);
+  margin-left: 0.5rem;
+}
+
+.moro-opc .delivery-option__price {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--moro-opc-text);
+  margin-left: 1rem;
 }
 
 /* === CHECKBOXES === */

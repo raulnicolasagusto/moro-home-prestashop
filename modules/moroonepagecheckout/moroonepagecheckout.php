@@ -70,9 +70,18 @@ class Moroonepagecheckout extends Module
 
         $this->context->controller->registerStylesheet(
             'module-moroonepagecheckout-front',
-            'modules/' . $this->name . '/views/css/front-v6.css',
+            'modules/' . $this->name . '/views/css/front-v10.css',
             [
                 'media' => 'all',
+                'priority' => 210,
+            ]
+        );
+
+        $this->context->controller->registerJavascript(
+            'module-moroonepagecheckout-front',
+            'modules/' . $this->name . '/views/js/front.js',
+            [
+                'position' => 'bottom',
                 'priority' => 210,
             ]
         );
