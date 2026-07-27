@@ -2,6 +2,8 @@
 # Moro Home - PrestaShop .gitignore
 # ===================================
 
+documentation
+
 # ----- Caché y compilación -----
 var/cache/
 var/logs/

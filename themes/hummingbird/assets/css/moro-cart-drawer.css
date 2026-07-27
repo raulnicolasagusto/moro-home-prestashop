@@ -391,6 +391,101 @@
   color: var(--moro-primary);
 }
 
+/* ---- Shipping calculator ---- */
+/* Refleja designe/cart-con-envio.html (línea 259) pero con tokens --moro-*
+   y convenciones del módulo. Aparece abajo del último item (el JS toggleará
+   `hidden` según items.length > 0). */
+
+.moro-cart-drawer__shipping {
+  padding: 24px 28px;
+  border-top: 1px solid var(--moro-surface-dim);
+  background: var(--moro-surface);
+}
+
+.moro-cart-drawer__shipping-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 16px 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--moro-on-surface-variant);
+  transition: color 300ms ease;
+}
+
+.moro-cart-drawer__shipping-trigger:hover,
+.moro-cart-drawer__shipping-trigger:focus-visible {
+  color: var(--moro-primary);
+}
+
+.moro-cart-drawer__shipping-trigger .material-symbols-outlined {
+  font-size: 20px;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+}
+
+.moro-cart-drawer__shipping-label {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.moro-cart-drawer__shipping-form {
+  display: flex;
+  gap: 8px;
+}
+
+.moro-cart-drawer__shipping-input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 16px;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--moro-on-surface);
+  background: var(--moro-surface);
+  border: 1px solid var(--moro-surface-dim);
+  outline: none;
+  transition: border-color 300ms ease, color 300ms ease;
+}
+
+.moro-cart-drawer__shipping-input::placeholder {
+  color: var(--moro-on-surface-variant);
+  opacity: 0.7;
+}
+
+.moro-cart-drawer__shipping-input:focus,
+.moro-cart-drawer__shipping-input:focus-visible {
+  border-color: var(--moro-primary);
+}
+
+.moro-cart-drawer__shipping-submit {
+  flex-shrink: 0;
+  padding: 8px 24px;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--moro-on-surface);
+  background: var(--moro-surface);
+  border: 1px solid var(--moro-on-surface-variant, #494544);
+  cursor: pointer;
+  transition: border-color 300ms ease, color 300ms ease, background 300ms ease;
+}
+
+.moro-cart-drawer__shipping-submit:hover,
+.moro-cart-drawer__shipping-submit:focus-visible {
+  border-color: var(--moro-primary);
+  color: var(--moro-primary);
+}
+
 /* Bloqueo scroll del body */
 body.moro-cart-drawer-open {
   overflow: hidden;

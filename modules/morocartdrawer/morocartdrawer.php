@@ -3,8 +3,8 @@
  * Moro Cart Drawer.
  *
  * Renderiza un cart lateral (drawer) que se abre al clickear el icono de carrito
- * del header. Front-end primero: en esta etapa el drawer muestra el estado vacío.
- * Los items se inyectan via JS (window.moroCart.renderItems) o, más adelante,
+ * del header. Front-end primero: en esta etapa el drawer muestra el estado vacio.
+ * Los items se inyectan via JS (window.moroCart.renderItems) o, mas adelante,
  * via AJAX contra ps_shoppingcart.
  */
 if (!defined('_PS_VERSION_')) {
@@ -13,14 +13,21 @@ if (!defined('_PS_VERSION_')) {
 
 class MoroCartDrawer extends Module
 {
+    private const SHIPPING_ENABLED_KEY = 'MORO_CARTDRAWER_SHIPPING_ENABLED';
+    private const SHIPPING_MODULE_KEY = 'MORO_CARTDRAWER_SHIPPING_MODULE';
+
+    private const KNOWN_CARRIER_LABELS = [
+        'correoargentino' => 'Correo Argentino',
+    ];
+
     public function __construct()
     {
         $this->name = 'morocartdrawer';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->author = 'Moro Home';
         $this->need_instance = 0;
-        $this->bootstrap = false;
+        $this->bootstrap = true;
 
         parent::__construct();
 
@@ -70,16 +77,177 @@ class MoroCartDrawer extends Module
             'morocartdrawer', 'ajax', [], true
         );
 
+        // Shipping calc: solo se pasa al Smarty si el toggle esta activo
+        // Y el carrier previamente elegido sigue instalado/activo (re-check en vivo).
+        $shippingEnabled = false;
+        if ((int) Configuration::get(self::SHIPPING_ENABLED_KEY) === 1) {
+            $savedCode = (string) Configuration::get(self::SHIPPING_MODULE_KEY);
+            $available = $this->getAvailableCarrierModules();
+            $validCodes = array_column($available, 'code');
+            if ($savedCode !== '' && in_array($savedCode, $validCodes, true)) {
+                $shippingEnabled = true;
+            }
+        }
+
         $this->context->smarty->assign([
             'moro_cart_drawer_cart_url'   => $cartUrl,
             'moro_cart_drawer_order_url'  => $orderUrl,
             'moro_cart_drawer_new_url'    => $newProductsUrl,
             'moro_cart_drawer_ajax_url'   => $ajaxUrl,
+            'moro_cart_drawer_shipping_enabled' => $shippingEnabled,
             'moro_cart_drawer_ps_data'    => json_encode([
                 'ajaxUrl' => $ajaxUrl,
             ]),
         ]);
 
         return $this->display(__FILE__, 'views/templates/hook/cartdrawer.tpl');
+    }
+
+    /* ================================================================
+       Back-office config
+       ================================================================ */
+
+    public function getContent()
+    {
+        $output = '';
+
+        if (Tools::isSubmit('submitMoroCartDrawer')) {
+            $enabled = (int) Tools::getValue(self::SHIPPING_ENABLED_KEY, 0);
+            $moduleCode = (string) Tools::getValue(self::SHIPPING_MODULE_KEY, '');
+
+            $available = $this->getAvailableCarrierModules();
+            $validCodes = array_column($available, 'code');
+
+            if ($enabled === 1 && count($validCodes) === 0) {
+                $enabled = 0;
+                $output .= $this->displayError($this->trans(
+                    'No hay ningún método de envío instalado.',
+                    [],
+                    'Modules.Morocartdrawer.Admin'
+                ));
+            }
+
+            if ($enabled === 1 && !in_array($moduleCode, $validCodes, true)) {
+                $moduleCode = $validCodes[0] ?? '';
+            }
+
+            Configuration::updateValue(self::SHIPPING_ENABLED_KEY, $enabled);
+            Configuration::updateValue(self::SHIPPING_MODULE_KEY, $enabled === 1 ? $moduleCode : '');
+
+            $output .= $this->displayConfirmation($this->trans('Settings updated.', [], 'Admin.Notifications.Success'));
+        }
+
+        return $output . $this->renderForm();
+    }
+
+    private function renderForm(): string
+    {
+        $available = $this->getAvailableCarrierModules();
+        $hasCarriers = count($available) > 0;
+        $enabled = (int) Configuration::get(self::SHIPPING_ENABLED_KEY);
+        $moduleCode = (string) Configuration::get(self::SHIPPING_MODULE_KEY);
+
+        $inputs = [];
+
+        $inputs[] = [
+            'type' => 'switch',
+            'label' => $this->trans('Mostrar el calculador de costos de envío en el carrito', [], 'Modules.Morocartdrawer.Admin'),
+            'name' => self::SHIPPING_ENABLED_KEY,
+            'is_bool' => true,
+            'desc' => $hasCarriers
+                ? $this->trans('Cuando esta activo, debajo del ultimo item del carrito aparece una seccion para que el cliente calcule el costo de envio ingresando su codigo postal.', [], 'Modules.Morocartdrawer.Admin')
+                : $this->trans('Necesitas instalar al menos un metodo de envio para activar esta opcion.', [], 'Modules.Morocartdrawer.Admin'),
+            'disabled' => !$hasCarriers,
+            'values' => [
+                ['id' => 'shipping_on', 'value' => 1, 'label' => $this->trans('Yes', [], 'Admin.Global')],
+                ['id' => 'shipping_off', 'value' => 0, 'label' => $this->trans('No', [], 'Admin.Global')],
+            ],
+        ];
+
+        if ($hasCarriers) {
+            $inputs[] = [
+                'type' => 'select',
+                'label' => $this->trans('Metodo de envio a conectar', [], 'Modules.Morocartdrawer.Admin'),
+                'name' => self::SHIPPING_MODULE_KEY,
+                'options' => [
+                    'query' => $available,
+                    'id' => 'code',
+                    'name' => 'label',
+                ],
+            ];
+
+            if ($enabled === 1 && $moduleCode !== '') {
+                $resolvedLabel = self::KNOWN_CARRIER_LABELS[$moduleCode] ?? ucfirst($moduleCode);
+                $inputs[] = [
+                    'type' => 'html',
+                    'label' => '',
+                    'name' => 'moro_cartdrawer_shipping_status',
+                    'html_content' => '<div class="alert alert-info" style="margin-top:8px;">'
+                        . $this->trans('Conectado a:', [], 'Modules.Morocartdrawer.Admin')
+                        . ' <strong>' . htmlspecialchars($resolvedLabel, ENT_QUOTES, 'UTF-8') . '</strong> &#10003;'
+                        . '</div>',
+                ];
+            }
+        }
+
+        $helper = new HelperForm();
+        $helper->show_toolbar = false;
+        $helper->table = $this->table;
+        $helper->module = $this;
+        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
+        $helper->allow_employee_form_lang = (int) Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+        $helper->identifier = $this->identifier;
+        $helper->submit_action = 'submitMoroCartDrawer';
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            . '&configure=' . $this->name
+            . '&tab_module=' . $this->tab
+            . '&module_name=' . $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+
+        $helper->fields_value[self::SHIPPING_ENABLED_KEY] = $enabled;
+        $helper->fields_value[self::SHIPPING_MODULE_KEY] = $moduleCode;
+
+        return $helper->generateForm([[
+            'form' => [
+                'legend' => [
+                    'title' => $this->trans('Moro Cart Drawer settings', [], 'Modules.Morocartdrawer.Admin'),
+                    'icon' => 'icon-shopping-cart',
+                ],
+                'input' => $inputs,
+                'submit' => [
+                    'title' => $this->trans('Save', [], 'Admin.Actions'),
+                ],
+            ],
+        ]]);
+    }
+
+    private function getAvailableCarrierModules(): array
+    {
+        $idLang = (int) $this->context->language->id;
+
+        $carriers = Carrier::getCarriers(
+            $idLang,
+            true,
+            false,
+            false,
+            null,
+            Carrier::CARRIERS_MODULE
+        );
+
+        $out = [];
+        $seen = [];
+        if (is_array($carriers)) {
+            foreach ($carriers as $c) {
+                $code = (string) ($c['external_module_name'] ?? '');
+                if ($code === '' || $code === '0' || isset($seen[$code])) {
+                    continue;
+                }
+                $seen[$code] = true;
+                $label = self::KNOWN_CARRIER_LABELS[$code] ?? ucfirst($code);
+                $out[] = ['code' => $code, 'label' => $label];
+            }
+        }
+
+        return $out;
     }
 }

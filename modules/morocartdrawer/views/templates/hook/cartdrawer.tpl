@@ -1,7 +1,7 @@
 {**
  * Moro Cart Drawer — marcado del aside lateral.
  *
- * Estado vacío por defecto. Los items se inyectan via JS en
+ * Estado vacio por defecto. Los items se inyectan via JS en
  * [data-ps-target="cart-items"] usando el template [data-ps-template="cart-item"].
  *}
 
@@ -38,13 +38,13 @@
     {* ---- Drawer Body ---- *}
     <div class="moro-cart-drawer__body" data-ps-ref="cart-body">
 
-      {* Estado vacío (visible por defecto) *}
+      {* Estado vacio (visible por defecto) *}
       <div class="moro-cart-drawer__empty" data-ps-ref="cart-empty">
         <div class="moro-cart-drawer__empty-icon">
           <span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
         </div>
-        <h3 class="moro-cart-drawer__empty-title">Tu carrito está vacío.</h3>
-        <p class="moro-cart-drawer__empty-text">¿No sabés por dónde empezar? Descubrí nuestras últimas novedades curadas.</p>
+        <h3 class="moro-cart-drawer__empty-title">Tu carrito esta vacio.</h3>
+        <p class="moro-cart-drawer__empty-text">No sabes por donde empezar? Descubri nuestras ultimas novedades curadas.</p>
         <a class="moro-cart-drawer__empty-link"
            href="{$moro_cart_drawer_new_url}">
           Ver Novedades
@@ -53,6 +53,36 @@
 
       {* Lista de items (oculta por defecto; JS la llena y muestra) *}
       <div class="moro-cart-drawer__items" data-ps-target="cart-items" hidden></div>
+
+      {if $moro_cart_drawer_shipping_enabled}
+      {* ---- Calculador de envio (ref designe/cart-con-envio.html linea 259) ---- *}
+      <div class="moro-cart-drawer__shipping"
+           data-ps-ref="cart-shipping"
+           hidden>
+        <button type="button"
+                class="moro-cart-drawer__shipping-trigger"
+                data-ps-action="toggle-shipping-calc">
+          <span class="material-symbols-outlined" aria-hidden="true">local_shipping</span>
+          <span class="moro-cart-drawer__shipping-label">Calcular costo de env&iacute;o</span>
+        </button>
+        <form class="moro-cart-drawer__shipping-form"
+              data-ps-ref="cart-shipping-form"
+              novalidate>
+          <input type="text"
+                 inputmode="numeric"
+                 class="moro-cart-drawer__shipping-input"
+                 placeholder="C&oacute;digo Postal"
+                 aria-label="C&oacute;digo Postal"
+                 maxlength="8"
+                 data-ps-ref="cart-shipping-postcode" />
+          <button type="submit"
+                  class="moro-cart-drawer__shipping-submit"
+                  data-ps-action="calculate-shipping">
+            Calcular
+          </button>
+        </form>
+      </div>
+      {/if}
     </div>
 
     {* ---- Drawer Footer ---- *}
