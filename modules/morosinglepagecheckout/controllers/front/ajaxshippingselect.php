@@ -75,6 +75,55 @@ class MorosinglepagecheckoutAjaxshippingselectModuleFrontController extends Modu
                     `agency_postal_code` = VALUES(`agency_postal_code`),
                     `date_upd` = NOW()'
             );
+
+            try {
+                $idCarrierCorreo = (int) Db::getInstance()->getValue(
+                    'SELECT `id_carrier`
+                    FROM `' . _DB_PREFIX_ . 'correoargentino_rates`
+                    WHERE `service_type` = "' . pSQL($productType) . '"
+                      AND `delivered_type` = "' . pSQL($deliveryType) . '"'
+                );
+
+                if ($idCarrierCorreo > 0 && (int) $cart->id_address_delivery > 0) {
+                    $cart->id_carrier = $idCarrierCorreo;
+                    $cart->setDeliveryOption([
+                        (int) $cart->id_address_delivery => $idCarrierCorreo . ',',
+                    ]);
+                    $cart->update();
+                }
+
+                $freshCart = new Cart((int) $cart->id);
+
+                if ($deliveryType === 'S' && $idCarrierCorreo > 0 && Validate::isLoadedObject($freshCart) && (int) $freshCart->id_address_delivery > 0) {
+                    $address = new Address((int) $freshCart->id_address_delivery);
+                    $stateIsoCode = '';
+
+                    if (Validate::isLoadedObject($address) && (int) $address->id_state > 0) {
+                        $state = new State((int) $address->id_state);
+                        if (Validate::isLoadedObject($state)) {
+                            $stateIsoCode = (string) $state->iso_code;
+                        }
+                    }
+
+                    Hook::exec('actionValidateStepComplete', [
+                        'step_name' => 'delivery',
+                        'cart' => $freshCart,
+                        'request_params' => [
+                            'correoargentino_branch_id_' . $idCarrierCorreo => $agencyId,
+                            'correoargentino_state_id_' . $idCarrierCorreo => $stateIsoCode,
+                        ],
+                    ]);
+                }
+            } catch (Throwable $exception) {
+                PrestaShopLogger::addLog(
+                    'Moro SPC Correo Argentino shipping select hook failed: ' . $exception->getMessage(),
+                    3,
+                    null,
+                    'Cart',
+                    (int) $cart->id,
+                    true
+                );
+            }
         }
 
         $this->renderJson(['success' => true]);

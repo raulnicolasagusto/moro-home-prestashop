@@ -6,6 +6,17 @@ class MorosinglepagecheckoutCheckoutModuleFrontController extends ModuleFrontCon
 
     public function initContent()
     {
+        $cart = $this->context->cart;
+        if (Validate::isLoadedObject($cart)) {
+            $idOrder = (int) Order::getIdByCartId((int) $cart->id);
+            if ($idOrder > 0) {
+                $order = new Order($idOrder);
+                if (Validate::isLoadedObject($order)) {
+                    Tools::redirect('index.php?controller=order-confirmation&id_cart=' . (int) $order->id_cart . '&id_module=' . (int) $this->module->id . '&id_order=' . (int) $order->id . '&key=' . $order->secure_key);
+                }
+            }
+        }
+
         parent::initContent();
         $idCountry = (int) Country::getByIso('AR') ?: (int) Configuration::get('PS_COUNTRY_DEFAULT');
 

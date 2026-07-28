@@ -6,11 +6,13 @@ if (!defined('_PS_VERSION_')) {
 
 class Morosinglepagecheckout extends Module
 {
+    private static $processingOrders = [];
+
     public function __construct()
     {
         $this->name = 'morosinglepagecheckout';
         $this->tab = 'checkout';
-        $this->version = '1.1.2';
+        $this->version = '1.1.3';
         $this->author = 'Moro Home';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -67,54 +69,9 @@ class Morosinglepagecheckout extends Module
                 ? $params['cart']
                 : new Cart((int) $order->id_cart);
 
-            if (!Validate::isLoadedObject($cart) || !$this->isPaidOrder($order) || !$this->shouldImportCorreoShipment($order, $cart)) {
-                return;
-            }
-
-            $selection = $this->getShippingSelection((int) $cart->id);
-            if (empty($selection) || !in_array($selection['delivery_type'], ['S', 'D'], true)) {
-                $this->recordShipmentAttempt($order, $cart, null, null, 'skipped', 'No hay seleccion de envio Correo Argentino para este carrito.');
-                return;
-            }
-
-            $address = new Address((int) $order->id_address_delivery);
-            $customer = new Customer((int) $order->id_customer);
-            if (!Validate::isLoadedObject($address) || !Validate::isLoadedObject($customer)) {
-                $this->recordShipmentAttempt($order, $cart, $selection, null, 'error', 'No se pudo cargar direccion o cliente del pedido.');
-                return;
-            }
-
-            $authContext = $this->getCorreoAuthContext();
-            if (!$authContext['ok']) {
-                $this->recordShipmentAttempt($order, $cart, $selection, null, 'error', $authContext['error']);
-                return;
-            }
-
-            $payload = $this->buildShippingImportPayload($order, $cart, $customer, $address, $selection, $authContext['customerId']);
-            $response = $this->doJsonRequest(
-                $authContext['baseUrl'] . '/shipping/import',
-                $payload,
-                [
-                    'Authorization: Bearer ' . $authContext['token'],
-                    'Content-Type: application/json',
-                ],
-                'POST',
-                20
-            );
-
-            if (!$response['ok']) {
-                $error = $this->extractApiError($response);
-                $this->recordShipmentAttempt($order, $cart, $selection, $payload, 'error', $error, $response['data']);
-                PrestaShopLogger::addLog('Moro SPC Correo import failed for order ' . (int) $order->id . ': ' . $error, 3, null, 'Order', (int) $order->id, true);
-                return;
-            }
-
-            $trackingNumber = $this->extractTrackingNumber($response['data']);
-            $this->recordShipmentAttempt($order, $cart, $selection, $payload, 'created', '', $response['data'], $trackingNumber);
-            $this->updateOrderCarrierTracking((int) $order->id, $trackingNumber);
-            $this->addOrderPrivateMessage($order, $this->buildShipmentSuccessMessage($selection, $response['data'], $trackingNumber));
-        } catch (Exception $exception) {
-            PrestaShopLogger::addLog('Moro SPC Correo import exception: ' . $exception->getMessage(), 3, null, 'Order', isset($order) ? (int) $order->id : 0, true);
+            $this->importCorreoShipmentForOrder($order, $cart, 'validate_order');
+        } catch (Throwable $exception) {
+            PrestaShopLogger::addLog('Moro SPC Correo import throwable: ' . $exception->getMessage(), 3, null, 'Order', isset($order) ? (int) $order->id : 0, true);
         }
     }
 
@@ -299,11 +256,168 @@ class Morosinglepagecheckout extends Module
         return (int) $cart->id_carrier > 0 || (float) $order->total_shipping_tax_incl >= 0;
     }
 
+    private function importCorreoShipmentForOrder(Order $order, Cart $cart, $source)
+    {
+        $idOrder = (int) $order->id;
+        if ($idOrder <= 0 || isset(self::$processingOrders[$idOrder])) {
+            return;
+        }
+
+        self::$processingOrders[$idOrder] = true;
+
+        try {
+            if (!Validate::isLoadedObject($cart) || !$this->installDb() || !$this->shouldImportCorreoShipment($order, $cart)) {
+                return;
+            }
+
+            $selection = $this->getShippingSelection((int) $cart->id);
+            if (empty($selection) || !in_array($selection['delivery_type'], ['S', 'D'], true)) {
+                $this->recordShipmentAttempt($order, $cart, null, null, 'skipped', 'No hay seleccion de envio Correo Argentino para este carrito. Fuente: ' . (string) $source);
+                return;
+            }
+
+            if (!$this->isPaidOrRecoverableMercadoPagoOrder($order, $cart)) {
+                return;
+            }
+
+            $this->recoverMercadoPagoOrderStateIfNeeded($order, $cart);
+
+            $address = new Address((int) $order->id_address_delivery);
+            $customer = new Customer((int) $order->id_customer);
+            if (!Validate::isLoadedObject($address) || !Validate::isLoadedObject($customer)) {
+                $this->recordShipmentAttempt($order, $cart, $selection, null, 'error', 'No se pudo cargar direccion o cliente del pedido.');
+                return;
+            }
+
+            $authContext = $this->getCorreoAuthContext();
+            if (!$authContext['ok']) {
+                $this->recordShipmentAttempt($order, $cart, $selection, null, 'error', $authContext['error']);
+                return;
+            }
+
+            $payload = $this->buildShippingImportPayload($order, $cart, $customer, $address, $selection, $authContext['customerId']);
+            $response = $this->doJsonRequest(
+                $authContext['baseUrl'] . '/shipping/import',
+                $payload,
+                [
+                    'Authorization: Bearer ' . $authContext['token'],
+                    'Content-Type: application/json',
+                ],
+                'POST',
+                20
+            );
+
+            if (!$response['ok']) {
+                $error = $this->extractApiError($response);
+                $this->recordShipmentAttempt($order, $cart, $selection, $payload, 'error', $error, $response['data']);
+                PrestaShopLogger::addLog('Moro SPC Correo import failed for order ' . $idOrder . ': ' . $error, 3, null, 'Order', $idOrder, true);
+                return;
+            }
+
+            $trackingNumber = $this->extractTrackingNumber($response['data']);
+            $this->recordShipmentAttempt($order, $cart, $selection, $payload, 'created', '', $response['data'], $trackingNumber);
+            $this->updateOrderCarrierTracking($idOrder, $trackingNumber);
+            $this->addOrderPrivateMessage($order, $this->buildShipmentSuccessMessage($selection, $response['data'], $trackingNumber));
+        } catch (Throwable $exception) {
+            PrestaShopLogger::addLog('Moro SPC Correo import failed in ' . (string) $source . ': ' . $exception->getMessage(), 3, null, 'Order', $idOrder, true);
+        } finally {
+            unset(self::$processingOrders[$idOrder]);
+        }
+    }
+
     private function isPaidOrder(Order $order)
     {
         $state = new OrderState((int) $order->current_state);
 
         return Validate::isLoadedObject($state) && (bool) $state->paid;
+    }
+
+    private function isPaidOrRecoverableMercadoPagoOrder(Order $order, Cart $cart)
+    {
+        if ($this->isPaidOrder($order)) {
+            return true;
+        }
+
+        if (!$this->isMercadoPagoOrder($order)) {
+            return false;
+        }
+
+        if ((int) $order->current_state !== 0) {
+            return false;
+        }
+
+        $requestStatus = strtolower((string) Tools::getValue('status'));
+        $requestCollectionStatus = strtolower((string) Tools::getValue('collection_status'));
+        if (in_array($requestStatus, ['approved', 'processed'], true) || in_array($requestCollectionStatus, ['approved', 'processed'], true)) {
+            return true;
+        }
+
+        $transaction = $this->getMercadoPagoTransaction((int) $cart->id);
+        if (is_array($transaction)) {
+            $status = strtolower((string) ($transaction['payment_status'] ?? ''));
+            if (in_array($status, ['approved', 'processed'], true)) {
+                return true;
+            }
+        }
+
+        return (float) $order->total_paid > 0 && (float) $cart->getOrderTotal(true, Cart::BOTH) > 0;
+    }
+
+    private function recoverMercadoPagoOrderStateIfNeeded(Order $order, Cart $cart)
+    {
+        if (!$this->isMercadoPagoOrder($order) || (int) $order->current_state !== 0) {
+            return;
+        }
+
+        $idState = (int) Configuration::get('MERCADOPAGO_STATUS_1');
+        if ($idState <= 0) {
+            $idState = (int) Configuration::get('PS_OS_PAYMENT');
+        }
+
+        $state = new OrderState($idState);
+        if ($idState <= 0 || !Validate::isLoadedObject($state)) {
+            PrestaShopLogger::addLog('Moro SPC could not recover Mercado Pago order state for order ' . (int) $order->id, 3, null, 'Order', (int) $order->id, true);
+            return;
+        }
+
+        $history = new OrderHistory();
+        $history->id_order = (int) $order->id;
+        $history->changeIdOrderState($idState, (int) $order->id, true);
+        $history->addWithemail(true);
+
+        $order->current_state = $idState;
+        $order->update();
+
+        Db::getInstance()->update(
+            'mp_transactions',
+            [
+                'payment_status' => pSQL('approved'),
+                'payment_id' => pSQL((string) Tools::getValue('payment_id')),
+                'received_webhook' => 1,
+            ],
+            '`cart_id` = ' . (int) $cart->id . ' AND (`payment_status` IS NULL OR `payment_status` != "approved")'
+        );
+
+        PrestaShopLogger::addLog('Moro SPC recovered Mercado Pago order state for order ' . (int) $order->id . ' to state ' . $idState, 1, null, 'Order', (int) $order->id, true);
+    }
+
+    private function isMercadoPagoOrder(Order $order)
+    {
+        if (stripos((string) $order->payment, 'Mercado Pago') !== false) {
+            return true;
+        }
+
+        return is_array($this->getMercadoPagoTransaction((int) $order->id_cart));
+    }
+
+    private function getMercadoPagoTransaction($idCart)
+    {
+        return Db::getInstance()->getRow(
+            'SELECT *
+            FROM `' . _DB_PREFIX_ . 'mp_transactions`
+            WHERE `cart_id` = ' . (int) $idCart . '
+            ORDER BY `id_mp_transaction` DESC'
+        );
     }
 
     private function getShippingSelection($idCart)
