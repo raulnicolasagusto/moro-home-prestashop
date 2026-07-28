@@ -112,6 +112,35 @@
   cursor: not-allowed;
 }
 
+.moro-spc__input[aria-invalid="true"] {
+  border-color: #ba1a1a;
+}
+
+.moro-spc__error {
+  min-height: 1.125rem;
+  margin: 0;
+  color: #ba1a1a;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.moro-spc__status {
+  min-height: 1.25rem;
+  color: var(--moro-spc-muted);
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.moro-spc__status[data-ps-state="success"] {
+  color: #286c2a;
+}
+
+.moro-spc__status[data-ps-state="error"] {
+  color: #ba1a1a;
+}
+
 .moro-spc__check {
   display: flex;
   align-items: flex-start;
@@ -144,6 +173,255 @@
 
 .moro-spc__pending--summary {
   margin-top: 1.5rem;
+}
+
+.moro-spc__shipping-calc {
+  display: grid;
+  gap: 0.875rem;
+}
+
+.moro-spc__secondary-button--wide {
+  width: 100%;
+}
+
+.moro-spc__carrier-list {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.moro-spc__carrier-card {
+  overflow: hidden;
+  border: 1px solid var(--moro-spc-border);
+  border-radius: 0.875rem;
+  background: #ffffff;
+  transition: border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+}
+
+.moro-spc__carrier-card:hover,
+.moro-spc__carrier-card.is-selected {
+  border-color: var(--moro-spc-primary);
+  background: #fffaf7;
+}
+
+.moro-spc__carrier-card.is-selected {
+  box-shadow: 0 0 0 1px rgba(212, 98, 17, 0.14);
+}
+
+.moro-spc__carrier-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.875rem;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.moro-spc__carrier-radio {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--moro-spc-primary);
+}
+
+.moro-spc__carrier-main {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.moro-spc__carrier-name,
+.moro-spc__carrier-price {
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.moro-spc__carrier-delay {
+  color: var(--moro-spc-muted);
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.moro-spc__carrier-price {
+  white-space: nowrap;
+}
+
+.moro-spc__pickup-panel {
+  display: grid;
+  gap: 0.875rem;
+  margin: 0 1rem 1rem;
+  padding: 1rem;
+  border-top: 1px solid rgba(212, 98, 17, 0.18);
+  border-radius: 0.75rem;
+  background: rgba(252, 249, 248, 0.82);
+}
+
+.moro-spc__pickup-panel[data-ps-state="hidden"] {
+  display: none;
+}
+
+.moro-spc__pickup-label,
+.moro-spc__pickup-select,
+.moro-spc__pickup-status,
+.moro-spc__pickup-detail {
+  font-family: "Montserrat", Arial, sans-serif;
+}
+
+.moro-spc__pickup-label {
+  color: var(--moro-spc-text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.moro-spc__pickup-select {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.625rem 2.25rem 0.625rem 0.75rem;
+  border: 1px solid var(--moro-spc-border);
+  border-radius: 0.75rem;
+  color: var(--moro-spc-text);
+  background-color: #ffffff;
+  background-image: linear-gradient(45deg, transparent 50%, var(--moro-spc-muted) 50%), linear-gradient(135deg, var(--moro-spc-muted) 50%, transparent 50%);
+  background-position: calc(100% - 1.0625rem) 50%, calc(100% - 0.75rem) 50%;
+  background-repeat: no-repeat;
+  background-size: 0.3125rem 0.3125rem, 0.3125rem 0.3125rem;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  transition: background-color 200ms ease, border-color 200ms ease;
+}
+
+.moro-spc__pickup-select:hover {
+  border-color: var(--moro-spc-border);
+  border-radius: 0.75rem;
+  background-color: #f3f0f0;
+}
+
+.moro-spc__pickup-select:disabled {
+  color: var(--moro-spc-muted);
+  background-color: #f3f0f0;
+  cursor: wait;
+}
+
+.moro-spc__pickup-select:focus,
+.moro-spc__pickup-select:focus-visible {
+  outline: none;
+  border-color: var(--moro-spc-border);
+  box-shadow: none;
+}
+
+.moro-spc__pickup-status {
+  color: var(--moro-spc-muted);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.moro-spc__pickup-detail {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid rgba(73, 69, 68, 0.14);
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.moro-spc__pickup-detail[hidden] {
+  display: none;
+}
+
+.moro-spc__pickup-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.moro-spc__pickup-address,
+.moro-spc__pickup-meta,
+.moro-spc__pickup-hours {
+  color: var(--moro-spc-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.moro-spc__section--payment {
+  margin-top: 1.5rem;
+}
+
+.moro-spc__payment-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.moro-spc__payment-card {
+  overflow: hidden;
+  border: 1px solid var(--moro-spc-border);
+  border-radius: 0.875rem;
+  background: #ffffff;
+  transition: border-color 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+}
+
+.moro-spc__payment-card:hover,
+.moro-spc__payment-card.is-selected {
+  border-color: var(--moro-spc-primary);
+  background: #fffaf7;
+}
+
+.moro-spc__payment-card.is-selected {
+  box-shadow: 0 0 0 1px rgba(212, 98, 17, 0.14);
+}
+
+.moro-spc__payment-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.875rem;
+  align-items: center;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.moro-spc__payment-radio {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--moro-spc-primary);
+}
+
+.moro-spc__payment-main {
+  display: grid;
+  min-width: 0;
+}
+
+.moro-spc__payment-title {
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.moro-spc__payment-logo {
+  max-width: 6.5rem;
+  max-height: 2rem;
+  object-fit: contain;
+}
+
+.moro-spc__payment-additional,
+.moro-spc__payment-form {
+  padding: 0 1rem 1rem;
+}
+
+.moro-spc__payment-additional[hidden],
+.moro-spc__payment-form[hidden] {
+  display: none;
+}
+
+.moro-spc__payment-confirmation {
+  margin-top: 1rem;
 }
 
 .moro-spc__cart {
@@ -300,6 +578,11 @@
   color: var(--moro-spc-text);
   background: #e4e2e1;
   font-size: 0.9375rem;
+}
+
+.moro-spc__secondary-button[data-ps-state="loading"] {
+  color: #ffffff;
+  background: var(--moro-spc-primary);
 }
 
 .moro-spc__totals {

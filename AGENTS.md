@@ -224,6 +224,7 @@ Cuando un módulo registra CSS con `registerStylesheet()`, el navegador puede ca
 
 - **Solución rápida:** Renombrar el archivo CSS (ej: `front-v2.css` → `front-v3.css`) y actualizar la referencia en el PHP del módulo.
 - **Alternativa:** Agregar un query parameter con versión en el registro: `'media' => 'all', 'version' => '2.0'`
+- **Regla de limpieza obligatoria:** cuando se cree un asset nuevo para cache-buster (`front-v7.js`, `front-v6.css`, etc.), eliminar del local el asset anterior que deja de estar registrado en el PHP del módulo. En la tabla de WinSCP listar solo los archivos activos registrados por el módulo, más cualquier archivo nuevo/modificado necesario. No dejar una pila de assets viejos que confunda el despliegue manual.
 
 **2. Componentes de PrestaShop con Bootstrap accordion/collapse:**
 
