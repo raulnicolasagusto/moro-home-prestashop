@@ -659,7 +659,7 @@ body.moro-search-dialog-open {
   position: absolute;
   top: 0;
   left: 50%;
-  width: 100%;
+  width: 100vw;
   border-top: 1px solid var(--moro-surface-dim);
   transform: translateX(-50%);
 }
@@ -1032,12 +1032,13 @@ body.moro-mega-menu-open {
   background: transparent;
   border: 0;
   color: var(--moro-on-surface);
-  font-family: var(--moro-font-sans);
-  font-size: var(--moro-fs-nav-item);
-  font-weight: var(--moro-fw-nav-item);
+  font-family: var(--moro-font-serif);
+  font-size: 15px;
+  font-weight: 300;
   line-height: 20px;
-  letter-spacing: var(--moro-ls-nav-item);
+  letter-spacing: 0.03em;
   text-decoration: none;
+  text-transform: none;
   cursor: pointer;
   transition: color 300ms ease;
 }
@@ -1080,10 +1081,12 @@ body.moro-mega-menu-open {
   border: 0;
   border-bottom: 1px solid var(--moro-surface-dim);
   color: var(--moro-on-surface);
-  font-family: var(--moro-font-sans);
-  font-size: var(--moro-fs-nav-item);
-  font-weight: var(--moro-fw-nav-item);
+  font-family: var(--moro-font-serif);
+  font-size: 15px;
+  font-weight: 300;
   line-height: 20px;
+  letter-spacing: 0.03em;
+  text-transform: none;
   cursor: pointer;
   text-align: left;
   transition: color 300ms ease;
@@ -1115,14 +1118,13 @@ body.moro-mega-menu-open {
 }
 
 .moro-mobile-drawer__sub-group-title {
-  font-family: var(--moro-font-sans);
-  font-size: var(--moro-fs-label-md);
-  font-weight: var(--moro-fw-label-md);
-  line-height: 16px;
-  letter-spacing: var(--moro-ls-label-md);
-  text-transform: uppercase;
+  font-family: var(--moro-font-serif);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 20px;
+  letter-spacing: 0.03em;
+  text-transform: none;
   color: var(--moro-on-surface-variant);
-  opacity: 0.6;
   margin: 0 0 12px;
   padding: 0;
 }
@@ -1131,10 +1133,11 @@ body.moro-mega-menu-open {
   display: block;
   padding: 8px 0;
   color: var(--moro-on-surface-variant);
-  font-family: var(--moro-font-sans);
+  font-family: var(--moro-font-serif);
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
+  letter-spacing: 0.02em;
   text-decoration: none;
   transition: color 300ms ease;
 }
@@ -1178,10 +1181,11 @@ body.moro-mega-menu-open {
 }
 
 .moro-mobile-drawer__sub-card-label {
-  font-family: var(--moro-font-sans);
+  font-family: var(--moro-font-serif);
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
+  letter-spacing: 0.02em;
   color: var(--moro-on-surface);
   margin: 8px 0 0;
   transition: color 300ms ease;

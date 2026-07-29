@@ -89,7 +89,7 @@ class MoroAnnouncementBar extends Module
 
         $this->context->controller->registerStylesheet(
             'moro-announcement-bar',
-            'modules/' . $this->name . '/views/css/moro-announcement-bar.css',
+            'modules/' . $this->name . '/views/css/moro-announcement-bar-v3.css',
             ['media' => 'all', 'priority' => 150]
         );
 
