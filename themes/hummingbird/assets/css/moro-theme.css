@@ -23,8 +23,12 @@
   --moro-on-surface-variant: #494544;
 
   /* ---- Tipografía familias ---- */
-  --moro-font-serif: "Newsreader", "Georgia", serif;
+  --moro-font-serif: "Cormorant", "Newsreader", "Georgia", serif;
   --moro-font-sans: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+  --font-primary: var(--moro-font-serif);
+  --font-secondary: var(--moro-font-sans);
+  --color-text-main: #333333;
+  --color-text-light: #555555;
 
   /* ---- Tipografía scale (referencia, se aplica incrementalmente) ---- */
   --moro-fs-display-lg: 64px;
@@ -59,4 +63,122 @@
 ::selection {
   background-color: var(--moro-surface-container-low);
   color: var(--moro-on-surface);
+}
+
+/* Tipografía global editorial: Cormorant para lectura y títulos, Montserrat para UI. */
+body,
+*,
+::before,
+::after {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  color: var(--color-text-light);
+  font-family: var(--font-primary);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+button,
+input,
+select,
+textarea,
+label,
+small,
+.btn,
+.form-control,
+.form-select,
+.input-group,
+.dropdown-menu,
+.breadcrumb,
+.pagination,
+.badge,
+.alert {
+  font-family: var(--font-secondary);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  color: var(--color-text-main);
+  font-family: var(--font-primary);
+  margin-bottom: 0.5em;
+}
+
+h1,
+.h1 {
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+h2,
+.h2 {
+  font-size: clamp(26px, 3vw, 36px);
+  font-weight: 300;
+  line-height: 1.2;
+}
+
+h3,
+.h3 {
+  font-size: clamp(20px, 2vw, 24px);
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+h4,
+.h4 {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.header__primary-nav .h6,
+.heading-6,
+.menu-item,
+.moro-header__nav-link,
+.moro-header__mobile-nav-link {
+  color: var(--color-text-main);
+  font-family: var(--font-primary);
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.product-price,
+.price,
+.current-price,
+.regular-price,
+.product__price,
+.product__regular-price,
+.product__discount-price,
+.product__unit-price,
+.product-miniature__price,
+.product-miniature__regular-price,
+.cart-summary-line .value,
+.cart-summary-line__value,
+.cart-detailed-totals,
+.blockcart-modal__price,
+.moro-cart-drawer__item-price,
+.moro-cart-drawer__shipping-option-price,
+[itemprop="price"] {
+  font-family: var(--font-secondary);
+  font-weight: 600;
+  letter-spacing: 0;
 }

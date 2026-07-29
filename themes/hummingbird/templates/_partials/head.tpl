@@ -65,19 +65,19 @@
   <link rel="shortcut icon" type="image/x-icon" href="{$shop.favicon}?{$shop.favicon_update_time}">
 {/block}
 
-{* Moro Home fonts: Newsreader (serif) + Montserrat (sans) + Material Symbols Outlined. *}
+{* Moro Home fonts: Cormorant (serif) + Newsreader (legacy serif) + Montserrat (sans) + Material Symbols Outlined. *}
 {block name='head_fonts'}
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
 {/block}
 
 {block name='stylesheets'}
   {include file='_partials/stylesheets.tpl' stylesheets=$stylesheets}
   {* Moro Home overrides (CSS plano hasta que el toolchain SCSS esté disponible). *}
-  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-theme.css?v=1.0.0">
-  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-header.css?v=15">
+  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-theme.css?v=1.1.0">
+  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-header.css?v=16">
   <link rel="stylesheet" href="{$urls.theme_assets}css/moro-cart-drawer.css?v=5">
 {/block}
 
