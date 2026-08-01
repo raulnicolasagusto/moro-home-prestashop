@@ -67,7 +67,7 @@
             aria-expanded="false"
           >
             <i class="material-symbols-outlined moro-header__icon" aria-hidden="true">search</i>
-            <span class="moro-header__icon-label d-none d-md-inline">{l s='Search' d='Shop.Theme.Actions'}</span>
+            <span class="moro-header__icon-label d-none d-md-inline">BUSCAR</span>
           </button>
 
           {* Toggle menú mobile *}
@@ -243,7 +243,7 @@
                    id="moro-search-dialog-input"
                    class="moro-search-dialog__input"
                    aria-label="{l s='Search' d='Shop.Theme.Actions'}"
-                   placeholder="{l s='Search for...' d='Shop.Theme.Actions'}"
+                   placeholder="¿Qué estás buscando?"
                    autocomplete="off" />
           </form>
 

@@ -120,6 +120,15 @@
   white-space: nowrap;
 }
 
+#moro-search-toggle .moro-header__icon-label {
+  font-family: var(--moro-font-serif);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--moro-on-surface);
+}
+
 /* ---- 2b. Centro: logo ---- */
 
 .moro-header__brand {
@@ -500,9 +509,13 @@
 /* Contenedor exterior: CSS Grid para expandir/colapsar altura */
 
 .moro-search-dialog {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1;
   display: grid;
   grid-template-rows: 0fr;
-  width: 100%;
   background: var(--moro-surface);
   border-color: var(--moro-surface-dim);
   border-style: solid;
@@ -587,7 +600,7 @@
   background: transparent;
   border: 0;
   padding: 0;
-  font-family: "Newsreader", var(--moro-font-serif);
+  font-family: var(--moro-font-serif);
   font-size: 24px;
   font-weight: 400;
   line-height: 1.4;
@@ -599,6 +612,8 @@
 .moro-search-dialog__input::placeholder {
   color: var(--moro-on-surface-variant);
   opacity: 0.3;
+  font-family: var(--moro-font-serif);
+  font-style: italic;
 }
 
 .moro-search-dialog__input::-webkit-search-cancel-button {
@@ -681,7 +696,7 @@ body.moro-search-dialog-open {
   color: var(--moro-on-surface);
   font-family: var(--moro-font-serif);
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 20px;
   letter-spacing: 0.03em;
   text-transform: none;
@@ -700,9 +715,13 @@ body.moro-search-dialog-open {
    ================================================================ */
 
 .moro-mega-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1;
   display: grid;
   grid-template-rows: 0fr;
-  width: 100%;
   background: var(--moro-surface);
   border-color: var(--moro-surface-dim);
   border-style: solid;
@@ -726,7 +745,6 @@ body.moro-search-dialog-open {
 /* Panel activo: grid expande a 1fr + border-top aparece */
 .moro-mega-menu.is-open {
   grid-template-rows: 1fr;
-  border-top-width: 1px;
 }
 
 /* ---- Contenido de cada panel (1 por categoría) ---- */
@@ -785,7 +803,7 @@ body.moro-search-dialog-open {
 .moro-mega-menu__group-title {
   font-family: var(--moro-font-serif);
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 20px;
   letter-spacing: 0.03em;
   text-transform: none;
@@ -797,7 +815,7 @@ body.moro-search-dialog-open {
 .moro-mega-menu__sublink {
   font-family: var(--moro-font-serif);
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 24px;
   letter-spacing: 0.02em;
   color: var(--moro-on-surface-variant);
@@ -875,7 +893,7 @@ body.moro-search-dialog-open {
 .moro-mega-menu__card-label {
   font-family: var(--moro-font-serif, "Newsreader", Georgia, serif);
   font-size: 18px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 24px;
   letter-spacing: 0.01em;
   color: var(--moro-on-surface);

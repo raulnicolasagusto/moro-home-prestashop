@@ -77,7 +77,7 @@
   {include file='_partials/stylesheets.tpl' stylesheets=$stylesheets}
   {* Moro Home overrides (CSS plano hasta que el toolchain SCSS esté disponible). *}
   <link rel="stylesheet" href="{$urls.theme_assets}css/moro-theme.css?v=1.1.0">
-  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-header-v5.css">
+  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-header-v10.css">
   <link rel="stylesheet" href="{$urls.theme_assets}css/moro-cart-drawer.css?v=5">
 {/block}
 
