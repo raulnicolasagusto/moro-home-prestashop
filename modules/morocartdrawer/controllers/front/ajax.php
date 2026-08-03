@@ -51,6 +51,9 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
                 case 'estimateShipping':
                     $this->ajaxEstimateShipping();
                     break;
+                case 'selectShipping':
+                    $this->ajaxSelectShipping();
+                    break;
                 case 'getPickupPoints':
                     $this->ajaxGetPickupPoints();
                     break;
@@ -176,15 +179,19 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             return;
         }
 
+        $showHome = (int) Configuration::get('MORO_CARTDRAWER_SHIPPING_SHOW_HOME');
         $showBranch = (int) Configuration::get('MORO_CARTDRAWER_SHIPPING_SHOW_BRANCH');
+        if ((string) Configuration::get('MORO_CARTDRAWER_SHIPPING_SHOW_HOME') === '') {
+            $showHome = 0;
+        }
         if ((string) Configuration::get('MORO_CARTDRAWER_SHIPPING_SHOW_BRANCH') === '') {
             $showBranch = 1;
         }
 
-        if ($showBranch !== 1) {
+        if ($showHome === 0 && $showBranch === 0) {
             echo json_encode([
                 'success' => false,
-                'error' => 'La opción de envío a sucursal está desactivada.',
+                'error' => 'Las opciones de envío están desactivadas.',
             ]);
             return;
         }
@@ -219,7 +226,6 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             'customerId' => $customerId,
             'postalCodeOrigin' => $postalCodeOrigin,
             'postalCodeDestination' => $postalCode,
-            'deliveredType' => 'S',
             'dimensions' => $dimensions,
         ];
 
@@ -241,48 +247,252 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $branchRate = null;
-        foreach ($ratesResponse['data']['rates'] as $rate) {
-            if (($rate['deliveredType'] ?? '') === 'S') {
-                $branchRate = $rate;
-                break;
-            }
-        }
-
-        if ($branchRate === null) {
+        $options = $this->formatRates($ratesResponse['data']['rates']);
+        if (empty($options)) {
             echo json_encode([
                 'success' => false,
-                'error' => 'No hay tarifa de retiro en sucursal para ese código postal.',
+                'error' => 'Correo Argentino no devolvió tarifas disponibles para esta dirección.',
             ]);
             return;
         }
 
-        $shippingAmount = (float) ($branchRate['price'] ?? 0);
-        $subtotal = (float) $cart->getOrderTotal(false, 1);
-        $total = $subtotal + $shippingAmount;
+        // Filtro de display segun toggles del Back Office
+        if ($showHome === 0) {
+            $options = array_values(array_filter($options, function (array $o): bool {
+                return $o['type'] !== 'home';
+            }));
+        }
 
-        $optionLabel = !empty($branchRate['productName'])
-            ? (string) $branchRate['productName']
-            : 'Correo Argentino';
+        if ($showBranch === 0) {
+            $options = array_values(array_filter($options, function (array $o): bool {
+                return $o['type'] !== 'branch';
+            }));
+        }
+
+        if (empty($options)) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'No hay opciones de envío disponibles para ese código postal.',
+            ]);
+            return;
+        }
+
+        // Sucursal primero, luego por precio
+        usort($options, function (array $left, array $right): int {
+            if ($left['type'] === $right['type']) {
+                return $left['priceAmount'] <=> $right['priceAmount'];
+            }
+
+            return $left['type'] === 'branch' ? -1 : 1;
+        });
+
+        $options[0]['selected'] = true;
+        $selected = $options[0];
+
+        $subtotal = (float) $cart->getOrderTotal(false, 1);
+        $total = $subtotal + (float) $selected['priceAmount'];
 
         echo json_encode([
             'success' => true,
             'postalCode' => $postalCode,
             'subtotal' => $this->formatPrice($subtotal),
             'subtotalAmount' => $subtotal,
-            'shipping' => $this->formatPrice($shippingAmount),
-            'shippingAmount' => $shippingAmount,
+            'shipping' => $this->formatPrice((float) $selected['priceAmount']),
+            'shippingAmount' => (float) $selected['priceAmount'],
             'total' => $this->formatPrice($total),
             'totalAmount' => $total,
-            'options' => [[
-                'id' => 'branch',
-                'type' => 'branch',
-                'label' => 'Correo Argentino - Retiro en sucursal',
-                'serviceName' => $optionLabel,
-                'price' => $this->formatPrice($shippingAmount),
-                'priceAmount' => $shippingAmount,
-                'selected' => true,
-            ]],
+            'options' => $options,
+        ]);
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $rates
+     *
+     * @return array<int, array{
+     *     id: string,
+     *     type: string,
+     *     deliveryType: string,
+     *     productType: string,
+     *     label: string,
+     *     serviceName: string,
+     *     delay: string,
+     *     price: string,
+     *     priceAmount: float,
+     *     selected: bool
+     * }>
+     */
+    private function formatRates(array $rates): array
+    {
+        $options = [];
+
+        foreach ($rates as $rate) {
+            if (!is_array($rate)) {
+                continue;
+            }
+
+            $deliveredType = (string) ($rate['deliveredType'] ?? '');
+            if (!in_array($deliveredType, ['S', 'D'], true)) {
+                continue;
+            }
+
+            $price = (float) ($rate['price'] ?? 0);
+            $serviceName = (string) ($rate['productName'] ?? 'Correo Argentino');
+            $deliveryMin = (string) ($rate['deliveryTimeMin'] ?? '');
+            $deliveryMax = (string) ($rate['deliveryTimeMax'] ?? '');
+            $type = $deliveredType === 'S' ? 'branch' : 'home';
+
+            $label = $type === 'branch'
+                ? 'Correo Argentino - Retiro en sucursal'
+                : 'Correo Argentino - Envío a domicilio';
+
+            $delay = '';
+            if ($deliveryMin !== '' || $deliveryMax !== '') {
+                $delay = trim($deliveryMin . ' a ' . $deliveryMax . ' días hábiles');
+            }
+
+            $options[] = [
+                'id' => $type . '-' . (string) ($rate['productType'] ?? 'CP'),
+                'type' => $type,
+                'deliveryType' => $deliveredType,
+                'productType' => (string) ($rate['productType'] ?? 'CP'),
+                'label' => $label,
+                'serviceName' => $serviceName,
+                'delay' => $delay,
+                'price' => $this->formatPrice($price),
+                'priceAmount' => $price,
+                'selected' => false,
+            ];
+        }
+
+        return $options;
+    }
+
+    private function ajaxSelectShipping(): void
+    {
+        $deliveryType = (string) Tools::getValue('delivery_type');
+        $price = (float) Tools::getValue('price', 0);
+        $productType = (string) Tools::getValue('product_type', 'CP');
+        $productName = (string) Tools::getValue('product_name', 'Correo Argentino');
+        $agencyId = trim((string) Tools::getValue('agency_id', ''));
+        $agencyName = trim((string) Tools::getValue('agency_name', ''));
+        $agencyAddress = trim((string) Tools::getValue('agency_address', ''));
+        $agencyPostalCode = trim((string) Tools::getValue('agency_postal_code', ''));
+
+        if (!in_array($deliveryType, ['S', 'D'], true) || $price < 0) {
+            echo json_encode([
+                'success' => false,
+                'error' => 'La opción de envío seleccionada no es válida.',
+            ]);
+            return;
+        }
+
+        if ($deliveryType === 'S' && $agencyId === '') {
+            echo json_encode([
+                'success' => false,
+                'error' => 'Seleccioná una sucursal para retirar el pedido.',
+            ]);
+            return;
+        }
+
+        $cookie = $this->context->cookie;
+        $cookie->__set('moro_spc_shipping_type', $deliveryType);
+        $cookie->__set('moro_spc_shipping_price', (string) $price);
+        $cookie->__set('moro_spc_shipping_product_type', $productType);
+        $cookie->__set('moro_spc_shipping_product_name', $productName);
+        $cookie->__set('moro_spc_shipping_agency_id', $deliveryType === 'S' ? $agencyId : '');
+        $cookie->__set('moro_spc_shipping_agency_name', $deliveryType === 'S' ? $agencyName : '');
+        $cookie->__set('moro_spc_shipping_agency_address', $deliveryType === 'S' ? $agencyAddress : '');
+        $cookie->__set('moro_spc_shipping_agency_postal_code', $deliveryType === 'S' ? $agencyPostalCode : '');
+        $cookie->write();
+
+        $cart = $this->context->cart;
+        if (!Validate::isLoadedObject($cart)) {
+            echo json_encode(['success' => true]);
+            return;
+        }
+
+        Db::getInstance()->execute(
+            'INSERT INTO `' . _DB_PREFIX_ . 'moro_spc_shipping_selection`
+            (`id_cart`, `delivery_type`, `price`, `product_type`, `product_name`, `agency_id`, `agency_name`, `agency_address`, `agency_postal_code`, `date_add`, `date_upd`)
+            VALUES (
+                ' . (int) $cart->id . ',
+                "' . pSQL($deliveryType) . '",
+                ' . (float) $price . ',
+                "' . pSQL($productType) . '",
+                "' . pSQL($productName) . '",
+                "' . pSQL($deliveryType === 'S' ? $agencyId : '') . '",
+                "' . pSQL($deliveryType === 'S' ? $agencyName : '') . '",
+                "' . pSQL($deliveryType === 'S' ? $agencyAddress : '') . '",
+                "' . pSQL($deliveryType === 'S' ? $agencyPostalCode : '') . '",
+                NOW(),
+                NOW()
+            )
+            ON DUPLICATE KEY UPDATE
+                `delivery_type` = VALUES(`delivery_type`),
+                `price` = VALUES(`price`),
+                `product_type` = VALUES(`product_type`),
+                `product_name` = VALUES(`product_name`),
+                `agency_id` = VALUES(`agency_id`),
+                `agency_name` = VALUES(`agency_name`),
+                `agency_address` = VALUES(`agency_address`),
+                `agency_postal_code` = VALUES(`agency_postal_code`),
+                `date_upd` = NOW()'
+        );
+
+        try {
+            $idCarrierCorreo = (int) Db::getInstance()->getValue(
+                'SELECT `id_carrier`
+                FROM `' . _DB_PREFIX_ . 'correoargentino_rates`
+                WHERE `service_type` = "' . pSQL($productType) . '"
+                  AND `delivered_type` = "' . pSQL($deliveryType) . '"'
+            );
+
+            if ($idCarrierCorreo > 0 && (int) $cart->id_address_delivery > 0) {
+                $cart->id_carrier = $idCarrierCorreo;
+                $cart->setDeliveryOption([
+                    (int) $cart->id_address_delivery => $idCarrierCorreo . ',',
+                ]);
+                $cart->update();
+            }
+
+            $freshCart = new Cart((int) $cart->id);
+
+            if ($deliveryType === 'S' && $idCarrierCorreo > 0 && Validate::isLoadedObject($freshCart) && (int) $freshCart->id_address_delivery > 0) {
+                $address = new Address((int) $freshCart->id_address_delivery);
+                $stateIsoCode = '';
+
+                if (Validate::isLoadedObject($address) && (int) $address->id_state > 0) {
+                    $state = new State((int) $address->id_state);
+                    if (Validate::isLoadedObject($state)) {
+                        $stateIsoCode = (string) $state->iso_code;
+                    }
+                }
+
+                Hook::exec('actionValidateStepComplete', [
+                    'step_name' => 'delivery',
+                    'cart' => $freshCart,
+                    'request_params' => [
+                        'correoargentino_branch_id_' . $idCarrierCorreo => $agencyId,
+                        'correoargentino_state_id_' . $idCarrierCorreo => $stateIsoCode,
+                    ],
+                ]);
+            }
+        } catch (Throwable $exception) {
+            PrestaShopLogger::addLog(
+                'Moro Cart Drawer shipping select failed: ' . $exception->getMessage(),
+                3,
+                null,
+                'Cart',
+                (int) $cart->id,
+                true
+            );
+        }
+
+        echo json_encode([
+            'success' => true,
+            'shipping' => $this->formatPrice($price),
+            'shippingAmount' => $price,
+            'deliveryType' => $deliveryType,
         ]);
     }
 
@@ -332,7 +542,7 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             return;
         }
 
-        $points = $this->fetchPickupPointsByPostalCode(
+        $points = $this->getPickupPointsForPostalCode(
             $authContext['baseUrl'],
             $authContext['token'],
             $authContext['customerId'],
@@ -436,80 +646,259 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
     }
 
     /**
+     * Puntos de retiro para un CP, resolviendo la provincia antes de llamar a la API.
+     *
+     * Prioridad de resolución de provincia (mismo criterio que el módulo SPC):
+     * 1. Dirección de envío del carrito (id_address_delivery) → provincia exacta.
+     * 2. Primera letra del CP si viene con letra (CPA completo, ej. X5000ABC).
+     * 3. Fallback: recorrer las provincias usando el caché por provincia.
+     *
      * @return array<int, array{id:string,name:string,address:string,city:string,province:string,postalCode:string,hours:string,latitude:string,longitude:string}>
      */
-    private function fetchPickupPointsByPostalCode(string $baseUrl, string $token, string $customerId, string $postalCode): array
+    private function getPickupPointsForPostalCode(string $baseUrl, string $token, string $customerId, string $postalCode): array
+    {
+        $provinceCode = $this->resolveProvinceCode($postalCode);
+        if ($provinceCode === '') {
+            return $this->fetchPickupPointsAcrossProvinces($baseUrl, $token, $customerId, $postalCode);
+        }
+
+        $points = $this->fetchPickupPointsByProvince($baseUrl, $token, $customerId, $provinceCode);
+
+        return $this->filterPickupPointsByPostalCode($points, $postalCode);
+    }
+
+    /**
+     * Resuelve el provinceCode de la API MiCorreo desde el CP o la dirección del carrito.
+     */
+    private function resolveProvinceCode(string $postalCode): string
+    {
+        $cart = $this->context->cart;
+        if (Validate::isLoadedObject($cart) && (int) $cart->id_address_delivery > 0) {
+            $address = new Address((int) $cart->id_address_delivery);
+            if (Validate::isLoadedObject($address)) {
+                $province = $this->getProvinceCodeFromAddress($address);
+                if ($province !== '') {
+                    return $province;
+                }
+            }
+        }
+
+        $trimmed = trim($postalCode);
+        if (preg_match('/^([A-Za-z])/', $trimmed, $matches)) {
+            return strtoupper($matches[1]);
+        }
+
+        return '';
+    }
+
+    /**
+     * Código de provincia desde una dirección (mismo criterio que el módulo SPC):
+     * ISO 3166-2:AR → primera letra del iso_code del State.
+     */
+    private function getProvinceCodeFromAddress(Address $address): string
+    {
+        if (!(int) $address->id_state) {
+            return '';
+        }
+
+        $state = new State((int) $address->id_state);
+        if (!Validate::isLoadedObject($state)) {
+            return '';
+        }
+
+        $isoCode = strtoupper(trim((string) $state->iso_code));
+        if ($isoCode === '') {
+            return '';
+        }
+
+        if (strpos($isoCode, '-') !== false) {
+            $parts = explode('-', $isoCode);
+            $isoCode = strtoupper((string) end($parts));
+        }
+
+        return substr($isoCode, 0, 1);
+    }
+
+    /**
+     * Todas las sucursales de una provincia, cacheadas en disco por provincia (TTL 24hs).
+     * Todos los CPs de la misma provincia comparten el mismo caché → 1 sola llamada a la API.
+     *
+     * @return array<int, array{id:string,name:string,address:string,city:string,province:string,postalCode:string,hours:string,latitude:string,longitude:string}>
+     */
+    private function fetchPickupPointsByProvince(string $baseUrl, string $token, string $customerId, string $provinceCode): array
+    {
+        $cacheKey = 'pickup_prov_' . $provinceCode;
+        $cached = $this->readCache($cacheKey);
+        if (is_array($cached)) {
+            return $cached;
+        }
+
+        $query = http_build_query([
+            'customerId' => $customerId,
+            'provinceCode' => $provinceCode,
+            'services' => 'pickup_availability',
+        ]);
+
+        $response = $this->doJsonRequest(
+            $baseUrl . '/agencies?' . $query,
+            [],
+            [
+                'Authorization: Bearer ' . $token,
+                'Content-Type: application/json',
+            ],
+            'GET',
+            7
+        );
+
+        if (!$response['ok'] || !is_array($response['data'])) {
+            return [];
+        }
+
+        $points = $this->parseAgencies($response['data']);
+        $this->writeCache($cacheKey, $points, 86400);
+
+        return $points;
+    }
+
+    /**
+     * Fallback: CP de solo 4 dígitos sin dirección. Recorre las provincias usando
+     * el caché por provincia; la primera vez es la única llamada costosa, después
+     * se lee de disco.
+     */
+    private function fetchPickupPointsAcrossProvinces(string $baseUrl, string $token, string $customerId, string $postalCode): array
+    {
+        $all = [];
+        foreach (self::AGENCY_PROVINCE_CODES as $provinceCode) {
+            $points = $this->fetchPickupPointsByProvince($baseUrl, $token, $customerId, $provinceCode);
+            foreach ($points as $point) {
+                $all[] = $point;
+            }
+        }
+
+        return $this->filterPickupPointsByPostalCode($all, $postalCode);
+    }
+
+    /**
+     * Parseo de agencias (independiente del CP) para poder cachearlas por provincia.
+     *
+     * @param array<int, array<string, mixed>> $agencies
+     *
+     * @return array<int, array{id:string,name:string,address:string,city:string,province:string,postalCode:string,hours:string,latitude:string,longitude:string}>
+     */
+    private function parseAgencies(array $agencies): array
     {
         $points = [];
         $seen = [];
 
-        foreach (self::AGENCY_PROVINCE_CODES as $provinceCode) {
-            $query = http_build_query([
-                'customerId' => $customerId,
-                'provinceCode' => $provinceCode,
-                'services' => 'pickup_availability',
-            ]);
-
-            $agenciesResponse = $this->doJsonRequest(
-                $baseUrl . '/agencies?' . $query,
-                [],
-                [
-                    'Authorization: Bearer ' . $token,
-                    'Content-Type: application/json',
-                ],
-                'GET'
-            );
-
-            if (!$agenciesResponse['ok'] || !is_array($agenciesResponse['data'])) {
+        foreach ($agencies as $agency) {
+            if (!is_array($agency)) {
                 continue;
             }
 
-            foreach ($agenciesResponse['data'] as $agency) {
-                if (!is_array($agency)) {
-                    continue;
-                }
-
-                $agencyCode = trim((string) ($agency['code'] ?? ''));
-                if ($agencyCode === '' || isset($seen[$agencyCode])) {
-                    continue;
-                }
-
-                $status = strtoupper((string) ($agency['status'] ?? ''));
-                if ($status !== '' && $status !== 'ACTIVE') {
-                    continue;
-                }
-
-                $services = $agency['services'] ?? null;
-                if (is_array($services) && array_key_exists('pickupAvailability', $services) && !$services['pickupAvailability']) {
-                    continue;
-                }
-
-                $address = is_array($agency['location']['address'] ?? null)
-                    ? $agency['location']['address']
-                    : [];
-
-                $agencyPostalCodeRaw = (string) ($address['postalCode'] ?? '');
-                $agencyPostalCode4 = $this->extractPostalCodeDigits($agencyPostalCodeRaw);
-                if ($agencyPostalCode4 !== $postalCode) {
-                    continue;
-                }
-
-                $seen[$agencyCode] = true;
-                $points[] = [
-                    'id' => $agencyCode,
-                    'name' => trim((string) ($agency['name'] ?? 'Sucursal Correo Argentino')),
-                    'address' => trim((string) ($address['streetName'] ?? '')) . ' ' . trim((string) ($address['streetNumber'] ?? '')),
-                    'city' => trim((string) ($address['city'] ?? $address['locality'] ?? '')),
-                    'province' => trim((string) ($address['province'] ?? '')),
-                    'postalCode' => $agencyPostalCodeRaw,
-                    'hours' => $this->formatAgencyHours($agency['hours'] ?? null),
-                    'latitude' => trim((string) ($agency['location']['latitude'] ?? '')),
-                    'longitude' => trim((string) ($agency['location']['longitude'] ?? '')),
-                ];
+            $agencyCode = trim((string) ($agency['code'] ?? $agency['agency_id'] ?? ''));
+            if ($agencyCode === '' || isset($seen[$agencyCode])) {
+                continue;
             }
+
+            $status = strtoupper((string) ($agency['status'] ?? ''));
+            if ($status !== '' && $status !== 'ACTIVE') {
+                continue;
+            }
+
+            $services = $agency['services'] ?? null;
+            if (is_array($services) && array_key_exists('pickupAvailability', $services) && !$services['pickupAvailability']) {
+                continue;
+            }
+
+            if (array_key_exists('pickup_availability', $agency) && !$agency['pickup_availability']) {
+                continue;
+            }
+
+            $location = is_array($agency['location'] ?? null) ? $agency['location'] : [];
+            $address = is_array($location['address'] ?? null)
+                ? $location['address']
+                : $location;
+
+            $seen[$agencyCode] = true;
+            $points[] = [
+                'id' => $agencyCode,
+                'name' => trim((string) ($agency['name'] ?? $agency['agency_name'] ?? 'Sucursal Correo Argentino')),
+                'address' => trim((string) ($address['streetName'] ?? $address['street_name'] ?? '')) . ' ' . trim((string) ($address['streetNumber'] ?? $address['street_number'] ?? '')),
+                'city' => trim((string) ($address['city'] ?? $address['locality'] ?? $address['city_name'] ?? '')),
+                'province' => trim((string) ($address['province'] ?? $address['state_name'] ?? '')),
+                'postalCode' => (string) ($address['postalCode'] ?? $address['zip_code'] ?? ''),
+                'hours' => $this->formatAgencyHours($agency['hours'] ?? $agency['open_hours'] ?? null),
+                'latitude' => trim((string) ($location['latitude'] ?? '')),
+                'longitude' => trim((string) ($location['longitude'] ?? '')),
+            ];
         }
 
         return $points;
+    }
+
+    /**
+     * Filtra los puntos (ya cacheados) por coincidencia de CP, en PHP, sin llamar a la API.
+     *
+     * @param array<int, array<string, mixed>> $points
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function filterPickupPointsByPostalCode(array $points, string $postalCode): array
+    {
+        $filtered = [];
+        foreach ($points as $point) {
+            if (!is_array($point)) {
+                continue;
+            }
+
+            $raw = (string) ($point['postalCode'] ?? '');
+            if ($this->extractPostalCodeDigits($raw) !== $postalCode) {
+                continue;
+            }
+
+            $filtered[] = $point;
+        }
+
+        return $filtered;
+    }
+
+    private function readCache(string $key)
+    {
+        $path = $this->getCachePath($key);
+        if (!is_file($path)) {
+            return null;
+        }
+
+        $raw = file_get_contents($path);
+        if (!is_string($raw) || $raw === '') {
+            return null;
+        }
+
+        $payload = json_decode($raw, true);
+        if (!is_array($payload) || (int) ($payload['expires'] ?? 0) < time()) {
+            return null;
+        }
+
+        return $payload['data'] ?? null;
+    }
+
+    private function writeCache(string $key, array $data, int $ttl): void
+    {
+        $path = $this->getCachePath($key);
+        $dir = dirname($path);
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+
+        @file_put_contents($path, json_encode([
+            'expires' => time() + $ttl,
+            'data' => $data,
+        ]));
+    }
+
+    private function getCachePath(string $key): string
+    {
+        return rtrim(_PS_CACHE_DIR_, '/\\') . DIRECTORY_SEPARATOR . 'morocartdrawer' . DIRECTORY_SEPARATOR . $key . '.json';
     }
 
     private function extractPostalCodeDigits(string $postalCode): string

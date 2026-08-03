@@ -711,9 +711,61 @@
 }
 
 .moro-cart-drawer__pickup-point {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   border: 1px solid var(--moro-surface-dim);
   background: var(--moro-surface-container-low);
   padding: 14px;
+  cursor: pointer;
+  transition: border-color 300ms ease, background-color 300ms ease;
+}
+
+.moro-cart-drawer__pickup-point:hover {
+  border-color: var(--moro-primary);
+}
+
+.moro-cart-drawer__pickup-point.is-selected {
+  border-color: var(--moro-primary);
+  background: var(--moro-surface);
+}
+
+.moro-cart-drawer__pickup-point input[type="radio"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.moro-cart-drawer__pickup-point-radio {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 1px solid var(--moro-surface-dim);
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.moro-cart-drawer__pickup-point-radio.is-selected {
+  border: 4px solid var(--moro-primary);
+}
+
+.moro-cart-drawer__pickup-point input[type="radio"]:focus-visible ~ .moro-cart-drawer__pickup-point-radio {
+  outline: 2px solid var(--moro-primary);
+  outline-offset: 2px;
+}
+
+.moro-cart-drawer__pickup-point-body {
+  display: block;
+  min-width: 0;
 }
 
 .moro-cart-drawer__pickup-point-name {
@@ -836,4 +888,68 @@ body.moro-cart-drawer-open {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* ------------------------------------------------------------------
+   Selección de opción de envío (radio funcional)
+   ------------------------------------------------------------------ */
+
+.moro-cart-drawer__shipping-option {
+  position: relative;
+  cursor: pointer;
+  transition: border-color 300ms ease, background-color 300ms ease;
+}
+
+.moro-cart-drawer__shipping-option:hover {
+  border-color: var(--moro-primary);
+}
+
+.moro-cart-drawer__shipping-option input[type="radio"] {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.moro-cart-drawer__shipping-option input[type="radio"]:focus-visible ~ .moro-cart-drawer__shipping-option-left {
+  outline: 2px solid var(--moro-primary);
+  outline-offset: 2px;
+}
+
+.moro-cart-drawer__shipping-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.moro-cart-drawer__shipping-option-name {
+  font-weight: 500;
+}
+
+.moro-cart-drawer__shipping-option-service {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--moro-on-surface-variant);
+}
+
+.moro-cart-drawer__shipping-option-delay {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--moro-on-surface-variant);
+}
+
+.moro-cart-drawer__pickup-point-choose {
+  display: none;
+}
+
+.moro-cart-drawer__pickup-point-choose:hover,
+.moro-cart-drawer__pickup-point-choose:focus-visible {
+  display: none;
 }

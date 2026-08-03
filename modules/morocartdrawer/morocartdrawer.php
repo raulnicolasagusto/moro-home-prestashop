@@ -27,7 +27,7 @@ class MoroCartDrawer extends Module
     {
         $this->name = 'morocartdrawer';
         $this->tab = 'front_office_features';
-        $this->version = '1.1.0';
+        $this->version = '1.1.5';
         $this->author = 'Moro Home';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -60,7 +60,7 @@ class MoroCartDrawer extends Module
         $this->context->controller->registerJavascript(
             'moro-cart-drawer',
             'modules/' . $this->name . '/views/js/moro-cart-drawer.js',
-            ['position' => 'bottom', 'priority' => 150]
+            ['position' => 'bottom', 'priority' => 150, 'version' => $this->version]
         );
 
         return '';
@@ -78,6 +78,10 @@ class MoroCartDrawer extends Module
 
         $ajaxUrl = $this->context->link->getModuleLink(
             'morocartdrawer', 'ajax', [], true
+        );
+
+        $shippingSelectUrl = $this->context->link->getModuleLink(
+            'morocartdrawer', 'ajax', ['action' => 'selectShipping'], true
         );
 
         // Shipping calc: solo se pasa al Smarty si el toggle esta activo
@@ -121,6 +125,7 @@ class MoroCartDrawer extends Module
             'moro_cart_drawer_order_url'  => $orderUrl,
             'moro_cart_drawer_new_url'    => $newProductsUrl,
             'moro_cart_drawer_ajax_url'   => $ajaxUrl,
+            'moro_cart_drawer_shipping_select_url' => $shippingSelectUrl,
             'moro_cart_drawer_shipping_enabled' => $shippingEnabled,
             'moro_cart_drawer_shipping_show_home' => (bool) $showHome,
             'moro_cart_drawer_shipping_show_branch' => (bool) $showBranch,
@@ -132,6 +137,7 @@ class MoroCartDrawer extends Module
                     'showHome' => (bool) $showHome,
                     'showBranch' => (bool) $showBranch,
                     'showPickupPoints' => (bool) $showPickupPoints,
+                    'selectUrl' => $shippingSelectUrl,
                 ],
             ]),
         ]);
@@ -255,7 +261,7 @@ class MoroCartDrawer extends Module
                 'label' => $this->trans('Mostrar envio a domicilio', [], 'Modules.Morocartdrawer.Admin'),
                 'name' => self::SHIPPING_SHOW_HOME_KEY,
                 'is_bool' => true,
-                'desc' => $this->trans('Esta opción queda preparada para una etapa siguiente.', [], 'Modules.Morocartdrawer.Admin'),
+                'desc' => $this->trans('Muestra las tarifas de envío a domicilio (Clásico y Express) en el drawer.', [], 'Modules.Morocartdrawer.Admin'),
                 'values' => [
                     ['id' => 'show_home_on', 'value' => 1, 'label' => $this->trans('Yes', [], 'Admin.Global')],
                     ['id' => 'show_home_off', 'value' => 0, 'label' => $this->trans('No', [], 'Admin.Global')],
@@ -267,7 +273,7 @@ class MoroCartDrawer extends Module
                 'label' => $this->trans('Mostrar envio a sucursal', [], 'Modules.Morocartdrawer.Admin'),
                 'name' => self::SHIPPING_SHOW_BRANCH_KEY,
                 'is_bool' => true,
-                'desc' => $this->trans('Esta opción es la que funciona por ahora.', [], 'Modules.Morocartdrawer.Admin'),
+                'desc' => $this->trans('Muestra las tarifas de retiro en sucursal en el drawer.', [], 'Modules.Morocartdrawer.Admin'),
                 'values' => [
                     ['id' => 'show_branch_on', 'value' => 1, 'label' => $this->trans('Yes', [], 'Admin.Global')],
                     ['id' => 'show_branch_off', 'value' => 0, 'label' => $this->trans('No', [], 'Admin.Global')],

@@ -32,8 +32,10 @@
   let ajaxUrl = '';
   let lastBadgeCount = -1;
   let isOpen = false;
-  let shippingConfig = { enabled: false, showHome: false, showBranch: true, showPickupPoints: true };
+  let shippingConfig = { enabled: false, showHome: false, showBranch: true, showPickupPoints: true, selectUrl: '' };
   let shippingEstimate = null;
+  let selectedOptionId = null;
+  let pendingBranchOption = null;
   const pickupPointsCache = new Map();
   const PICKUP_POINTS_CACHE_TTL_MS = 10 * 60 * 1000;
 
@@ -65,14 +67,14 @@
       .catch((err) => { console.error('[moroCart] fetchCart failed:', err); });
   };
 
-  const updateQtyAjax = (/** @type {CartItem} */ item, /** @type {number} */ newQty) => {
+  const updateQtyAjax = (/** @type {CartItem} */ item, /** @type {'up'|'down'} */ op) => {
     const params = new URLSearchParams();
     params.append('ajax', '1');
     params.append('action', 'updateQty');
     params.append('id_product', String(item.id_product));
     params.append('id_product_attribute', String(item.id_product_attribute));
-    params.append('qty', String(newQty));
-    params.append('op', 'up');
+    params.append('qty', '1');
+    params.append('op', op);
 
     return fetch(ajaxUrl, { method: 'POST', body: params })
       .then(r => r.json())
@@ -152,6 +154,50 @@
       points,
       ts: Date.now(),
     });
+  };
+
+  /**
+   * @typedef {Object} ShippingSelection
+   * @property {string} deliveryType
+   * @property {number} price
+   * @property {string} productType
+   * @property {string} serviceName
+   * @property {string} [agencyId]
+   * @property {string} [agencyName]
+   * @property {string} [agencyAddress]
+   * @property {string} [agencyPostalCode]
+   */
+
+  const selectShippingAjax = (/** @type {ShippingSelection} */ selection) => {
+    const params = new URLSearchParams();
+    params.append('ajax', '1');
+    params.append('action', 'selectShipping');
+    params.append('delivery_type', selection.deliveryType);
+    params.append('price', String(selection.price));
+    params.append('product_type', selection.productType || 'CP');
+    params.append('product_name', selection.serviceName || 'Correo Argentino');
+
+    if (selection.deliveryType === 'S') {
+      params.append('agency_id', selection.agencyId || '');
+      params.append('agency_name', selection.agencyName || '');
+      params.append('agency_address', selection.agencyAddress || '');
+      params.append('agency_postal_code', selection.agencyPostalCode || '');
+    }
+
+    const url = shippingConfig.selectUrl || ajaxUrl;
+    return fetch(url, { method: 'POST', body: params })
+      .then(r => r.json())
+      .then(data => {
+        if (!data || !data.success) {
+          throw new Error((data && data.error) || 'No pudimos guardar el envío.');
+        }
+        const shippingValueEl = $('[data-ps-ref="cart-shipping-value"]');
+        if (shippingValueEl && data.shipping) {
+          shippingValueEl.textContent = data.shipping;
+        }
+        updateGrandTotal();
+        return data;
+      });
   };
 
   /* =================================================================
@@ -284,6 +330,8 @@
     if (pickupLink) pickupLink.hidden = true;
 
     shippingEstimate = null;
+    selectedOptionId = null;
+    pendingBranchOption = null;
     closePickupPointsModal();
     updateGrandTotal();
   };
@@ -314,7 +362,17 @@
     }
   };
 
-  const renderShippingResult = (/** @type {{postalCode:string,shipping:string,total:string,options:Array<{label:string,price:string,selected:boolean}>}} */ data) => {
+  const EXPRESS_RATE_RE = /expreso|express|prioritario|urgente/i;
+
+  const buildShippingLabel = (/** @type {{type:string,productType:string,serviceName:string}} */ option) => {
+    const isExpress = option.productType === 'EP' || EXPRESS_RATE_RE.test(option.serviceName || '');
+    if (option.type === 'home') {
+      return isExpress ? 'Envío a domicilio Express' : 'Envío a domicilio';
+    }
+    return isExpress ? 'Envío a sucursal Express' : 'Envío a sucursal';
+  };
+
+  const renderShippingResult = (/** @type {{postalCode:string,shipping:string,total:string,options:Array<{id:string,type:string,deliveryType:string,productType:string,label:string,serviceName:string,delay:string,price:string,priceAmount:number,selected:boolean}>}} */ data) => {
     const result = $('[data-ps-ref="cart-shipping-result"]');
     const cpLabel = $('[data-ps-ref="cart-shipping-postcode-label"]');
     const options = $('[data-ps-ref="cart-shipping-options"]');
@@ -331,9 +389,24 @@
       error.textContent = '';
     }
 
+    selectedOptionId = null;
+    pendingBranchOption = null;
+
     (data.options || []).forEach((option) => {
       const row = document.createElement('label');
       row.className = 'moro-cart-drawer__shipping-option' + (option.selected ? ' is-selected' : '');
+      row.dataset.psAction = 'select-shipping-option';
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'moro-cart-shipping-option';
+      input.value = option.id || '';
+      if (option.selected) input.checked = true;
+      input.dataset.psDeliveryType = option.deliveryType || '';
+      input.dataset.psProductType = option.productType || 'CP';
+      input.dataset.psProductName = option.serviceName || 'Correo Argentino';
+      input.dataset.psShippingPrice = String(option.priceAmount ?? 0);
+      row.appendChild(input);
 
       const left = document.createElement('div');
       left.className = 'moro-cart-drawer__shipping-option-left';
@@ -344,7 +417,22 @@
 
       const text = document.createElement('span');
       text.className = 'moro-cart-drawer__shipping-option-text';
-      text.textContent = option.label || '';
+      const name = document.createElement('span');
+      name.className = 'moro-cart-drawer__shipping-option-name';
+      name.textContent = buildShippingLabel(option);
+      text.appendChild(name);
+      if (option.serviceName) {
+        const service = document.createElement('span');
+        service.className = 'moro-cart-drawer__shipping-option-service';
+        service.textContent = option.serviceName;
+        text.appendChild(service);
+      }
+      if (option.delay) {
+        const delay = document.createElement('span');
+        delay.className = 'moro-cart-drawer__shipping-option-delay';
+        delay.textContent = option.delay;
+        text.appendChild(delay);
+      }
       left.appendChild(text);
 
       const price = document.createElement('span');
@@ -366,6 +454,101 @@
     updateGrandTotal();
   };
 
+  const selectShippingOption = (/** @type {HTMLElement} */ row) => {
+    const optionsContainer = $('[data-ps-ref="cart-shipping-options"]');
+    const input = /** @type {HTMLInputElement|null} */ (row.querySelector('input[type="radio"]'));
+    if (!optionsContainer || !input) return;
+
+    input.checked = true;
+    const isBranch = input.dataset.psDeliveryType === 'S';
+    optionsContainer.querySelectorAll('.moro-cart-drawer__shipping-option').forEach((r) => {
+      const radio = /** @type {HTMLInputElement|null} */ (r.querySelector('input[type="radio"]'));
+      const circle = r.querySelector('.moro-cart-drawer__shipping-option-radio');
+      const isChecked = radio === input;
+      r.classList.toggle('is-selected', isChecked);
+      if (circle) circle.classList.toggle('is-selected', isChecked);
+    });
+
+    if (isBranch) {
+      pendingBranchOption = {
+        price: parseFloat(input.dataset.psShippingPrice || '0'),
+        productType: input.dataset.psProductType || 'CP',
+        serviceName: input.dataset.psProductName || 'Correo Argentino',
+      };
+      return;
+    }
+
+    pendingBranchOption = null;
+    selectShippingAjax({
+      deliveryType: 'D',
+      price: parseFloat(input.dataset.psShippingPrice || '0'),
+      productType: input.dataset.psProductType || 'CP',
+      serviceName: input.dataset.psProductName || 'Correo Argentino',
+    }).catch((err) => {
+      showShippingError(err.message || 'No pudimos guardar el envío.');
+    });
+  };
+
+  const getPendingBranchOption = () => {
+    if (pendingBranchOption) return pendingBranchOption;
+
+    const optionsContainer = $('[data-ps-ref="cart-shipping-options"]');
+    if (!optionsContainer) return null;
+
+    const checked = optionsContainer.querySelector(
+      'input[type="radio"][data-ps-delivery-type="S"]:checked'
+    );
+    if (!(checked instanceof HTMLInputElement)) return null;
+
+    return {
+      price: parseFloat(checked.dataset.psShippingPrice || '0'),
+      productType: checked.dataset.psProductType || 'CP',
+      serviceName: checked.dataset.psProductName || 'Correo Argentino',
+    };
+  };
+
+  const selectPickupPoint = (/** @type {HTMLElement} */ row) => {
+    const input = /** @type {HTMLInputElement|null} */ (row.querySelector('input[type="radio"]'));
+    if (!input) return;
+
+    input.checked = true;
+
+    const list = row.parentElement;
+    if (list) {
+      list.querySelectorAll('.moro-cart-drawer__pickup-point').forEach((r) => {
+        const isSelected = r === row;
+        r.classList.toggle('is-selected', isSelected);
+        const circle = r.querySelector('.moro-cart-drawer__pickup-point-radio');
+        if (circle) circle.classList.toggle('is-selected', isSelected);
+      });
+    }
+
+    const branch = getPendingBranchOption();
+    if (!branch) {
+      showShippingError('Elegí primero la opción de envío a sucursal.');
+      return;
+    }
+
+    selectShippingAjax({
+      deliveryType: 'S',
+      price: branch.price,
+      productType: branch.productType,
+      serviceName: branch.serviceName,
+      agencyId: input.dataset.psAgencyId || '',
+      agencyName: input.dataset.psAgencyName || '',
+      agencyAddress: input.dataset.psAgencyAddress || '',
+      agencyPostalCode: input.dataset.psAgencyPostalCode || '',
+    })
+      .then(() => {
+        pendingBranchOption = null;
+        closePickupPointsModal();
+        updateGrandTotal();
+      })
+      .catch((err) => {
+        showShippingError(err.message || 'No pudimos guardar la sucursal.');
+      });
+  };
+
   const closePickupPointsModal = () => {
     const modal = /** @type {HTMLDialogElement|null} */ ($('[data-ps-ref="pickup-points-modal"]'));
     if (modal && modal.open) {
@@ -384,28 +567,46 @@
 
     const fragment = document.createDocumentFragment();
     points.forEach((point) => {
-      const card = document.createElement('article');
+      const card = document.createElement('label');
       card.className = 'moro-cart-drawer__pickup-point';
+      card.dataset.psAction = 'select-pickup-point';
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = 'moro-cart-pickup-point';
+      input.value = point.id || '';
+      input.dataset.psAgencyId = point.id || '';
+      input.dataset.psAgencyName = point.name || '';
+      input.dataset.psAgencyAddress = point.address || '';
+      input.dataset.psAgencyPostalCode = point.postalCode || '';
+      card.appendChild(input);
+
+      const radio = document.createElement('span');
+      radio.className = 'moro-cart-drawer__pickup-point-radio';
+      card.appendChild(radio);
+
+      const body = document.createElement('span');
+      body.className = 'moro-cart-drawer__pickup-point-body';
 
       const name = document.createElement('h4');
       name.className = 'moro-cart-drawer__pickup-point-name';
       name.textContent = point.name || 'Sucursal Correo Argentino';
+      body.appendChild(name);
 
       const address = document.createElement('p');
       address.className = 'moro-cart-drawer__pickup-point-address';
       const addressLine = [point.address, point.city, point.province].filter(Boolean).join(' - ');
       address.textContent = addressLine + (point.postalCode ? ' (' + point.postalCode + ')' : '');
-
-      card.appendChild(name);
-      card.appendChild(address);
+      body.appendChild(address);
 
       if (point.hours) {
         const hours = document.createElement('p');
         hours.className = 'moro-cart-drawer__pickup-point-hours';
         hours.textContent = point.hours;
-        card.appendChild(hours);
+        body.appendChild(hours);
       }
 
+      card.appendChild(body);
       fragment.appendChild(card);
     });
 
@@ -415,6 +616,10 @@
 
   const openPickupPointsModal = () => {
     if (!shippingConfig.showPickupPoints) return;
+
+    if (!pendingBranchOption) {
+      pendingBranchOption = getPendingBranchOption();
+    }
 
     const modal = /** @type {HTMLDialogElement|null} */ ($('[data-ps-ref="pickup-points-modal"]'));
     const cpLabel = $('[data-ps-ref="pickup-points-postcode"]');
@@ -550,8 +755,7 @@
         const itemEl = target.closest('.moro-cart-drawer__item');
         const idx = itemEl ? parseInt(/** @type {HTMLElement} */ (itemEl).dataset.itemIndex || '', 10) : -1;
         if (Number.isFinite(idx) && items[idx]) {
-          const newQty = (items[idx].quantity || 1) + 1;
-          updateQtyAjax(items[idx], newQty);
+          updateQtyAjax(items[idx], 'up');
         }
         break;
       }
@@ -560,8 +764,11 @@
         const itemEl = target.closest('.moro-cart-drawer__item');
         const idx = itemEl ? parseInt(/** @type {HTMLElement} */ (itemEl).dataset.itemIndex || '', 10) : -1;
         if (Number.isFinite(idx) && items[idx]) {
-          const newQty = Math.max(1, (items[idx].quantity || 1) - 1);
-          updateQtyAjax(items[idx], newQty);
+          if ((items[idx].quantity || 1) <= 1) {
+            removeItemAjax(items[idx]);
+          } else {
+            updateQtyAjax(items[idx], 'down');
+          }
         }
         break;
       }
@@ -598,6 +805,16 @@
       case 'view-pickup-points': {
         e.preventDefault();
         openPickupPointsModal();
+        break;
+      }
+      case 'select-shipping-option': {
+        e.preventDefault();
+        selectShippingOption(target);
+        break;
+      }
+      case 'select-pickup-point': {
+        e.preventDefault();
+        selectPickupPoint(target);
         break;
       }
       case 'close-pickup-points-modal': {
@@ -658,6 +875,7 @@
             showHome: Boolean(parsed.shipping.showHome),
             showBranch: Boolean(parsed.shipping.showBranch),
             showPickupPoints: parsed.shipping.showPickupPoints !== false,
+            selectUrl: parsed.shipping.selectUrl || '',
           };
         }
         console.log('[moroCart] ajaxUrl:', ajaxUrl);

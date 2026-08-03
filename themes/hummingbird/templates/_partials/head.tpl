@@ -78,7 +78,7 @@
   {* Moro Home overrides (CSS plano hasta que el toolchain SCSS esté disponible). *}
   <link rel="stylesheet" href="{$urls.theme_assets}css/moro-theme.css?v=1.1.0">
   <link rel="stylesheet" href="{$urls.theme_assets}css/moro-header-v10.css">
-  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-cart-drawer.css?v=5">
+  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-cart-drawer.css?v=8">
 {/block}
 
 {block name='javascript_head'}
@@ -86,7 +86,6 @@
   <script src="{$urls.theme_assets}js/moro-search-dialog.js?v=1.0.0" defer></script>
   <script src="{$urls.theme_assets}js/moro-mega-menu.js?v=1.0.0" defer></script>
   <script src="{$urls.theme_assets}js/moro-mobile-menu.js?v=1.0.0" defer></script>
-  <script src="{$urls.theme_assets}js/moro-cart-drawer.js?v=1.3.1" defer></script>
 {/block}
 
 {block name='hook_header'}

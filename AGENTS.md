@@ -304,6 +304,38 @@ el build de SCSS, migrarlas a `abstract/variables/` como `$moro-*`.
   
   'Remove-Item -Path "C:\xampp-8-2\htdocs\more-home\var\cache\prod\smarty\compile\*" -Recurse -Force'.
 
+### 10.1 Caché de bundles de assets del tema (producción / AWS) — OBLIGATORIO
+
+Cuando subís un cambio de JS/CSS por WinSCP y el sitio **sigue sirviendo la versión
+vieja**, no alcanza con limpiar Smarty: PrestaShop arma **bundles combinados**
+(`theme-*.css`, `bottom-*.js`) en la carpeta
+`themes/hummingbird/assets/cache/`, y el servidor los sigue sirviendo viejos.
+
+**Síntoma:** el código nuevo ya está subido (lo verificás con `curl` al `.js`/`.css`
+fuente) pero la página carga el bundle viejo → "no funciona" en JS/CSS.
+
+**Solución (por SSH en producción):**
+
+```bash
+sudo find /var/www/moro-home/themes/hummingbird/assets/cache -type f -delete
+```
+
+Esto borra los bundles combinados del tema. Después, la limpieza habitual:
+
+```bash
+sudo rm -rf /var/www/moro-home/var/cache/prod/smarty/*
+sudo rm -f /var/www/moro-home/var/cache/prod/FrontContainer.php
+```
+
+Y hard refresh del navegador con "Disable cache" en DevTools.
+
+**Cuándo usar este comando (regla práctica):**
+- Cada vez que se sube un cambio de JS/CSS **y** no se ve reflejado.
+- Si PrestaShop tiene activado "Combinar/Comprimir/Cachear" (CCC) en
+  Preferencias → Rendimiento, los cambios de assets casi siempre necesitan este paso.
+- Mientras se desarrolla a mano (sin build ni versionado real), conviene **desactivar
+  el CCC** en el Back Office y reactivarlo solo cuando el sitio esté estable.
+
 ## 11. Regla Anti-Hardcode (Diseño vs. Contenido) — OBLIGATORIA
 
 Esta regla tiene prioridad sobre cualquier otra instrucción de la tarea, incluso
