@@ -50,6 +50,11 @@
     panel.classList.add('is-open');
     document.body.classList.add('moro-search-dialog-open');
     toggleBtn.setAttribute('aria-expanded', 'true');
+    if (input) {
+      input.value = '';
+      // Disparar 'input' para que moro-search-results.js resetee el panel.
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
     setTimeout(function () {
       if (input) input.focus();
     }, 350);
@@ -60,7 +65,11 @@
     panel.classList.remove('is-open');
     document.body.classList.remove('moro-search-dialog-open');
     toggleBtn.setAttribute('aria-expanded', 'false');
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+      // Disparar 'input' para que moro-search-results.js reseteé el panel.
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    }
   }
   window.closeMoroSearchPanel = close;
 

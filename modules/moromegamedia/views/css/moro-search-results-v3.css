@@ -1,0 +1,231 @@
+/* ==========================================================================
+   Moro Home — Search results (live search panel)
+   Inyectado por moromegadmedia (hook displayHeader).
+   Estructura/estilo basados en designe/search-input.html <main> adaptados a
+   tokens Moro (AGENTS.md §8, §9).
+   ========================================================================== */
+
+.moro-search-results {
+  --moro-search-discount: #ba1a1a;
+  max-width: 1920px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 8px 0 40px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  transition: opacity 400ms ease-out 75ms, transform 400ms ease-out 75ms;
+}
+
+.moro-search-results[hidden] {
+  display: none;
+}
+
+.moro-search-results__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+@media (min-width: 768px) {
+  .moro-search-results__inner {
+    flex-direction: row;
+    gap: 48px;
+  }
+}
+
+/* ---- Columna izquierda: Sugerencias (solo título por ahora) ---- */
+
+.moro-search-results__aside {
+  flex: 0 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .moro-search-results__aside {
+    width: 25%;
+    max-width: 280px;
+  }
+}
+
+.moro-search-results__aside-title {
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-label-md);
+  font-weight: var(--moro-fw-label-md);
+  letter-spacing: var(--moro-ls-label-md);
+  line-height: var(--moro-lh-label-md);
+  text-transform: uppercase;
+  color: var(--moro-on-surface-variant);
+  border-bottom: 1px solid var(--moro-surface-dim);
+  padding-bottom: 8px;
+  margin: 0 0 16px;
+}
+
+/* ---- Columna derecha: Productos ---- */
+
+.moro-search-results__section {
+  flex: 1;
+  min-width: 0;
+}
+
+.moro-search-results__heading {
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-nav-item);
+  font-weight: var(--moro-fw-nav-item);
+  letter-spacing: var(--moro-ls-nav-item);
+  line-height: var(--moro-lh-nav-item);
+  color: var(--moro-on-surface-variant);
+  border-bottom: 1px solid var(--moro-surface-dim);
+  padding-bottom: 8px;
+  margin: 0 0 24px;
+  text-transform: uppercase;
+}
+
+/* ---- Estados: loading / empty / error ---- */
+
+.moro-search-results__state {
+  font-family: var(--moro-font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--moro-on-surface-variant);
+  padding: 24px 0;
+  margin: 0;
+}
+
+.moro-search-results__state[hidden] {
+  display: none;
+}
+
+/* ---- Grilla de productos ---- */
+
+.moro-search-results__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 576px) {
+  .moro-search-results__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 992px) {
+  .moro-search-results__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+}
+
+/* ---- Card de producto (copia adaptada de search-input.html <main>) ---- */
+
+.moro-search-results__card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.moro-search-results__card-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--moro-surface-container-low);
+  margin: 0 0 12px;
+}
+
+.moro-search-results__card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms ease;
+}
+
+.moro-search-results__card:hover .moro-search-results__card-image,
+.moro-search-results__card:focus-visible .moro-search-results__card-image {
+  transform: scale(1.05);
+}
+
+.moro-search-results__card-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  font-family: var(--moro-font-sans);
+  font-size: var(--moro-fs-label-md);
+  font-weight: var(--moro-fw-label-md);
+  letter-spacing: var(--moro-ls-label-md);
+  line-height: var(--moro-lh-label-md);
+  text-transform: uppercase;
+  color: var(--moro-on-surface);
+  background: var(--moro-surface);
+  border: 1px solid var(--moro-surface-dim);
+  padding: 4px 8px;
+}
+
+.moro-search-results__card-title {
+  font-family: var(--moro-font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--moro-on-surface);
+  margin: 0 0 4px;
+}
+
+.moro-search-results__card-price {
+  font-family: var(--moro-font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--moro-on-surface-variant);
+  margin: 0;
+}
+
+.moro-search-results__card-price--discount {
+  color: var(--moro-search-discount);
+}
+
+.moro-search-results__card-price-old {
+  font-weight: 400;
+  color: var(--moro-on-surface-variant);
+  text-decoration: line-through;
+  margin-left: 8px;
+}
+
+/* ---- Link "Ver todos los resultados" ---- */
+
+.moro-search-results__all {
+  display: block;
+  text-align: center;
+  margin-top: 24px;
+  font-family: var(--moro-font-serif);
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  line-height: 20px;
+  text-transform: none;
+  color: var(--moro-on-surface);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: color 300ms ease;
+}
+
+.moro-search-results__all:hover,
+.moro-search-results__all:focus-visible {
+  color: var(--moro-primary);
+}
+
+.moro-search-results__all[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .moro-search-results__card-image {
+    transition: none;
+  }
+}

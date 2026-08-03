@@ -242,6 +242,7 @@
                    name="s"
                    id="moro-search-dialog-input"
                    class="moro-search-dialog__input"
+                   data-ps-ref="search-input"
                    aria-label="{l s='Search' d='Shop.Theme.Actions'}"
                    placeholder="¿Qué estás buscando?"
                    autocomplete="off" />
@@ -256,6 +257,9 @@
           </button>
 
         </div>
+
+        {* ===== Panel de resultados en vivo (módulo moromegamedia) ===== *}
+        {include file='module:moromegamedia/views/templates/hook/search-results.tpl'}
 
       </div>
 

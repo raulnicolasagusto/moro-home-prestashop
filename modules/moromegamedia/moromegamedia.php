@@ -49,10 +49,23 @@ class MoroMegaMedia extends Module
     }
 
     /**
-     * Hook displayHeader: arma $mega_menu_categories + $mega_menu_media.
+     * Hook displayHeader: arma $mega_menu_categories + $mega_menu_media
+     * y registra los assets del buscador en vivo (moro-search-results).
      */
     public function hookDisplayHeader()
     {
+        $this->context->controller->registerStylesheet(
+            'moro-search-results',
+            'modules/' . $this->name . '/views/css/moro-search-results-v3.css',
+            ['media' => 'all', 'priority' => 150]
+        );
+
+        $this->context->controller->registerJavascript(
+            'moro-search-results',
+            'modules/' . $this->name . '/views/js/moro-search-results.js',
+            ['position' => 'bottom', 'priority' => 150]
+        );
+
         $id_lang = (int) $this->context->language->id;
         $id_shop = (int) $this->context->shop->id;
 

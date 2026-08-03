@@ -21,7 +21,7 @@
           data-color="{$announcement.color|escape:'html':'UTF-8'}"
           {if !$isSelected}aria-hidden="true" tabindex="-1"{/if}
         >
-          {$announcement.message|escape:'html':'UTF-8'}
+          <b>{$announcement.message|escape:'html':'UTF-8'}</b>
         </a>
       {else}
         <span
@@ -31,7 +31,7 @@
           data-color="{$announcement.color|escape:'html':'UTF-8'}"
           {if !$isSelected}aria-hidden="true"{/if}
         >
-          {$announcement.message|escape:'html':'UTF-8'}
+          <b>{$announcement.message|escape:'html':'UTF-8'}</b>
         </span>
       {/if}
     {/foreach}
