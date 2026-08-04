@@ -22,6 +22,7 @@ class MorosinglepagecheckoutCheckoutModuleFrontController extends ModuleFrontCon
 
         $this->context->smarty->assign([
             'moro_spc_preview_mode' => false,
+            'moro_spc_shipping_selection' => $this->getStoredShippingSelection($cart),
             'moro_spc_urls' => [
                 'address' => $this->context->link->getModuleLink($this->module->name, 'ajaxaddress'),
                 'carriers' => $this->context->link->getModuleLink($this->module->name, 'ajaxcarriers'),
@@ -38,6 +39,32 @@ class MorosinglepagecheckoutCheckoutModuleFrontController extends ModuleFrontCon
         ]);
 
         $this->setTemplate('module:morosinglepagecheckout/views/templates/front/checkout.tpl');
+    }
+
+    private function getStoredShippingSelection(Cart $cart): array
+    {
+        if (!Validate::isLoadedObject($cart)) {
+            return [];
+        }
+
+        $row = Db::getInstance()->getRow(
+            'SELECT *
+            FROM `' . _DB_PREFIX_ . 'moro_spc_shipping_selection`
+            WHERE `id_cart` = ' . (int) $cart->id
+        );
+
+        if (!is_array($row) || empty($row['delivery_type'])) {
+            return [];
+        }
+
+        $row['delay'] = (string) $this->context->cookie->__get('moro_spc_shipping_delay');
+        $row['agency_hours'] = (string) $this->context->cookie->__get('moro_spc_shipping_agency_hours');
+        $row['price_formatted'] = $this->context->getCurrentLocale()->formatPrice(
+            (float) $row['price'],
+            $this->context->currency->iso_code
+        );
+
+        return $row;
     }
 
     private function getPaymentOptions(): array

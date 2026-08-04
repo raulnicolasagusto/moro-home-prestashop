@@ -27,7 +27,7 @@ class MoroCartDrawer extends Module
     {
         $this->name = 'morocartdrawer';
         $this->tab = 'front_office_features';
-        $this->version = '1.1.5';
+        $this->version = '1.1.6';
         $this->author = 'Moro Home';
         $this->need_instance = 0;
         $this->bootstrap = true;

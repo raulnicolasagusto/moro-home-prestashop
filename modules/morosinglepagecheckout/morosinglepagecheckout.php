@@ -12,7 +12,7 @@ class Morosinglepagecheckout extends Module
     {
         $this->name = 'morosinglepagecheckout';
         $this->tab = 'checkout';
-        $this->version = '1.1.3';
+        $this->version = '1.1.4';
         $this->author = 'Moro Home';
         $this->need_instance = 0;
         $this->bootstrap = true;
@@ -70,9 +70,19 @@ class Morosinglepagecheckout extends Module
                 : new Cart((int) $order->id_cart);
 
             $this->importCorreoShipmentForOrder($order, $cart, 'validate_order');
+            $this->clearShippingCookies();
         } catch (Throwable $exception) {
             PrestaShopLogger::addLog('Moro SPC Correo import throwable: ' . $exception->getMessage(), 3, null, 'Order', isset($order) ? (int) $order->id : 0, true);
         }
+    }
+
+    private function clearShippingCookies(): void
+    {
+        $cookie = $this->context->cookie;
+        foreach (['type', 'price', 'product_type', 'product_name', 'delay', 'agency_id', 'agency_name', 'agency_address', 'agency_postal_code', 'agency_hours'] as $suffix) {
+            $cookie->__unset('moro_spc_shipping_' . $suffix);
+        }
+        $cookie->write();
     }
 
     public function hookActionOrderStatusPostUpdate(array $params)
@@ -110,7 +120,7 @@ class Morosinglepagecheckout extends Module
 
         $this->context->controller->registerStylesheet(
             'module-morosinglepagecheckout-front',
-            'modules/' . $this->name . '/views/css/front-v8.css',
+            'modules/' . $this->name . '/views/css/front-v9.css',
             [
                 'media' => 'all',
                 'priority' => 210,
@@ -120,7 +130,7 @@ class Morosinglepagecheckout extends Module
 
         $this->context->controller->registerJavascript(
             'module-morosinglepagecheckout-front',
-            'modules/' . $this->name . '/views/js/front-v10.js',
+            'modules/' . $this->name . '/views/js/front-v11.js',
             [
                 'position' => 'bottom',
                 'priority' => 210,

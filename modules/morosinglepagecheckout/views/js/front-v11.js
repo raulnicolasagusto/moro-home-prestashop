@@ -7,7 +7,7 @@
     return;
   }
 
-  root.setAttribute('data-ps-spc-assets-version', 'front-v10');
+  root.setAttribute('data-ps-spc-assets-version', 'front-v11');
 
   var config = {};
   var token = root.getAttribute('data-ps-token') || '';
@@ -334,6 +334,11 @@
   function calculateShipping() {
     if (!config.shipping_quote || !carrierTarget) {
       return;
+    }
+
+    var selectedSummary = root.querySelector('[data-ps-ref="shipping-selected"]');
+    if (selectedSummary) {
+      selectedSummary.hidden = true;
     }
 
     var button = root.querySelector('[data-ps-action="calculate-shipping"]');

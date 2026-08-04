@@ -138,7 +138,45 @@
             <h2 id="moro-spc-shipping-title" class="moro-spc__title">
               {l s='Envío' d='Modules.Morosinglepagecheckout.Shop'}
             </h2>
-            <div class="moro-spc__shipping-calc">
+
+            {if $moro_spc_shipping_selection}
+              <div class="moro-spc__shipping-selected" data-ps-ref="shipping-selected">
+                <div class="moro-spc__shipping-selected-main">
+                  <span class="moro-spc__shipping-selected-label">
+                    {if $moro_spc_shipping_selection.delivery_type === 'S'}
+                      {l s='Retiro en sucursal' d='Modules.Morosinglepagecheckout.Shop'}
+                    {else}
+                      {l s='Envío a domicilio' d='Modules.Morosinglepagecheckout.Shop'}
+                    {/if}
+                    — {$moro_spc_shipping_selection.price_formatted|escape:'html':'UTF-8'}
+                  </span>
+                  <span class="moro-spc__shipping-selected-name">
+                    {$moro_spc_shipping_selection.product_name|escape:'html':'UTF-8'}
+                  </span>
+                  {if $moro_spc_shipping_selection.delay}
+                    <span class="moro-spc__shipping-selected-meta">
+                      {$moro_spc_shipping_selection.delay|escape:'html':'UTF-8'}
+                    </span>
+                  {/if}
+                  {if $moro_spc_shipping_selection.delivery_type === 'S' && $moro_spc_shipping_selection.agency_name}
+                    <span class="moro-spc__shipping-selected-meta">
+                      {$moro_spc_shipping_selection.agency_name|escape:'html':'UTF-8'}
+                      {if $moro_spc_shipping_selection.agency_address} — {$moro_spc_shipping_selection.agency_address|escape:'html':'UTF-8'}{/if}
+                    </span>
+                    {if $moro_spc_shipping_selection.agency_hours}
+                      <span class="moro-spc__shipping-selected-meta">
+                        {$moro_spc_shipping_selection.agency_hours|escape:'html':'UTF-8'}
+                      </span>
+                    {/if}
+                  {/if}
+                </div>
+                <button class="moro-spc__secondary-button" type="button" data-ps-action="calculate-shipping">
+                  {l s='Cambiar envío' d='Modules.Morosinglepagecheckout.Shop'}
+                </button>
+              </div>
+            {/if}
+
+            <div class="moro-spc__shipping-calc" data-ps-ref="shipping-calc" {if $moro_spc_shipping_selection}hidden{/if}>
               <p class="moro-spc__helper">
                 {l s='Calculá el envío con el código postal de la dirección cargada.' d='Modules.Morosinglepagecheckout.Shop'}
               </p>

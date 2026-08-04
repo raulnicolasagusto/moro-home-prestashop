@@ -229,15 +229,25 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             'dimensions' => $dimensions,
         ];
 
-        $ratesResponse = $this->doJsonRequest(
-            $baseUrl . '/rates',
-            $ratesPayload,
-            [
-                'Authorization: Bearer ' . $token,
-                'Content-Type: application/json',
-            ],
-            'POST'
-        );
+        $ratesResponse = null;
+        $rateDelays = [500000, 1500000];
+        foreach ($rateDelays as $rateDelay) {
+            $ratesResponse = $this->doJsonRequest(
+                $baseUrl . '/rates',
+                $ratesPayload,
+                [
+                    'Authorization: Bearer ' . $token,
+                    'Content-Type: application/json',
+                ],
+                'POST'
+            );
+
+            if ($ratesResponse['ok'] && !empty($ratesResponse['data']['rates']) && is_array($ratesResponse['data']['rates'])) {
+                break;
+            }
+
+            usleep($rateDelay);
+        }
 
         if (!$ratesResponse['ok'] || empty($ratesResponse['data']['rates']) || !is_array($ratesResponse['data']['rates'])) {
             echo json_encode([
@@ -373,10 +383,12 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
         $price = (float) Tools::getValue('price', 0);
         $productType = (string) Tools::getValue('product_type', 'CP');
         $productName = (string) Tools::getValue('product_name', 'Correo Argentino');
+        $delay = (string) Tools::getValue('delay', '');
         $agencyId = trim((string) Tools::getValue('agency_id', ''));
         $agencyName = trim((string) Tools::getValue('agency_name', ''));
         $agencyAddress = trim((string) Tools::getValue('agency_address', ''));
         $agencyPostalCode = trim((string) Tools::getValue('agency_postal_code', ''));
+        $agencyHours = str_replace('|', ', ', trim((string) Tools::getValue('agency_hours', '')));
 
         if (!in_array($deliveryType, ['S', 'D'], true) || $price < 0) {
             echo json_encode([
@@ -399,10 +411,12 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
         $cookie->__set('moro_spc_shipping_price', (string) $price);
         $cookie->__set('moro_spc_shipping_product_type', $productType);
         $cookie->__set('moro_spc_shipping_product_name', $productName);
+        $cookie->__set('moro_spc_shipping_delay', $delay);
         $cookie->__set('moro_spc_shipping_agency_id', $deliveryType === 'S' ? $agencyId : '');
         $cookie->__set('moro_spc_shipping_agency_name', $deliveryType === 'S' ? $agencyName : '');
         $cookie->__set('moro_spc_shipping_agency_address', $deliveryType === 'S' ? $agencyAddress : '');
         $cookie->__set('moro_spc_shipping_agency_postal_code', $deliveryType === 'S' ? $agencyPostalCode : '');
+        $cookie->__set('moro_spc_shipping_agency_hours', $deliveryType === 'S' ? $agencyHours : '');
         $cookie->write();
 
         $cart = $this->context->cart;
@@ -591,17 +605,8 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             ? 'https://apitest.correoargentino.com.ar/micorreo/v1'
             : 'https://api.correoargentino.com.ar/micorreo/v1';
 
-        $tokenResponse = $this->doJsonRequest(
-            $baseUrl . '/token',
-            [],
-            [
-                'Authorization: ' . $basicAuthHeader,
-                'Content-Type: application/json',
-            ],
-            'POST'
-        );
-
-        if (!$tokenResponse['ok'] || empty($tokenResponse['data']['token'])) {
+        $token = $this->getAccessToken($baseUrl, $basicAuthHeader);
+        if ($token === '') {
             return [
                 'ok' => false,
                 'error' => 'No se pudo autenticar con Correo Argentino.',
@@ -610,8 +615,6 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
                 'customerId' => '',
             ];
         }
-
-        $token = (string) $tokenResponse['data']['token'];
 
         if ($customerId === '') {
             if ($username === '' || $password === '') {
@@ -643,6 +646,56 @@ class MoroCartDrawerAjaxModuleFrontController extends ModuleFrontController
             'token' => $token,
             'customerId' => $customerId,
         ];
+    }
+
+    /**
+     * Token de acceso con caché en Configuration (mismo patrón que el módulo nativo correoargentino):
+     * se reutiliza hasta que expira, evitando golpear /token en cada request.
+     * Incluye reintentos con backoff por si la API tarda en responder el primer token (cold start).
+     */
+    private function getAccessToken(string $baseUrl, string $basicAuthHeader): string
+    {
+        $cachedToken = (string) Configuration::get('MORO_CARTDRAWER_ACCESS_TOKEN');
+        $cachedExpire = (string) Configuration::get('MORO_CARTDRAWER_ACCESS_TOKEN_EXPIRE');
+
+        $expireTs = strtotime($cachedExpire);
+        if ($expireTs === false || $expireTs <= 0) {
+            $expireTs = 0;
+        }
+
+        if ($cachedToken !== '' && $expireTs > time()) {
+            return $cachedToken;
+        }
+
+        $delays = [500000, 1500000];
+        foreach ($delays as $delay) {
+            $tokenResponse = $this->doJsonRequest(
+                $baseUrl . '/token',
+                [],
+                [
+                    'Authorization: ' . $basicAuthHeader,
+                    'Content-Type: application/json',
+                ],
+                'POST'
+            );
+
+            if ($tokenResponse['ok'] && !empty($tokenResponse['data']['token'])) {
+                $token = (string) $tokenResponse['data']['token'];
+                $expire = trim((string) ($tokenResponse['data']['expire'] ?? ''));
+                if ($expire === '') {
+                    $expire = date('c', time() + 900);
+                }
+
+                Configuration::updateValue('MORO_CARTDRAWER_ACCESS_TOKEN', $token);
+                Configuration::updateValue('MORO_CARTDRAWER_ACCESS_TOKEN_EXPIRE', $expire);
+
+                return $token;
+            }
+
+            usleep($delay);
+        }
+
+        return '';
     }
 
     /**

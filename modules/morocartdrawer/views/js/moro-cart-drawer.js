@@ -162,10 +162,12 @@
    * @property {number} price
    * @property {string} productType
    * @property {string} serviceName
+   * @property {string} [delay]
    * @property {string} [agencyId]
    * @property {string} [agencyName]
    * @property {string} [agencyAddress]
    * @property {string} [agencyPostalCode]
+   * @property {string} [agencyHours]
    */
 
   const selectShippingAjax = (/** @type {ShippingSelection} */ selection) => {
@@ -176,12 +178,14 @@
     params.append('price', String(selection.price));
     params.append('product_type', selection.productType || 'CP');
     params.append('product_name', selection.serviceName || 'Correo Argentino');
+    params.append('delay', selection.delay || '');
 
     if (selection.deliveryType === 'S') {
       params.append('agency_id', selection.agencyId || '');
       params.append('agency_name', selection.agencyName || '');
       params.append('agency_address', selection.agencyAddress || '');
       params.append('agency_postal_code', selection.agencyPostalCode || '');
+      params.append('agency_hours', selection.agencyHours || '');
     }
 
     const url = shippingConfig.selectUrl || ajaxUrl;
@@ -406,6 +410,7 @@
       input.dataset.psProductType = option.productType || 'CP';
       input.dataset.psProductName = option.serviceName || 'Correo Argentino';
       input.dataset.psShippingPrice = String(option.priceAmount ?? 0);
+      input.dataset.psShippingDelay = option.delay || '';
       row.appendChild(input);
 
       const left = document.createElement('div');
@@ -474,6 +479,7 @@
         price: parseFloat(input.dataset.psShippingPrice || '0'),
         productType: input.dataset.psProductType || 'CP',
         serviceName: input.dataset.psProductName || 'Correo Argentino',
+        delay: input.dataset.psShippingDelay || '',
       };
       return;
     }
@@ -484,6 +490,7 @@
       price: parseFloat(input.dataset.psShippingPrice || '0'),
       productType: input.dataset.psProductType || 'CP',
       serviceName: input.dataset.psProductName || 'Correo Argentino',
+      delay: input.dataset.psShippingDelay || '',
     }).catch((err) => {
       showShippingError(err.message || 'No pudimos guardar el envío.');
     });
@@ -504,6 +511,7 @@
       price: parseFloat(checked.dataset.psShippingPrice || '0'),
       productType: checked.dataset.psProductType || 'CP',
       serviceName: checked.dataset.psProductName || 'Correo Argentino',
+      delay: checked.dataset.psShippingDelay || '',
     };
   };
 
@@ -534,10 +542,12 @@
       price: branch.price,
       productType: branch.productType,
       serviceName: branch.serviceName,
+      delay: branch.delay || '',
       agencyId: input.dataset.psAgencyId || '',
       agencyName: input.dataset.psAgencyName || '',
       agencyAddress: input.dataset.psAgencyAddress || '',
       agencyPostalCode: input.dataset.psAgencyPostalCode || '',
+      agencyHours: input.dataset.psAgencyHours || '',
     })
       .then(() => {
         pendingBranchOption = null;
@@ -579,6 +589,7 @@
       input.dataset.psAgencyName = point.name || '';
       input.dataset.psAgencyAddress = point.address || '';
       input.dataset.psAgencyPostalCode = point.postalCode || '';
+      input.dataset.psAgencyHours = point.hours || '';
       card.appendChild(input);
 
       const radio = document.createElement('span');

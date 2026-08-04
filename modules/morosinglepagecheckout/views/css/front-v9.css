@@ -180,6 +180,37 @@
   gap: 0.875rem;
 }
 
+.moro-spc__shipping-selected {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--moro-spc-border);
+  border-radius: 0.875rem;
+  background: #ffffff;
+}
+
+.moro-spc__shipping-selected-main {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.moro-spc__shipping-selected-label {
+  font-weight: 600;
+  color: var(--moro-spc-text, #1c1b1b);
+}
+
+.moro-spc__shipping-selected-name {
+  font-size: 0.9375rem;
+  color: var(--moro-spc-text, #1c1b1b);
+}
+
+.moro-spc__shipping-selected-meta {
+  font-size: 0.875rem;
+  color: var(--moro-spc-text-muted, #494544);
+}
+
 .moro-spc__secondary-button--wide {
   width: 100%;
 }
