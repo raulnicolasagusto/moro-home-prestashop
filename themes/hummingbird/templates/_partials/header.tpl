@@ -298,8 +298,7 @@
              data-ps-target="mobile-main">
           <ul class="moro-mobile-drawer__list" role="list">
             {foreach from=$mega_menu_categories item=cat name=moroDrawerLoop}
-              <li class="moro-mobile-drawer__item"
-                  style="--moro-stagger: {$smarty.foreach.moroDrawerLoop.index * 60}ms;">
+              <li class="moro-mobile-drawer__item">
                 {if !empty($cat.subs) || !empty($mega_menu_media[$cat.id_category])}
                   <button type="button"
                           class="moro-mobile-drawer__link"

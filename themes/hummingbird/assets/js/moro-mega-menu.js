@@ -14,6 +14,8 @@
   const IS_OPEN_CLASS = 'is-open';
   const BODY_OPEN_CLASS = 'moro-mega-menu-open';
   const CROSS_FADE_MS = 150;
+  const ITEM_ANIM_MS = 450;   // duración animación de cada item del panel
+  const ITEM_STAGGER_MS = 175; // delay incremental entre items consecutivos
 
   let panel = null;
   let inner = null;
@@ -72,6 +74,32 @@
     switchCategory(category);
   }
 
+  function animatePanelItems(panelEl) {
+    if (!panelEl) return;
+    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    const items = panelEl.querySelectorAll('.moro-mega-menu__sublink, .moro-mega-menu__card');
+    for (let i = 0; i < items.length; i++) {
+      if (typeof items[i].getAnimations === 'function') {
+        items[i].getAnimations().forEach((anim) => anim.cancel());
+      }
+      if (typeof items[i].animate !== 'function') continue;
+      items[i].animate(
+        [
+          { opacity: '0', transform: 'translateY(8px)' },
+          { opacity: '1', transform: 'translateY(0)' },
+        ],
+        {
+          duration: ITEM_ANIM_MS,
+          delay: i * ITEM_STAGGER_MS,
+          easing: 'ease-out',
+          fill: 'both',
+        }
+      );
+    }
+  }
+
   function open(category) {
     // Cerrar el search panel y mobile drawer si están abiertos
     if (typeof window.closeMoroSearchPanel === 'function') {
@@ -86,6 +114,9 @@
     // Forzar reflow para disparar la transición del grid
     void panel.offsetWidth;
     panel.classList.add(IS_OPEN_CLASS);
+
+    // Stagger de aparición de subcategorías (misma mecánica que el drawer mobile)
+    animatePanelItems(document.getElementById('moro-mega-panel-' + category));
 
     // Quitar fade-out del contenido
     forEachPanelContent(function (c) {
@@ -114,6 +145,9 @@
         c.classList.remove(HIDDEN_CONTENT_CLASS);
       });
       inner.classList.remove('moro-mega-menu--cross-fade');
+
+      // Stagger de aparición de las subcategorías del nuevo panel
+      animatePanelItems(document.getElementById('moro-mega-panel-' + category));
     }, CROSS_FADE_MS);
 
     activeCategory = category;

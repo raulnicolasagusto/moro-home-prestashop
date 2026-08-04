@@ -42,6 +42,9 @@
   var SUB_TRANSITION_MS = 350;  // sub-panel slide
   var OVERLAY_MS = 300;      // overlay fade
 
+  var ITEM_ANIM_MS = 450;    // duración animación de cada item del drawer
+  var ITEM_STAGGER_MS = 175; // delay incremental entre items consecutivos
+
   /* ---- state ---- */
 
   var overlay = null;
@@ -144,8 +147,29 @@
       drawer.classList.add(CLASS_OPEN);
     });
 
-    // Animación de cascada en los items: .is-open en el padre dispara las transiciones
-    // con stagger via --moro-stagger en cada item
+    // Stagger de aparición (Web Animations API, como HeaderSidebar de mcgeeandco):
+    // opacity 0→1 y translateY(8px)→0, delay = index * 100ms.
+    // fill:'forwards' mantiene el estado final; closeDrawer() cancela y resetea.
+    // Si el usuario prefiere motion-reduced, no se anima (CSS fallback muestra los items).
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion) {
+      var items = drawer.querySelectorAll('.moro-mobile-drawer__item');
+      for (var i = 0; i < items.length; i++) {
+        if (typeof items[i].animate !== 'function') { continue; }
+        items[i].animate(
+          [
+            { opacity: '0', transform: 'translateY(8px)' },
+            { opacity: '1', transform: 'translateY(0)' }
+          ],
+          {
+            duration: ITEM_ANIM_MS,
+            delay: i * ITEM_STAGGER_MS,
+            easing: 'ease-out',
+            fill: 'both'
+          }
+        );
+      }
+    }
 
     // Scroll lock
     document.body.classList.add(BODY_OPEN_CLASS);
@@ -175,6 +199,17 @@
     // Ocultar drawer
     drawer.classList.remove(CLASS_OPEN);
     drawer.setAttribute('aria-hidden', 'true');
+
+    // Reset del stagger: cancela las animaciones en curso y deja los items en su
+    // estado CSS base (opacity:0, translateY(8px)) para que la próxima apertura repita.
+    var animItems = drawer.querySelectorAll('.moro-mobile-drawer__item');
+    for (var a = 0; a < animItems.length; a++) {
+      if (typeof animItems[a].getAnimations === 'function') {
+        var running = animItems[a].getAnimations();
+        for (var b = 0; b < running.length; b++) { running[b].cancel(); }
+      }
+    }
+
     setTimeout(function () {
       if (!isOpen) {
         hideElement(drawer);
@@ -241,6 +276,27 @@
     // Animar al estado visible
     subEl.classList.add(CLASS_OPEN);
     if (mainEl) { mainEl.classList.add(CLASS_PUSHED); }
+
+    // Stagger de aparición de los items del sub-panel (misma mecánica que el panel principal)
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion) {
+      var subItems = subEl.querySelectorAll('.moro-mobile-drawer__sub-link, .moro-mobile-drawer__sub-card');
+      for (var s = 0; s < subItems.length; s++) {
+        if (typeof subItems[s].animate !== 'function') { continue; }
+        subItems[s].animate(
+          [
+            { opacity: '0', transform: 'translateY(8px)' },
+            { opacity: '1', transform: 'translateY(0)' }
+          ],
+          {
+            duration: ITEM_ANIM_MS,
+            delay: s * ITEM_STAGGER_MS,
+            easing: 'ease-out',
+            fill: 'both'
+          }
+        );
+      }
+    }
 
     subOpen = true;
     if (subEl) { subEl.scrollTop = 0; }

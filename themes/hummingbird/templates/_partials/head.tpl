@@ -77,15 +77,15 @@
   {include file='_partials/stylesheets.tpl' stylesheets=$stylesheets}
   {* Moro Home overrides (CSS plano hasta que el toolchain SCSS esté disponible). *}
   <link rel="stylesheet" href="{$urls.theme_assets}css/moro-theme.css?v=1.1.0">
-  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-header-v10.css">
+  <link rel="stylesheet" href="{$urls.theme_assets}css/moro-header-v10.css?v=2">
   <link rel="stylesheet" href="{$urls.theme_assets}css/moro-cart-drawer.css?v=8">
 {/block}
 
 {block name='javascript_head'}
   {include file='_partials/javascript.tpl' javascript=$javascript.head vars=$js_custom_vars}
   <script src="{$urls.theme_assets}js/moro-search-dialog.js?v=1.0.0" defer></script>
-  <script src="{$urls.theme_assets}js/moro-mega-menu.js?v=1.0.0" defer></script>
-  <script src="{$urls.theme_assets}js/moro-mobile-menu.js?v=1.0.0" defer></script>
+  <script src="{$urls.theme_assets}js/moro-mega-menu.js?v=1.1.0" defer></script>
+  <script src="{$urls.theme_assets}js/moro-mobile-menu.js?v=1.9.0" defer></script>
 {/block}
 
 {block name='hook_header'}
