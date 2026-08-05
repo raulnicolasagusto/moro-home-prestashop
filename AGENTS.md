@@ -532,3 +532,110 @@ Si el módulo está activo pero no hace nada (no cambia el template, no carga CS
 El módulo `moroonepagecheckout` fue instalado con la versión 1.0.0 que registraba `actionFrontControllerInitAfter` + `actionFrontControllerSetMedia`. Después se modificó el PHP para usar solo `actionFrontControllerSetMedia`, pero el módulo ya estaba instalado con los 2 hooks originales en la DB. Al desactivar/reactivar, los hooks no se actualizaron, causando que el módulo no funcionara.
 
 **Solución aplicada:** se agregó el override de `enable()` que re-registra los hooks al activar, y se desinstaló/reinstaló el módulo para sincronizar los hooks en la DB con el código actual.
+
+## 13. Consultas a la base de datos en producción (SSH)
+
+Datos de acceso a la DB de producción (AWS Lightsail):
+
+| Dato | Valor |
+|---|---|
+| Base de datos | `moro_home_db` |
+| Prefijo de tablas | `vovsk_` (ej. `vovsk_module`, `vovsk_hook`, `vovsk_hook_module`) |
+| Archivo de credenciales | `/var/www/moro-home/app/config/parameters.php` (PrestaShop 9 — NO existe `config/parameters.php`) |
+| Cliente | `sudo mysql` (autenticación root por socket, no pide password en el servidor) |
+
+**Forma de ejecutar cualquier query (copiar y pegar):**
+
+```bash
+sudo mysql moro_home_db -e "TU QUERY AQUI"
+```
+
+**Ejemplos útiles:**
+
+1. Hooks registrados de un módulo (diagnóstico de "módulo no funciona"):
+   ```bash
+   sudo mysql moro_home_db -e "SELECT h.name FROM vovsk_hook h JOIN vovsk_hook_module hm ON hm.id_hook=h.id_hook JOIN vovsk_module m ON m.id_module=hm.id_module WHERE m.name='nombre_del_modulo';"
+   ```
+
+2. Versión instalada y estado de un módulo:
+   ```bash
+   sudo mysql moro_home_db -e "SELECT name, version, active FROM vovsk_module WHERE name='nombre_del_modulo';"
+   ```
+
+3. Si `sudo mysql` pide password o falla, sacar las credenciales reales de:
+   ```bash
+   sudo grep -E "database_host|database_name|database_user|database_password|database_prefix" /var/www/moro-home/app/config/parameters.php
+   ```
+   y usar `mysql -u <user> -p<pass> <db> -e "..."`.
+
+**Reglas:**
+- El prefijo de tablas es `vovsk_` — NUNCA asumir `ps_` (el código de ejemplo del §12.4 usa `ps_` y está desactualizado).
+- Nunca modificar la DB directamente para features: solo lectura de diagnóstico (los cambios de schema van en módulos, vía `install()`).
+
+## 14. Diagnóstico de errores — método obligatorio cuando algo "no funciona" y se dan vueltas
+
+### 14.1 El método (en este orden, SIN saltarte pasos)
+
+Cuando un módulo/cambio "no funciona" y no está claro por qué, NO seguir tocando código a ciegas. Hacer esto en orden:
+
+1. **Verificar qué está sirviendo producción** (curl al HTML/CSS del sitio, como en el §Diagnóstico CSS/Smarty). Si el HTML no tiene rastro del cambio → problema de despliegue/caché, no de lógica.
+2. **Verificar que el hook esté registrado en la DB** (query del §13):
+   ```bash
+   sudo mysql moro_home_db -e "SELECT h.name FROM vovsk_hook h JOIN vovsk_hook_module hm ON hm.id_hook=h.id_hook JOIN vovsk_module m ON m.id_module=hm.id_module WHERE m.name='nombre_del_modulo';"
+   ```
+   Si el hook esperado no aparece → desinstalar/reinstalar el módulo (los hooks solo se registran en el `install()` o en el override de `enable()`).
+3. **Verificar que el hook realmente SE EJECUTA** con un log a archivo (ver §14.4). Si el log no se crea → el hook no se dispara en ese contexto → VER EL PASO 4.
+4. **Verificar en el CORE QUÉ hook dispara cada contexto** — esta es LA lección clave (ver §14.2).
+
+### 14.2 LECCIÓN CLAVE: no asumir el nombre del hook — buscar en el core qué hook dispara cada contexto
+
+El error más caro del proyecto (5 horas): el módulo `moroproductcard` registraba `actionPresentProduct` para alimentar las cards del listado, y NUNCA funcionó porque:
+
+- En **PrestaShop 9**, los listados de productos (categorías, búsqueda, best sellers) presentan los productos con **`ProductListingPresenter`** (`src/Adapter/Presenter/Product/ProductListingPresenter.php`), que dispara el hook **`actionPresentProductListing`**.
+- El hook **`actionPresentProduct`** solo lo dispara **`ProductPresenter::present()`** (`src/Adapter/Presenter/Product/ProductPresenter.php:93`), que se usa en **página de producto y carrito** — NO en listados.
+
+**Regla obligatoria:** antes de registrar un hook en un módulo, buscar en el core local (`src/`, `controllers/`, `classes/`) DÓNDE se ejecuta `Hook::exec('<nombre_hook>')` y en qué contexto. Ejemplo de búsqueda:
+
+```bash
+# En el core local (C:\laragon\www\more-home):
+Get-ChildItem src, controllers, classes -Recurse -Filter "*.php" | Select-String -Pattern "actionPresentProductListing|actionPresentProduct" 
+```
+
+Nunca asumir que un hook "obvio" (como `actionPresentProduct`) aplica a un contexto (como el listado). Verificarlo SIEMPRE en el código fuente del core instalado localmente.
+
+### 14.3 Producción se traga las excepciones de los hooks SIN avisar
+
+`classes/Hook.php` (`callHookOn`, ~línea 439): en producción (sin debug), cualquier excepción lanzada dentro del método de un hook se captura y **se descarta silenciosamente** (solo se relanza si el entorno está en debug). Un módulo que "no hace nada" puede estar reventando por una excepción invisible.
+
+**Consecuencias prácticas:**
+- Nunca dejar `catch (Exception $e)` cuando se quiere diagnosticar: los `TypeError`/`Error` de PHP 7+ **NO son `Exception`** — usar **`catch (Throwable $e)`**.
+- Poner cada proveedor de datos en su **propio try/catch**: si uno falla, los demás siguen corriendo (el bug de `moroproductcard` dejaba `getCardImages()` sin ejecutar porque `getColorVariantsWithStock()` explotaba antes en el mismo try).
+
+### 14.4 `error_log()` puede no escribir en ningún lado — usar archivo en /tmp
+
+En el servidor de producción el `error_log` de php.ini está vacío y los logs de Apache no muestran errores PHP. `error_log()` no es confiable para diagnosticar.
+
+**Método confiable:** escribir el diagnóstico a un archivo en `/tmp` (www-data puede escribir ahí):
+
+```php
+// Dentro del hook, al inicio y en cada catch:
+@file_put_contents('/tmp/mi-modulo.log', date('c') . ' mensaje' . PHP_EOL, FILE_APPEND);
+```
+
+Y leerlo por SSH:
+```bash
+sudo cat /tmp/mi-modulo.log
+```
+
+Si el archivo NO se crea → el hook no se está ejecutando (revisar §14.1 paso 2 y §14.2). Si se crea y muestra el error → ahí está el bug.
+
+### 14.5 Checklist rápido (el flujo que resolvió el caso moroproductcard)
+
+1. ¿El HTML servido tiene el dato/markup esperado? (curl a producción)
+2. ¿El hook está en la DB? (query vovsk_)
+3. ¿El hook se ejecuta? (log a /tmp)
+4. ¿El hook correcto para el contexto? (buscar `Hook::exec` en el core local — §14.2)
+5. ¿Hay excepción silenciosa? (catch Throwable + log a /tmp — §14.3/§14.4)
+6. ¿El template recibe los datos? (revisar el HTML renderizado del dato, ej. el data-ps-data o la clase esperada)
+
+

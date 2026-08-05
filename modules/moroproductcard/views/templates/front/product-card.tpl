@@ -36,7 +36,17 @@
     {/if}
   </a>
 
-  {if isset($product.images[1].bySize.default_lg.url)}
+  {if isset($product.moro_card_images.hover.lg) && $product.moro_card_images.hover.lg}
+    <img
+      class="moro-product-card__image-hover"
+      src="{$product.moro_card_images.hover.lg}"
+      width="{$product.cover.bySize.default_md.width}"
+      height="{$product.cover.bySize.default_md.height}"
+      loading="eager"
+      decoding="async"
+      alt="{if !empty($product.cover.legend)}{$product.cover.legend}{else}{$product.name}{/if}"
+    >
+  {elseif isset($product.images[1].bySize.default_lg.url)}
     <img
       class="moro-product-card__image-hover"
       src="{$product.images[1].bySize.default_lg.url}"
@@ -63,6 +73,7 @@
     {if !$product_out_of_stock}
       <form class="moro-product-card__form" action="{$urls.pages.cart}" method="post">
         <input type="hidden" name="id_product" value="{$product.id_product}">
+        <input type="hidden" name="id_product_attribute" value="" class="moro-product-card__combo-input">
         <input type="hidden" name="qty" value="1">
         <input type="hidden" name="token" value="{$static_token}">
         <button
