@@ -1,0 +1,125 @@
+/**
+ * Moro Home — Banner de categoría full-width (edge-to-edge).
+ * Una sola imagen (cover de categoría) con título y descripción superpuestos.
+ * Estructura/estilo de desgine/category-page.html; datos 100% reales de PrestaShop.
+ * CSS plano temporal (AGENTS.md): migrar a SCSS cuando el toolchain esté disponible.
+ */
+
+/* Quitar SOLO el árbol de categorías (ps_categorytree) de la página de categoría.
+   Los filtros de la columna izquierda (ps_facetedsearch) se mantienen. */
+#category .ps-categorytree,
+#category .category-tree {
+  display: none;
+}
+
+/* Filtros (columna izquierda) en la fuente principal del tema (Cormorant), en negrita */
+#category #left-column .search-filters .left-block__title,
+#category #left-column .search-filters .accordion-button,
+#category #left-column .search-filters .search-filters__link,
+#category #left-column .search-filters .search-filters__color-label {
+  font-family: var(--moro-font-serif, "Cormorant", Georgia, serif);
+  font-weight: 700;
+}
+
+/* Banner edge-to-edge: rompe el container para ocupar todo el ancho de la página */
+.moro-category-banner {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  height: 360px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  background: var(--moro-surface-container-low);
+}
+
+.moro-category-banner__picture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* La imagen SIEMPRE recorta (object-fit: cover) para llenar el banner completo */
+.moro-category-banner__image {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.moro-category-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(28, 27, 27, 0.6) 0%,
+    rgba(28, 27, 27, 0.25) 55%,
+    rgba(28, 27, 27, 0) 100%
+  );
+}
+
+.moro-category-banner__content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: 40px 20px;
+  color: #ffffff;
+}
+
+@media (min-width: 768px) {
+  .moro-category-banner {
+    height: 420px;
+  }
+
+  .moro-category-banner__content {
+    padding: 64px;
+  }
+}
+
+.moro-category-banner__title {
+  margin: 0 0 12px;
+  color: inherit;
+  font-family: var(--moro-font-serif, "Newsreader", Georgia, serif);
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 48px;
+  letter-spacing: -0.01em;
+}
+
+@media (min-width: 768px) {
+  .moro-category-banner__title {
+    font-size: 64px;
+    line-height: 72px;
+    letter-spacing: -0.02em;
+  }
+}
+
+.moro-category-banner__description {
+  max-width: 480px;
+  margin: 0;
+  font-family: var(--moro-font-sans, "Montserrat", "Helvetica Neue", Arial, sans-serif);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 28px;
+  letter-spacing: 0.02em;
+}
+
+.moro-category-banner__description p {
+  margin-bottom: 0;
+}
+
+/* Fallback sin imagen: solo texto sobre superficie clara */
+.moro-category-banner__content--no-image {
+  color: var(--moro-on-surface);
+  align-self: center;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.moro-category-banner__content--no-image .moro-category-banner__description {
+  color: var(--moro-on-surface-variant);
+}

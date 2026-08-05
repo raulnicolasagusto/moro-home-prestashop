@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="dark:bg-background" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Atelier Home - Products</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&amp;family=Cormorant:wght@300;400;500&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary": "#994200",
+                      "secondary": "#6b5b53",
+                      "surface-tint": "#9d4400",
+                      "on-tertiary-fixed": "#001d36",
+                      "inverse-on-surface": "#f3f0f0",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#f4ded4",
+                      "outline-variant": "#dec0b2",
+                      "inverse-surface": "#303030",
+                      "on-tertiary-fixed-variant": "#00497d",
+                      "on-primary-container": "#fffbff",
+                      "tertiary-fixed-dim": "#9fcaff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-container": "#fdfcff",
+                      "on-primary-fixed": "#331100",
+                      "primary-container": "#c05500",
+                      "outline": "#8b7266",
+                      "primary-fixed-dim": "#ffb68f",
+                      "error-container": "#ffdad6",
+                      "on-secondary-container": "#716159",
+                      "primary-fixed": "#ffdbca",
+                      "on-secondary-fixed": "#241913",
+                      "on-error-container": "#93000a",
+                      "tertiary-container": "#0078c9",
+                      "surface-container-high": "#eae7e7",
+                      "surface-bright": "#fcf9f8",
+                      "on-surface-variant": "#574238",
+                      "surface-container": "#f0eded",
+                      "tertiary-fixed": "#d1e4ff",
+                      "surface-variant": "#e4e2e1",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#e4e2e1",
+                      "on-surface": "#1b1c1c",
+                      "surface-dim": "#dcd9d9",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#f4ded4",
+                      "background": "#fcf9f8",
+                      "surface": "#fcf9f8",
+                      "on-secondary-fixed-variant": "#52443d",
+                      "secondary-fixed-dim": "#d7c2b9",
+                      "on-primary-fixed-variant": "#773200",
+                      "inverse-primary": "#ffb68f",
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "tertiary": "#005fa0",
+                      "on-background": "#1b1c1c",
+                      "surface-container-low": "#f6f3f2"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "4px",
+                      "margin-mobile": "20px",
+                      "gutter": "24px",
+                      "section-gap": "120px",
+                      "margin-desktop": "64px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Cormorant"
+                      ],
+                      "label-md": [
+                              "Montserrat"
+                      ],
+                      "display-lg": [
+                              "Cormorant"
+                      ],
+                      "nav-item": [
+                              "Montserrat"
+                      ],
+                      "display-lg-mobile": [
+                              "Cormorant"
+                      ],
+                      "body-lg": [
+                              "Montserrat"
+                      ],
+                      "headline-md": [
+                              "Cormorant"
+                      ],
+                      "body-md": [
+                              "Montserrat"
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .product-card:hover .hover-image {
+            opacity: 1;
+        }
+        .product-card:hover .hover-overlay {
+            opacity: 1;
+        }
+        .product-card:hover .hover-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col antialiased">
+<!-- TopNavBar -->
+<nav class="w-full top-0 sticky z-50 bg-background border-b border-outline-variant flat no shadows flex flex-col items-center px-margin-desktop py-4 max-w-[1440px] mx-auto">
+<div class="w-full flex justify-between items-center mb-4">
+<div class="text-headline-md font-headline-md tracking-widest text-on-background uppercase">ATELIER HOME</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95 transition-transform">shopping_bag</span>
+<span class="material-symbols-outlined text-primary cursor-pointer active:scale-95 transition-transform">person</span>
+</div>
+</div>
+<div class="w-full flex justify-center gap-8">
+<a class="text-on-surface-variant font-nav-item hover:text-primary transition-colors duration-300" href="#">Furniture</a>
+<a class="text-on-surface-variant font-nav-item hover:text-primary transition-colors duration-300" href="#">Lighting</a>
+<a class="text-primary font-bold border-b-2 border-primary pb-1" href="#">Decor</a>
+<a class="text-on-surface-variant font-nav-item hover:text-primary transition-colors duration-300" href="#">Rugs</a>
+<a class="text-on-surface-variant font-nav-item hover:text-primary transition-colors duration-300" href="#">New Arrivals</a>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-grow w-full max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-section-gap flex flex-col gap-section-gap">
+<header class="text-center max-w-2xl mx-auto mb-8">
+<h1 class="text-display-lg-mobile md:text-display-lg font-display-lg text-on-background mb-4">New Arrivals</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Discover our latest collection of handcrafted home decor, designed to bring warmth and elegance to your space.</p>
+</header>
+<!-- Product Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
+<!-- Product 1: Aura Ceramic Vase -->
+<div class="flex flex-col gap-6 product-card group">
+<div class="relative bg-surface-container-low aspect-[3/4] w-full overflow-hidden cursor-pointer">
+<!-- Primary Image -->
+<img alt="Aura Ceramic Vase" class="absolute inset-0 object-cover w-full h-full transition-opacity duration-500 ease-in-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5ZMznOWcfww3NkGSBd9mxgRCC7h9YZjwpvAHBDhWZfHy-749IOVm_669yD6MtWXPI5PN-nveR1UpE2Ho0rUKnZ5Vsmrs39zyi3ZT61n5vyaYb38VMWkPjxSJmNptxppTz__C_kDFbmmVZoR22dU1KnnFuTiWgAG_J09QJJUtxfxpI3gwsPqP04Pk-O3o-uRXfDcvryvvBHy5D-FF1w_qSYu9HZPipffUVnB8JG6VZM4EConHSdjGf"/>
+<!-- Hover Lifestyle Image -->
+<img alt="Aura Ceramic Vase Lifestyle" class="absolute inset-0 object-cover w-full h-full transition-opacity duration-700 ease-in-out opacity-0 hover-image transform scale-105 group-hover:scale-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlsHvI3tYqGUAGuzCvPKv14igCAIw744mEyALrfdziS_PCZqLuYHdZrnOpBJtivShwySoAwubZ62JmluvMc62dNxgai-SX0c3Vu6Qcds71HWIgrfhKhINjbcbStu3wEKOiD4jf3ywqA8_4GmGaJy1mrmwIRmDftW0Qx6iKDP_tvBy3Of9bn9KJrAL3pYtGrh-Z0lm4Xm4sIhbf4MjOywBnfloEZeSaVxRRMOBwQ3Rs9wxUbliPcnxP"/>
+<!-- Overlay -->
+<div class="absolute inset-0 bg-secondary/10 opacity-0 transition-opacity duration-300 hover-overlay"></div>
+<!-- Actions -->
+<div class="absolute bottom-8 left-0 right-0 px-8 flex flex-col gap-4 z-10 opacity-0 transform translate-y-4 transition-all duration-400 ease-out hover-actions">
+<button class="w-full bg-primary text-on-primary py-4 px-8 text-label-md font-label-md uppercase tracking-widest hover:bg-surface-tint transition-colors">Quick Add</button>
+<a class="text-center text-on-surface text-label-md font-label-md uppercase tracking-widest bg-surface/80 backdrop-blur-sm py-4 px-8 hover:bg-surface transition-colors border border-outline-variant" href="#">View Details</a>
+</div>
+</div>
+<div class="flex justify-between items-start pt-4">
+<div class="flex flex-col gap-2">
+<h3 class="text-headline-md font-headline-md text-on-background">Aura Ceramic Vase</h3>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Handcrafted in Portugal</p>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">$145</span>
+</div>
+</div>
+<!-- Product 2: Linen Lumbar Pillow -->
+<div class="flex flex-col gap-6 product-card group">
+<div class="relative bg-surface-container-low aspect-[3/4] w-full overflow-hidden cursor-pointer">
+<!-- Primary Image -->
+<img alt="Linen Lumbar Pillow" class="absolute inset-0 object-cover w-full h-full transition-opacity duration-500 ease-in-out" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa02L1JluYs8_8ehy5zJz4HveyGLFWRmBKPJIypkidFX3tfpgNzK2v8JVbV8F33-zEHtataTcYFJ_W4m1M0QvXEQfSlQ-cnuRMoEQSXIVSSuMNJ-Z2OO_kfIRfq--3UL_SRdtt1sP0GW4qSVINw0pqwTdNxAmicbGQsSq_sdo1xZhBA8iEtBgHBe3if_0Y-0vl32qcjG3Cwh4xTD43hUXZiM4nSu1h7Am0NZGaT02ZX6RxpA0xpn18"/>
+<!-- Hover Lifestyle Image -->
+<img alt="Linen Lumbar Pillow Lifestyle" class="absolute inset-0 object-cover w-full h-full transition-opacity duration-700 ease-in-out opacity-0 hover-image transform scale-105 group-hover:scale-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNm49UQqzh4XcZW_eVeYjtdEn1OrjVvXhNyypixhhmknrrsmff7GZU13F-j4tb5MO_PumHqB2UqqKY2AFej7ZESMt9pdXHF4u-OYXgXl3ZgUsoJW5vX7yqbJE-HJldeVGgfnZXZM8sbmqV152bHi54HAzKgIxAp0HJ8PL89AWbaaOpWSHE_whPT4EHiNzJFPkwa81B1zb1vooypiUr3h4ov8opCReCGcRfnGcjA7PJb7Fl7B2zHBJl"/>
+<!-- Overlay -->
+<div class="absolute inset-0 bg-secondary/10 opacity-0 transition-opacity duration-300 hover-overlay"></div>
+<!-- Actions -->
+<div class="absolute bottom-8 left-0 right-0 px-8 flex flex-col gap-4 z-10 opacity-0 transform translate-y-4 transition-all duration-400 ease-out hover-actions">
+<button class="w-full bg-primary text-on-primary py-4 px-8 text-label-md font-label-md uppercase tracking-widest hover:bg-surface-tint transition-colors">Quick Add</button>
+<a class="text-center text-on-surface text-label-md font-label-md uppercase tracking-widest bg-surface/80 backdrop-blur-sm py-4 px-8 hover:bg-surface transition-colors border border-outline-variant" href="#">View Details</a>
+</div>
+</div>
+<div class="flex justify-between items-start pt-4">
+<div class="flex flex-col gap-2">
+<h3 class="text-headline-md font-headline-md text-on-background">Linen Lumbar Pillow</h3>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Soft Terracotta</p>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">$85</span>
+</div>
+</div>
+<!-- Placeholder Products for Grid -->
+<div class="flex flex-col gap-6 product-card group">
+<div class="relative bg-surface-container-low aspect-[3/4] w-full overflow-hidden cursor-pointer border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline-variant">image</span>
+<div class="absolute inset-0 bg-secondary/10 opacity-0 transition-opacity duration-300 hover-overlay"></div>
+<div class="absolute bottom-8 left-0 right-0 px-8 flex flex-col gap-4 z-10 opacity-0 transform translate-y-4 transition-all duration-400 ease-out hover-actions">
+<button class="w-full bg-primary text-on-primary py-4 px-8 text-label-md font-label-md uppercase tracking-widest hover:bg-surface-tint transition-colors">Quick Add</button>
+<a class="text-center text-on-surface text-label-md font-label-md uppercase tracking-widest bg-surface/80 backdrop-blur-sm py-4 px-8 hover:bg-surface transition-colors border border-outline-variant" href="#">View Details</a>
+</div>
+</div>
+<div class="flex justify-between items-start pt-4">
+<div class="flex flex-col gap-2">
+<h3 class="text-headline-md font-headline-md text-on-background">Woven Basket</h3>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Natural Seagrass</p>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">$65</span>
+</div>
+</div>
+<div class="flex flex-col gap-6 product-card group">
+<div class="relative bg-surface-container-low aspect-[3/4] w-full overflow-hidden cursor-pointer border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-outline-variant">image</span>
+<div class="absolute inset-0 bg-secondary/10 opacity-0 transition-opacity duration-300 hover-overlay"></div>
+<div class="absolute bottom-8 left-0 right-0 px-8 flex flex-col gap-4 z-10 opacity-0 transform translate-y-4 transition-all duration-400 ease-out hover-actions">
+<button class="w-full bg-primary text-on-primary py-4 px-8 text-label-md font-label-md uppercase tracking-widest hover:bg-surface-tint transition-colors">Quick Add</button>
+<a class="text-center text-on-surface text-label-md font-label-md uppercase tracking-widest bg-surface/80 backdrop-blur-sm py-4 px-8 hover:bg-surface transition-colors border border-outline-variant" href="#">View Details</a>
+</div>
+</div>
+<div class="flex justify-between items-start pt-4">
+<div class="flex flex-col gap-2">
+<h3 class="text-headline-md font-headline-md text-on-background">Brass Candle Holder</h3>
+<p class="text-body-lg font-body-lg text-on-surface-variant">Antiqued Finish</p>
+</div>
+<span class="text-headline-sm font-headline-sm text-on-background">$45</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full mt-section-gap bg-surface-container-low border-t border-outline-variant py-16 px-margin-desktop flex flex-col md:flex-row justify-between items-center max-w-[1440px] mx-auto flat no shadows">
+<div class="text-headline-sm font-headline-sm text-on-background uppercase mb-8 md:mb-0">ATELIER HOME</div>
+<div class="flex flex-wrap justify-center gap-8 mb-8 md:mb-0">
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="#">Shipping &amp; Returns</a>
+<a class="text-on-surface-variant font-body-md hover:text-primary transition-colors" href="#">Contact Us</a>
+</div>
+<div class="text-body-md font-body-md text-on-surface-variant">© 2024 Atelier Home. All rights reserved.</div>
+</footer>
+</body></html>

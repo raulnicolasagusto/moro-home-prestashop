@@ -1,0 +1,234 @@
+/**
+ * Moro Product Card — card con hover (segunda imagen, Agregar rápido, Ver detalles).
+ * Estructura y animaciones de desgine/product-cart.html adaptadas a la paleta
+ * Moro (variables --moro-* de moro-theme.css).
+ */
+
+/* Con el módulo activo se desactiva el quickview nativo del tema, que en hover
+   se deslizaba desde abajo y se superponía con los botones de la card Moro. */
+.product-miniature.js-product-miniature:hover .product-miniature__quickview-button,
+.product-miniature.js-product-miniature:has(:focus-visible) .product-miniature__quickview-button,
+.product-miniature.js-product-miniature .product-miniature__quickview-button:focus {
+  transform: none !important;
+}
+
+/* En mobile el quickview-touch flotaba sobre los botones: se oculta. */
+.product-miniature__inner .product-miniature__quickview-touch {
+  display: none;
+}
+
+.moro-product-card__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--moro-surface-container-low);
+}
+
+.moro-product-card__image-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.moro-product-card__image,
+.moro-product-card__image-hover {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.moro-product-card__image {
+  transition: opacity 500ms ease-in-out;
+  will-change: opacity;
+}
+
+.moro-product-card__image-hover {
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 700ms ease-in-out, transform 700ms ease-in-out;
+  will-change: opacity, transform;
+}
+
+.moro-product-card__media:hover .moro-product-card__image {
+  opacity: 0;
+}
+
+.moro-product-card__media:hover .moro-product-card__image-hover {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.moro-product-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(107, 91, 83, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+
+.moro-product-card__media:hover .moro-product-card__overlay {
+  opacity: 1;
+}
+
+.moro-product-card__actions {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 32px;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 10;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+
+.moro-product-card__media:hover .moro-product-card__actions {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.moro-product-card__form {
+  margin: 0;
+}
+
+.moro-product-card__add {
+  display: block;
+  width: 100%;
+  padding: 16px 32px;
+  border: 0;
+  background: var(--moro-primary);
+  color: #ffffff;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 300ms ease;
+}
+
+.moro-product-card__add:hover,
+.moro-product-card__add:focus {
+  background: var(--moro-primary-hover, #b8500c);
+}
+
+.moro-product-card__details {
+  display: block;
+  width: 100%;
+  padding: 16px 32px;
+  text-align: center;
+  background: rgba(252, 249, 248, 0.85);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--moro-surface-dim);
+  color: var(--moro-on-surface);
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 300ms ease, color 300ms ease;
+}
+
+.moro-product-card__details:hover,
+.moro-product-card__details:focus {
+  background: var(--moro-surface);
+  color: var(--moro-primary);
+}
+
+.moro-product-card__body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.moro-product-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.moro-product-card__name {
+  margin: 0;
+  font-family: var(--moro-font-serif, "Cormorant", Georgia, serif);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: var(--moro-on-surface);
+  text-decoration: none;
+  transition: color 300ms ease;
+}
+
+.moro-product-card__name:hover,
+.moro-product-card__name:focus {
+  color: var(--moro-primary);
+}
+
+/* Resumen: max 50 chars. El espacio queda reservado aunque no haya resumen,
+   para no romper la alineación de la grilla. */
+.moro-product-card__summary {
+  min-height: 24px;
+  margin: 0;
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: 0.01em;
+  color: var(--moro-on-surface-variant);
+}
+
+.moro-product-card__prices {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.moro-product-card__price {
+  font-family: var(--moro-font-serif, "Cormorant", Georgia, serif);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 24px;
+  color: var(--moro-on-surface);
+}
+
+.moro-product-card__regular-price {
+  font-family: var(--moro-font-sans, "Montserrat", sans-serif);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--moro-on-surface-variant);
+  text-decoration: line-through;
+}
+
+/* Sin hover (touch/mobile): los botones quedan visibles y no se cambia la imagen */
+@media (hover: none), (max-width: 767px) {
+  .moro-product-card__overlay {
+    opacity: 1;
+  }
+
+  .moro-product-card__actions {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .moro-product-card__image-hover {
+    display: none;
+  }
+}

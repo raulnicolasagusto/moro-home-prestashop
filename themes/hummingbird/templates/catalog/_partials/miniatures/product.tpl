@@ -15,7 +15,11 @@
         <div class="{$componentName}__top">
           {include file='catalog/_partials/product-flags.tpl'}
 
-          {include file='catalog/_partials/miniatures/product-image.tpl'}
+          {if isset($moro_product_card) && $moro_product_card}
+            {include file='module:moroproductcard/views/templates/front/product-card.tpl'}
+          {else}
+            {include file='catalog/_partials/miniatures/product-image.tpl'}
+          {/if}
 
           {include file='catalog/_partials/miniatures/product-quickview.tpl'}
         </div>
@@ -23,6 +27,9 @@
 
       {block name='product_miniature_bottom'}
         <div class="{$componentName}__bottom">
+          {if isset($moro_product_card) && $moro_product_card}
+            {include file='module:moroproductcard/views/templates/front/product-card-body.tpl'}
+          {else}
           <div class="{$componentName}__infos">
             {block name='product_name'}
               <a class="{$componentName}__title" href="{$product.url}" aria-label="{l s='View product %product_name%' sprintf=['%product_name%' => $product.name] d='Shop.Theme.Catalog'}">{$product.name}</a>
@@ -107,6 +114,7 @@
               </a>
             {/if}
           </div>
+          {/if}
         </div>
       {/block}
     </div>

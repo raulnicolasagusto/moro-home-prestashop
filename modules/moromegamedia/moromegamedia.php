@@ -6,6 +6,10 @@
  * arma el árbol categorías + subcategorías + media (imágenes nativas de
  * subcat / productos) y lo pasa a Smarty.
  *
+ * Las cards del menú usan la miniatura nativa de la subcategoría
+ * (img/c/{id}_thumb.jpg, campo BO "Miniatura de categoría") con fallback
+ * a la portada (img/c/{id}.jpg).
+ *
  * - No escribe en BD.
  * - No agrega campos nuevos en el BO.
  * - No crea tabla nueva.
@@ -21,7 +25,7 @@ class MoroMegaMedia extends Module
     {
         $this->name = 'moromegamedia';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->author = 'Moro Home';
         $this->need_instance = 0;
         $this->bootstrap = false;
@@ -30,7 +34,7 @@ class MoroMegaMedia extends Module
 
         $this->displayName = $this->trans('Moro Mega Menu Media', [], 'Modules.Moromegamedia.Admin');
         $this->description = $this->trans(
-            'Provides native subcategory and product images for the Moro Home mega menu header. Read-only, no database changes.',
+            'Provides native category thumbnails (with cover fallback) for the Moro Home mega menu header. Read-only, no database changes.',
             [],
             'Modules.Moromegamedia.Admin'
         );
@@ -154,8 +158,9 @@ class MoroMegaMedia extends Module
 
     /**
      * Construye el array de media (imágenes) para una categoría top-level.
-     * Solo incluye subcategorías con imagen de portada cargada en el BO.
-     * Máximo 3 cards. Si ninguna subcats tiene imagen, retorna array vacío.
+     * Usa la miniatura nativa de cada subcategoría (img/c/{id}_thumb.jpg,
+     * campo BO "Miniatura de categoría") con fallback a su portada.
+     * Máximo 3 cards. Si ninguna subcat tiene imagen, retorna array vacío.
      *
      * @return array<int, array{image: string, label: string, url: string}>
      */
@@ -164,18 +169,22 @@ class MoroMegaMedia extends Module
         $images = [];
         $maxImages = 3;
 
-        // Solo subcategorías con imagen de portada cargada
+        // Solo subcategorías con imagen: miniatura primero, portada como fallback
         foreach ($rawSubs as $sub) {
             if (count($images) >= $maxImages) {
                 break;
             }
             $catId = (int) $sub['id_category'];
-            if (!$this->categoryHasImage($catId)) {
-                continue;
+            $imageId = $catId . '_thumb';
+            if (!$this->hasThumbnail($catId)) {
+                if (!$this->categoryHasImage($catId)) {
+                    continue;
+                }
+                $imageId = $catId;
             }
             $images[] = [
                 'image' => $this->context->link->getCatImageLink(
-                    $sub['link_rewrite'], $catId, 'default_lg'
+                    $sub['link_rewrite'], $imageId, 'default_lg'
                 ),
                 'label' => $sub['name'],
                 'url'   => $this->context->link->getCategoryLink(
@@ -185,6 +194,16 @@ class MoroMegaMedia extends Module
         }
 
         return $images;
+    }
+
+    /**
+     * Detecta si una categoría tiene miniatura cargada (img/c/{id}_thumb.jpg).
+     * La miniatura se sube desde el BO en "Miniatura de categoría".
+     */
+    private function hasThumbnail(int $catId): bool
+    {
+        $file = _PS_CAT_IMG_DIR_ . $catId . '_thumb.jpg';
+        return file_exists($file) && is_file($file);
     }
 
     /**
